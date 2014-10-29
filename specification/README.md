@@ -1,7 +1,6 @@
 # UriBeacon Specification
 
-***Open specification for
-Bluetooth 4.0 proximity beacons with Uri.***
+***The Open Web Uri Beacon specification for the Internet of Things***
 
 *(pronounced YUR-ee-BEE-kun)*
 
