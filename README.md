@@ -2,13 +2,13 @@
 
 *(pronounced YUR-ee-BEE-kun)*
 
-**A Bluetooth 4.0 advertisment format containing Web Uris for the Internet of Things.**
+**Open Beacon specification containing Web Uris for the Internet of Things**
 
 Check out how UriBeacons are used in the [Physical Web](http://google.github.io/physical-web/) project.
 
 ## Disclaimer
 
-This is not an official Google product. This is an early-stage experiment that we are developing in the open as we do all things related to the web. This should only be of interest to developers looking to provide feedback and contribute.
+This is not an official Google product. This is an early-stage experiment that we are developing in the open as we do all things related to the web. This should only be of interest to developers looking to provide feedback and [contribute](CONTRIBUTING.md).
 
 ## Why We Created the UriBeacon Specification
 
@@ -26,10 +26,6 @@ own Web presence. Our design is:
 3. Independent of any particular hardware, user-agent, service or mobile platform.
 4. Openly licensed under Apache 2.0 and as such free of restrictive and proprietary terms.
 
-In contrast, existing beacon specifications ask users to constantly
-install new smart phone applications, use a specific cloud service,
-and/or require restrictive terms of use.
-
 In short, UriBeacon connects low power beacons to the family of Open
 Web technologies and is one step towards making the Internet of Things as
 easy to use as the World Wide Web.
@@ -45,8 +41,7 @@ and sample code for advertisers and scanners:
 * **[linux-uribeacon](linux-uribeacon) - Allows Linux users to experiment with UriBeacons.**
 
 We will also be providing instructions on how to assemble and 
-program your own standalone UriBeacon tags to make the things you
-care about smarter.
+program standalone UriBeacon tags.
 
 ## UriBeacon Devices and Tags
 
