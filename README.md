@@ -1,8 +1,9 @@
-# Welcome to the UriBeacon Open Source Project
+# Welcome to the UriBeacon<br> Open Source Project
+
+**The Open Web Uri Beacon specification for the Internet of Things**
 
 *(pronounced YUR-ee-BEE-kun)*
 
-**Open Beacon specification containing Web Uris for the Internet of Things**
 
 Check out how UriBeacons are used in the [Physical Web](http://google.github.io/physical-web/) project.
 
@@ -42,6 +43,19 @@ and sample code for advertisers and scanners:
 
 We will also be providing instructions on how to assemble and 
 program standalone UriBeacon tags.
+
+## What is a Uri?
+
+One can classify URIs as Locators (URLs), or Names (URNs), or both.
+
+A Name functions like a person’s name (or Government ID number), while a Locator resembles that person’s postal address.
+
+In other words: URN is an item’s identity, while the URL is a method for finding it.
+
+* `urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6` [RFC4122](http://www.ietf.org/rfc/rfc4122.txt)
+* `https://www.ietf.org/rfc/rfc2141.txt` [RFC1738](http://www.ietf.org/rfc/rfc1738.txt)
+
+UriBeacons can broadcast familiar HTTP URLs (`http` and `https`), UUID URNs (128-bit universally unique identifiers) as well as other URIs.
 
 ## UriBeacon Devices and Tags
 
