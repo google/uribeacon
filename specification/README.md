@@ -161,8 +161,8 @@ below.
 |10       | 0x0a       | .net
 |11       | 0x0b       | .info
 |12       | 0x0c       | .biz
-|13       | 0x0d5      | .gov
-|14..32   | 0x0A..0x20 | Reserved for Future Use
+|13       | 0x0d      | .gov
+|14..32   | 0x0e..0x20 | Reserved for Future Use
 |127..255 | 0x7F..0xFF | Reserved for Future Use
 
 Note: URIs are written only with the graphic printable characters of the US-ASCII coded character set. The octets 00-20 and 7F-FF hexadecimal are not used. See “Excluded US-ASCII Characters” in RFC 2936.
