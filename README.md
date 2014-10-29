@@ -4,6 +4,11 @@
 
 **A Bluetooth 4.0 advertisment format containing Web Uris for the Internet of Things.**
 
+Check out how UriBeacons are used in the [Physical Web](http://google.github.io/physical-web/) project.
+
+## Disclaimer
+
+This is not an official Google product. This is an early-stage experiment that we are developing in the open as we do all things related to the web. This should only be of interest to developers looking to provide feedback and contribute.
 
 ## Why We Created the UriBeacon Specification
 
@@ -83,8 +88,4 @@ short and show long URLs, titles, etc. and configuration tools can
 automatically shorten long Urls when writing beacons. Also this
 specification does not preclude additional information exchange over a
 GATT service following discovery.
-
-## Disclaimer
-
-This is not an official Google product.
 
