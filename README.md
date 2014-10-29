@@ -1,6 +1,6 @@
 # Welcome to the UriBeacon<br> Open Source Project
 
-**The Open Web Uri Beacon specification for the Internet of Things**
+**The  Web Uri  OpenBeacon specification for the Internet of Things**
 
 *(pronounced YUR-ee-BEE-kun)*
 
