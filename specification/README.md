@@ -132,12 +132,7 @@ The encoding consists of 16-octets representing the UUID in the form:
 
 | Offset | Size | Description
 | :----- | :--- | :----------------
-<<<<<<< HEAD
 | 0..15   |  16   | UUID in byte order
-=======
-| 0..7   |  8   | Least Significant Bytes
-| 8..15  |  8   | Most Significant Bytes
->>>>>>> 702e3ccafb83d4c01d9a687cf5a79b50a9cc24f6
 
 ### UriBeacon HTTP URL encoding
 
