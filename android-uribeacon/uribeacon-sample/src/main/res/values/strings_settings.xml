@@ -1,0 +1,59 @@
+<!--
+  Copyright 2014 Google Inc. All rights reserved.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<resources>
+    <string name="title_activity_uribeacon_settings">Settings</string>
+
+    <!-- BLE Background Scanning Mode -->
+
+    <string name="pref_title_main_background">Background Scanning</string>
+
+    <string name="pref_key_background">background</string>
+    <string name="pref_title_background">Background Mode</string>
+
+    <!-- Hardware override -->
+
+    <string name="pref_title_main_hardware_override">Hardware Override</string>
+
+    <string name="pref_key_hardware_override">hardware_override</string>
+    <string name="pref_title_hardware_override">Hardware BLE enabled</string>
+
+    <!-- BLE Serial Scan setting -->
+
+    <string name="pref_title_main_serial_scan_mode">Serial Scanner</string>
+
+    <!-- BLE Serial Scan Mode settings -->
+
+    <string name="pref_key_serial_scan_mode">serial_scan_mode_key</string>
+    <string name="pref_title_serial_scan_mode">Scan Mode</string>
+
+    <!-- BLE Scan Mode Values -->
+
+    <string name="pref_val_scan_mode_low_power">Low Power</string>
+    <string name="pref_val_scan_mode_low_latency">Low Latency</string>
+    <string name="pref_val_scan_mode_balanced">Balanced</string>
+
+    <!-- BLE Filter settings -->
+
+    <string name="pref_title_main_filters">Filter Settings</string>
+
+   <!-- BLE iBeacon Filter -->
+
+    <string name="pref_key_uribeacon">UriBeaocn</string>
+    <string name="pref_title_filter_uribeacon">Filter UriBeaocn</string>
+    <string name="pref_summary_off_filter_uribeacon">Not filtering on UriBeaocn</string>
+    <string name="pref_summary_on_filter_uribeacon">Filtering on UriBeaocn</string>
+
+</resources>

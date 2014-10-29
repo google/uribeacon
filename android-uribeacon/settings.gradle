@@ -1,0 +1,1 @@
+include ':uribeacon-sample', ':uribeacon-library'

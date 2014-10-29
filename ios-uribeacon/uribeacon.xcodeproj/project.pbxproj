@@ -1,0 +1,683 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		BD039BD219CA488C005A7F37 /* uribeacon_tests.m in Sources */ = {isa = PBXBuildFile; fileRef = BD039BD119CA488C005A7F37 /* uribeacon_tests.m */; };
+		BD039BD819CA4B38005A7F37 /* testdata.json in Resources */ = {isa = PBXBuildFile; fileRef = BD039BD619CA4B38005A7F37 /* testdata.json */; };
+		BD039BDA19CA4E9C005A7F37 /* liburibeacon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BD779295199C0AEF00278B6A /* liburibeacon.a */; };
+		BD039BDB19CA4EAB005A7F37 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BD7792BC199C1AA400278B6A /* CoreBluetooth.framework */; };
+		BD039BE419CB7A0E005A7F37 /* NSData+UBUnitTest.m in Sources */ = {isa = PBXBuildFile; fileRef = BD039BE319CB7A0E005A7F37 /* NSData+UBUnitTest.m */; };
+		BD7792AE199C0B2900278B6A /* UBUriBeaconScanner.m in Sources */ = {isa = PBXBuildFile; fileRef = BD7792AD199C0B2900278B6A /* UBUriBeaconScanner.m */; };
+		BD7792B2199C0CDE00278B6A /* UBConfigurableUriBeacon.m in Sources */ = {isa = PBXBuildFile; fileRef = BD7792B1199C0CDE00278B6A /* UBConfigurableUriBeacon.m */; };
+		BD7792B5199C0CF100278B6A /* UBUriBeacon.m in Sources */ = {isa = PBXBuildFile; fileRef = BD7792B4199C0CF100278B6A /* UBUriBeacon.m */; };
+		BD7792BA199C148000278B6A /* NSString+UB.m in Sources */ = {isa = PBXBuildFile; fileRef = BD7792B7199C148000278B6A /* NSString+UB.m */; };
+		BD7792BB199C148000278B6A /* NSURL+UB.m in Sources */ = {isa = PBXBuildFile; fileRef = BD7792B9199C148000278B6A /* NSURL+UB.m */; };
+		BD7792CB199F22FA00278B6A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = BD7792CA199F22FA00278B6A /* main.m */; };
+		BD7792CE199F22FA00278B6A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = BD7792CD199F22FA00278B6A /* AppDelegate.m */; };
+		BD7792D1199F22FA00278B6A /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BD7792D0199F22FA00278B6A /* ViewController.m */; };
+		BD7792D6199F22FA00278B6A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BD7792D5199F22FA00278B6A /* Images.xcassets */; };
+		BD7792E9199F23B600278B6A /* UriBeacon.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = BD7792AF199C0BBD00278B6A /* UriBeacon.h */; };
+		BD7792EA199F23B900278B6A /* UBConfigurableUriBeacon.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = BD7792B0199C0CDE00278B6A /* UBConfigurableUriBeacon.h */; };
+		BD7792EB199F23BA00278B6A /* UBUriBeaconScanner.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = BD7792AC199C0B2900278B6A /* UBUriBeaconScanner.h */; };
+		BD7792EC199F23BD00278B6A /* UBUriBeacon.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = BD7792B3199C0CF100278B6A /* UBUriBeacon.h */; };
+		BD7792EF199F24BE00278B6A /* liburibeacon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BD779295199C0AEF00278B6A /* liburibeacon.a */; };
+		BD7792F0199F262800278B6A /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BD7792BC199C1AA400278B6A /* CoreBluetooth.framework */; };
+		BD7792F419A2C76400278B6A /* UBUriBeaconWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = BD7792F319A2C76400278B6A /* UBUriBeaconWriter.m */; };
+		BD7792F719A3055800278B6A /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BD7792F619A3055800278B6A /* SettingsViewController.m */; };
+		BD7792FA19A30AB700278B6A /* ConfigureViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BD7792F919A30AB700278B6A /* ConfigureViewController.m */; };
+		BDE9F17A19A673B700AA8DFB /* libMBProgressHUD.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BDE9F17719A5770500AA8DFB /* libMBProgressHUD.a */; };
+		BDE9F2B219AFF90C00AA8DFB /* UBUriBeaconReader.m in Sources */ = {isa = PBXBuildFile; fileRef = BDE9F2B119AFF90C00AA8DFB /* UBUriBeaconReader.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		BD7792ED199F24B700278B6A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BD77928D199C0AEF00278B6A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BD779294199C0AEF00278B6A;
+			remoteInfo = uribeacon;
+		};
+		BDE9F17619A5770500AA8DFB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BDE9F17219A5770500AA8DFB /* MBProgressHUD.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D286A7491518C70F00E13FB8;
+			remoteInfo = MBProgressHUD;
+		};
+		BDE9F17819A5771E00AA8DFB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BDE9F17219A5770500AA8DFB /* MBProgressHUD.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = D286A7481518C70F00E13FB8;
+			remoteInfo = MBProgressHUD;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		BD779293199C0AEF00278B6A /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = include/UriBeacon;
+			dstSubfolderSpec = 16;
+			files = (
+				BD7792E9199F23B600278B6A /* UriBeacon.h in CopyFiles */,
+				BD7792EC199F23BD00278B6A /* UBUriBeacon.h in CopyFiles */,
+				BD7792EA199F23B900278B6A /* UBConfigurableUriBeacon.h in CopyFiles */,
+				BD7792EB199F23BA00278B6A /* UBUriBeaconScanner.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		BD039BCD19CA488C005A7F37 /* uribeacon-tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "uribeacon-tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		BD039BD019CA488C005A7F37 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BD039BD119CA488C005A7F37 /* uribeacon_tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = uribeacon_tests.m; sourceTree = "<group>"; };
+		BD039BD619CA4B38005A7F37 /* testdata.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = testdata.json; sourceTree = "<group>"; };
+		BD039BE219CB7A0E005A7F37 /* NSData+UBUnitTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+UBUnitTest.h"; sourceTree = "<group>"; };
+		BD039BE319CB7A0E005A7F37 /* NSData+UBUnitTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+UBUnitTest.m"; sourceTree = "<group>"; };
+		BD779295199C0AEF00278B6A /* liburibeacon.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = liburibeacon.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		BD7792AC199C0B2900278B6A /* UBUriBeaconScanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UBUriBeaconScanner.h; sourceTree = "<group>"; };
+		BD7792AD199C0B2900278B6A /* UBUriBeaconScanner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UBUriBeaconScanner.m; sourceTree = "<group>"; };
+		BD7792AF199C0BBD00278B6A /* UriBeacon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UriBeacon.h; sourceTree = "<group>"; };
+		BD7792B0199C0CDE00278B6A /* UBConfigurableUriBeacon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UBConfigurableUriBeacon.h; sourceTree = "<group>"; };
+		BD7792B1199C0CDE00278B6A /* UBConfigurableUriBeacon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UBConfigurableUriBeacon.m; sourceTree = "<group>"; };
+		BD7792B3199C0CF100278B6A /* UBUriBeacon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UBUriBeacon.h; sourceTree = "<group>"; };
+		BD7792B4199C0CF100278B6A /* UBUriBeacon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UBUriBeacon.m; sourceTree = "<group>"; };
+		BD7792B6199C148000278B6A /* NSString+UB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+UB.h"; sourceTree = "<group>"; };
+		BD7792B7199C148000278B6A /* NSString+UB.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+UB.m"; sourceTree = "<group>"; };
+		BD7792B8199C148000278B6A /* NSURL+UB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+UB.h"; sourceTree = "<group>"; };
+		BD7792B9199C148000278B6A /* NSURL+UB.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+UB.m"; sourceTree = "<group>"; };
+		BD7792BC199C1AA400278B6A /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
+		BD7792BF199C347400278B6A /* UBUriBeaconPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UBUriBeaconPrivate.h; sourceTree = "<group>"; };
+		BD7792C0199C349800278B6A /* UBUriBeaconScannerPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UBUriBeaconScannerPrivate.h; sourceTree = "<group>"; };
+		BD7792C1199C368100278B6A /* UBConfigurableUriBeaconPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UBConfigurableUriBeaconPrivate.h; sourceTree = "<group>"; };
+		BD7792C6199F22F900278B6A /* uribeacon-sample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "uribeacon-sample.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		BD7792C9199F22FA00278B6A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BD7792CA199F22FA00278B6A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		BD7792CC199F22FA00278B6A /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		BD7792CD199F22FA00278B6A /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		BD7792CF199F22FA00278B6A /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		BD7792D0199F22FA00278B6A /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		BD7792D5199F22FA00278B6A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		BD7792F219A2C76400278B6A /* UBUriBeaconWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UBUriBeaconWriter.h; sourceTree = "<group>"; };
+		BD7792F319A2C76400278B6A /* UBUriBeaconWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UBUriBeaconWriter.m; sourceTree = "<group>"; };
+		BD7792F519A3055800278B6A /* SettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsViewController.h; sourceTree = "<group>"; };
+		BD7792F619A3055800278B6A /* SettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsViewController.m; sourceTree = "<group>"; };
+		BD7792F819A30AB700278B6A /* ConfigureViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConfigureViewController.h; sourceTree = "<group>"; };
+		BD7792F919A30AB700278B6A /* ConfigureViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConfigureViewController.m; sourceTree = "<group>"; };
+		BDE9F17219A5770500AA8DFB /* MBProgressHUD.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MBProgressHUD.xcodeproj; path = "uribeacon-sample/third-party/MBProgressHUD/MBProgressHUD.xcodeproj"; sourceTree = "<group>"; };
+		BDE9F2B019AFF90C00AA8DFB /* UBUriBeaconReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UBUriBeaconReader.h; sourceTree = "<group>"; };
+		BDE9F2B119AFF90C00AA8DFB /* UBUriBeaconReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UBUriBeaconReader.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		BD039BCA19CA488C005A7F37 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BD039BDB19CA4EAB005A7F37 /* CoreBluetooth.framework in Frameworks */,
+				BD039BDA19CA4E9C005A7F37 /* liburibeacon.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BD779292199C0AEF00278B6A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BD7792C3199F22F900278B6A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BDE9F17A19A673B700AA8DFB /* libMBProgressHUD.a in Frameworks */,
+				BD7792F0199F262800278B6A /* CoreBluetooth.framework in Frameworks */,
+				BD7792EF199F24BE00278B6A /* liburibeacon.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		BD039BCE19CA488C005A7F37 /* uribeacon-tests */ = {
+			isa = PBXGroup;
+			children = (
+				BD039BD119CA488C005A7F37 /* uribeacon_tests.m */,
+				BD039BD619CA4B38005A7F37 /* testdata.json */,
+				BD039BCF19CA488C005A7F37 /* Supporting Files */,
+				BD039BE219CB7A0E005A7F37 /* NSData+UBUnitTest.h */,
+				BD039BE319CB7A0E005A7F37 /* NSData+UBUnitTest.m */,
+			);
+			path = "uribeacon-tests";
+			sourceTree = "<group>";
+		};
+		BD039BCF19CA488C005A7F37 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				BD039BD019CA488C005A7F37 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		BD77928C199C0AEF00278B6A = {
+			isa = PBXGroup;
+			children = (
+				BD779297199C0AEF00278B6A /* uribeacon */,
+				BD7792C7199F22FA00278B6A /* uribeacon-sample */,
+				BD039BCE19CA488C005A7F37 /* uribeacon-tests */,
+				BD7792BE199C1AAF00278B6A /* Frameworks */,
+				BD779296199C0AEF00278B6A /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		BD779296199C0AEF00278B6A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				BD779295199C0AEF00278B6A /* liburibeacon.a */,
+				BD7792C6199F22F900278B6A /* uribeacon-sample.app */,
+				BD039BCD19CA488C005A7F37 /* uribeacon-tests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		BD779297199C0AEF00278B6A /* uribeacon */ = {
+			isa = PBXGroup;
+			children = (
+				BD7792B6199C148000278B6A /* NSString+UB.h */,
+				BD7792B7199C148000278B6A /* NSString+UB.m */,
+				BD7792B8199C148000278B6A /* NSURL+UB.h */,
+				BD7792B9199C148000278B6A /* NSURL+UB.m */,
+				BD7792F219A2C76400278B6A /* UBUriBeaconWriter.h */,
+				BD7792F319A2C76400278B6A /* UBUriBeaconWriter.m */,
+				BDE9F2B019AFF90C00AA8DFB /* UBUriBeaconReader.h */,
+				BDE9F2B119AFF90C00AA8DFB /* UBUriBeaconReader.m */,
+				BD7792AC199C0B2900278B6A /* UBUriBeaconScanner.h */,
+				BD7792AD199C0B2900278B6A /* UBUriBeaconScanner.m */,
+				BD7792C0199C349800278B6A /* UBUriBeaconScannerPrivate.h */,
+				BD7792AF199C0BBD00278B6A /* UriBeacon.h */,
+				BD7792B0199C0CDE00278B6A /* UBConfigurableUriBeacon.h */,
+				BD7792B1199C0CDE00278B6A /* UBConfigurableUriBeacon.m */,
+				BD7792C1199C368100278B6A /* UBConfigurableUriBeaconPrivate.h */,
+				BD7792B3199C0CF100278B6A /* UBUriBeacon.h */,
+				BD7792B4199C0CF100278B6A /* UBUriBeacon.m */,
+				BD7792BF199C347400278B6A /* UBUriBeaconPrivate.h */,
+			);
+			path = uribeacon;
+			sourceTree = "<group>";
+		};
+		BD7792BE199C1AAF00278B6A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				BD7792BC199C1AA400278B6A /* CoreBluetooth.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		BD7792C7199F22FA00278B6A /* uribeacon-sample */ = {
+			isa = PBXGroup;
+			children = (
+				BDE9F17119A576F500AA8DFB /* third-party */,
+				BD7792CC199F22FA00278B6A /* AppDelegate.h */,
+				BD7792CD199F22FA00278B6A /* AppDelegate.m */,
+				BD7792CF199F22FA00278B6A /* ViewController.h */,
+				BD7792D0199F22FA00278B6A /* ViewController.m */,
+				BD7792F519A3055800278B6A /* SettingsViewController.h */,
+				BD7792F619A3055800278B6A /* SettingsViewController.m */,
+				BD7792F819A30AB700278B6A /* ConfigureViewController.h */,
+				BD7792F919A30AB700278B6A /* ConfigureViewController.m */,
+				BD7792D5199F22FA00278B6A /* Images.xcassets */,
+				BD7792C8199F22FA00278B6A /* Supporting Files */,
+			);
+			path = "uribeacon-sample";
+			sourceTree = "<group>";
+		};
+		BD7792C8199F22FA00278B6A /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				BD7792C9199F22FA00278B6A /* Info.plist */,
+				BD7792CA199F22FA00278B6A /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		BDE9F17119A576F500AA8DFB /* third-party */ = {
+			isa = PBXGroup;
+			children = (
+				BDE9F17219A5770500AA8DFB /* MBProgressHUD.xcodeproj */,
+			);
+			name = "third-party";
+			path = ..;
+			sourceTree = "<group>";
+		};
+		BDE9F17319A5770500AA8DFB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				BDE9F17719A5770500AA8DFB /* libMBProgressHUD.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		BD039BCC19CA488C005A7F37 /* uribeacon-tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BD039BD319CA488C005A7F37 /* Build configuration list for PBXNativeTarget "uribeacon-tests" */;
+			buildPhases = (
+				BD039BC919CA488C005A7F37 /* Sources */,
+				BD039BCA19CA488C005A7F37 /* Frameworks */,
+				BD039BCB19CA488C005A7F37 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "uribeacon-tests";
+			productName = "uribeacon-tests";
+			productReference = BD039BCD19CA488C005A7F37 /* uribeacon-tests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		BD779294199C0AEF00278B6A /* uribeacon */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BD7792A6199C0AEF00278B6A /* Build configuration list for PBXNativeTarget "uribeacon" */;
+			buildPhases = (
+				BD779291199C0AEF00278B6A /* Sources */,
+				BD779292199C0AEF00278B6A /* Frameworks */,
+				BD779293199C0AEF00278B6A /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = uribeacon;
+			productName = uribeacon;
+			productReference = BD779295199C0AEF00278B6A /* liburibeacon.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		BD7792C5199F22F900278B6A /* uribeacon-sample */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BD7792E7199F22FA00278B6A /* Build configuration list for PBXNativeTarget "uribeacon-sample" */;
+			buildPhases = (
+				BD92342E19C7609C00943BD1 /* ShellScript */,
+				BD7792C2199F22F900278B6A /* Sources */,
+				BD7792C3199F22F900278B6A /* Frameworks */,
+				BD7792C4199F22F900278B6A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				BDE9F17919A5771E00AA8DFB /* PBXTargetDependency */,
+				BD7792EE199F24B700278B6A /* PBXTargetDependency */,
+			);
+			name = "uribeacon-sample";
+			productName = "uribeacon-sample";
+			productReference = BD7792C6199F22F900278B6A /* uribeacon-sample.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		BD77928D199C0AEF00278B6A /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0600;
+				ORGANIZATIONNAME = "Hoa Dinh";
+				TargetAttributes = {
+					BD039BCC19CA488C005A7F37 = {
+						CreatedOnToolsVersion = 6.0;
+					};
+					BD779294199C0AEF00278B6A = {
+						CreatedOnToolsVersion = 6.0;
+					};
+					BD7792C5199F22F900278B6A = {
+						CreatedOnToolsVersion = 6.0;
+					};
+				};
+			};
+			buildConfigurationList = BD779290199C0AEF00278B6A /* Build configuration list for PBXProject "uribeacon" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = BD77928C199C0AEF00278B6A;
+			productRefGroup = BD779296199C0AEF00278B6A /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = BDE9F17319A5770500AA8DFB /* Products */;
+					ProjectRef = BDE9F17219A5770500AA8DFB /* MBProgressHUD.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				BD779294199C0AEF00278B6A /* uribeacon */,
+				BD7792C5199F22F900278B6A /* uribeacon-sample */,
+				BD039BCC19CA488C005A7F37 /* uribeacon-tests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		BDE9F17719A5770500AA8DFB /* libMBProgressHUD.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libMBProgressHUD.a;
+			remoteRef = BDE9F17619A5770500AA8DFB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		BD039BCB19CA488C005A7F37 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BD039BD819CA4B38005A7F37 /* testdata.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BD7792C4199F22F900278B6A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BD7792D6199F22FA00278B6A /* Images.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		BD92342E19C7609C00943BD1 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "printenv\n#git clone https://github.com/jdg/MBProgressHUD\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		BD039BC919CA488C005A7F37 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BD039BE419CB7A0E005A7F37 /* NSData+UBUnitTest.m in Sources */,
+				BD039BD219CA488C005A7F37 /* uribeacon_tests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BD779291199C0AEF00278B6A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BDE9F2B219AFF90C00AA8DFB /* UBUriBeaconReader.m in Sources */,
+				BD7792BB199C148000278B6A /* NSURL+UB.m in Sources */,
+				BD7792F419A2C76400278B6A /* UBUriBeaconWriter.m in Sources */,
+				BD7792B2199C0CDE00278B6A /* UBConfigurableUriBeacon.m in Sources */,
+				BD7792AE199C0B2900278B6A /* UBUriBeaconScanner.m in Sources */,
+				BD7792BA199C148000278B6A /* NSString+UB.m in Sources */,
+				BD7792B5199C0CF100278B6A /* UBUriBeacon.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BD7792C2199F22F900278B6A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BD7792D1199F22FA00278B6A /* ViewController.m in Sources */,
+				BD7792CE199F22FA00278B6A /* AppDelegate.m in Sources */,
+				BD7792FA19A30AB700278B6A /* ConfigureViewController.m in Sources */,
+				BD7792CB199F22FA00278B6A /* main.m in Sources */,
+				BD7792F719A3055800278B6A /* SettingsViewController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		BD7792EE199F24B700278B6A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BD779294199C0AEF00278B6A /* uribeacon */;
+			targetProxy = BD7792ED199F24B700278B6A /* PBXContainerItemProxy */;
+		};
+		BDE9F17919A5771E00AA8DFB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = MBProgressHUD;
+			targetProxy = BDE9F17819A5771E00AA8DFB /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		BD039BD419CA488C005A7F37 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "uribeacon-tests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					XCTest,
+					"-ObjC",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		BD039BD519CA488C005A7F37 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "uribeacon-tests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					XCTest,
+					"-ObjC",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		BD7792A4199C0AEF00278B6A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(BUILT_PRODUCTS_DIR)/include",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		BD7792A5199C0AEF00278B6A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(BUILT_PRODUCTS_DIR)/include",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		BD7792A7199C0AEF00278B6A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		BD7792A8199C0AEF00278B6A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		BD7792E3199F22FA00278B6A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "uribeacon-sample/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		BD7792E4199F22FA00278B6A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				INFOPLIST_FILE = "uribeacon-sample/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		BD039BD319CA488C005A7F37 /* Build configuration list for PBXNativeTarget "uribeacon-tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BD039BD419CA488C005A7F37 /* Debug */,
+				BD039BD519CA488C005A7F37 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BD779290199C0AEF00278B6A /* Build configuration list for PBXProject "uribeacon" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BD7792A4199C0AEF00278B6A /* Debug */,
+				BD7792A5199C0AEF00278B6A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BD7792A6199C0AEF00278B6A /* Build configuration list for PBXNativeTarget "uribeacon" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BD7792A7199C0AEF00278B6A /* Debug */,
+				BD7792A8199C0AEF00278B6A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BD7792E7199F22FA00278B6A /* Build configuration list for PBXNativeTarget "uribeacon-sample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BD7792E3199F22FA00278B6A /* Debug */,
+				BD7792E4199F22FA00278B6A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = BD77928D199C0AEF00278B6A /* Project object */;
+}

@@ -1,0 +1,109 @@
+#!/bin/bash
+
+# Copyright 2014 Google Inc. All rights reserved.
+# 
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#     http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# uribeacon_scan - scan for Bluetooth 4.0 UriBeacon advertisements
+#
+# Requirements:
+#  apt-get install bluez-hcidump
+
+sudo hcitool lescan --duplicates 1>/dev/null &
+trap "sudo kill $!" EXIT
+sudo hcidump --raw | awk '
+BEGIN {
+      line = ""
+      Codes[0] = "http://www."
+      Codes[1] = "https://www."
+      Codes[2] = "http://"
+      Codes[3] = "https://"
+      Codes[4] = "tel:"
+      Codes[5] = "mailto:"
+      Codes[6] = "geo:"
+      Codes[7] = ".com"
+      Codes[8] = ".org"
+      Codes[9] = ".edu"
+}
+
+function get_mac(bytes) {
+  return (bytes[13] ":" bytes[12] ":" bytes[11] ":" bytes[10] ":" bytes[9] ":" bytes[8])
+}
+
+function get_uri(bytes) {
+  uri = ""
+  limit = service_data_limit(bytes)
+  for (i = 28; i < limit; i++) {
+    code = strtonum("0x"bytes[i])
+    if (code in Codes) {
+       uri = uri Codes[code]
+    } else {
+       uri = uri sprintf("%c", code)
+    }
+  }
+  return uri
+}
+
+function get_flags(bytes) {
+  return bytes[26]
+}
+
+function get_tx_power(bytes) {
+  return bytes[27]
+}
+
+# Returns the max index into the service data AD field
+function service_data_limit(bytes) {
+	 val = 22 + strtonum("0x"bytes[22])
+	 return val
+}
+
+function has_service_data(bytes) {
+  return (length(bytes) > 25 &&
+  	 bytes[23] == "16" &&
+	 bytes[24] == "D8" &&
+	 bytes[25] == "FE")
+}
+
+function has_service_uuid(bytes) {
+  return (length(bytes) > 21 &&
+  	 bytes[18] == "03" &&
+	 bytes[19] == "03" &&
+	 bytes[20] == "D8" &&
+         bytes[21] == "FE")
+}
+
+$1 == ">" {
+  if (line != "") {
+    split(line, bytes, " ")
+    if (has_service_uuid(bytes) && has_service_data(bytes)) {
+      print ""
+      print "Mac:     " get_mac(bytes)
+      print "Flags:   " get_flags(bytes)
+      print "TxPower: " get_tx_power(bytes)
+      print "Uri:     " get_uri(bytes)
+      print "Raw:     " line
+    } else {
+#      print "Other: " line
+    }
+  }
+  # Remove the ">" char at the start of line and restart
+  $1 = ""
+  line = $0
+  next
+}
+
+/[0-9][0-9]/ {
+  # concat each additional line starting with a number
+  line = line $0
+ }' -
