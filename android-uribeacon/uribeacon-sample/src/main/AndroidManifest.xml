@@ -28,6 +28,11 @@
             android:name="org.uribeacon.scan.compat.ScanWakefulService"
             android:exported="false"></service>
 
+        <service
+            android:name="org.uribeacon.config.GattService"
+            android:exported="false" >
+        </service>
+
         <!-- This is required for the scan library. -->
         <receiver android:name="org.uribeacon.scan.compat.ScanWakefulBroadcastReceiver"></receiver>
 
@@ -45,6 +50,9 @@
         <activity
             android:name="org.uribeacon.sample.ConfigActivity"
             android:label="@string/title_activity_uribeacon_config"></activity>
+        <activity
+            android:name="org.uribeacon.sample.SomeActivity"
+            android:label="@string/title_activity_config"></activity>
     </application>
 
 </manifest>
