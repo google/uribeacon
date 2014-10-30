@@ -27,6 +27,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -149,6 +150,13 @@ public class ConfigActivity extends ListActivity {
         mLeDeviceListAdapter.clear();
       }
     });
+  }
+
+  @Override
+  protected void onListItemClick (ListView l, View v, int position, long id) {
+    Toast.makeText(this, "Clicked row " + position, Toast.LENGTH_SHORT).show();
+    ScanResultAdapter.DeviceSighting sighting = mLeDeviceListAdapter.getItem(position);
+    SomeActivity.startConfigureActivity(this, sighting.scanResult.getDevice());
   }
 
   @Override
