@@ -24,19 +24,32 @@ struct expansion {
   int length;
 };
 
-static struct expansion expansionsList[] = {
+static struct expansion prefixExpansionsList[] = {
     {0, "http://www."},
     {1, "https://www."},
     {2, "http://"},
     {3, "https://"},
-    {4, "tel:"},
-    {5, "mailto:"},
-    {6, "geo:"},
+    {4, "urn:uuid:"},
+};
+
+static struct expansion expansionsList[] = {
+    {0, ".com/"},
+    {1, ".org/"},
+    {2, ".edu/"},
+    {3, ".net/"},
+    {4, ".info/"},
+    {5, ".biz/"},
+    {6, ".gov/"},
     {7, ".com"},
     {8, ".org"},
     {9, ".edu"},
+    {10, ".net"},
+    {11, ".info"},
+    {12, ".biz"},
+    {13, ".gov"},
 };
 
+static const char *prefixExpansionsMapping[255];
 static const char *expansionsMapping[255];
 
 + (NSString *)ub_decodedBeaconURIString:(NSData *)data {
@@ -44,7 +57,12 @@ static const char *expansionsMapping[255];
   NSUInteger length = [data length];
   NSMutableData *resultData = [NSMutableData data];
   for (unsigned i = 0; i < length; i++) {
-    const char *expansionValue = expansionsMapping[(unsigned char)bytes[i]];
+    const char *expansionValue = NULL;
+    if (i == 0) {
+      expansionValue = prefixExpansionsMapping[(unsigned char)bytes[i]];
+    } else {
+      expansionValue = expansionsMapping[(unsigned char)bytes[i]];
+    }
     if (expansionValue == NULL) {
       // TODO(dvh): There's probably room for optimization: several non-encoded
       // bytes
@@ -68,18 +86,28 @@ static const char *expansionsMapping[255];
   while (i < [data length]) {
     int found = -1;
     int foundLength = -1;
-    for (unsigned int k = 0;
-         k < sizeof(expansionsList) / sizeof(expansionsList[0]); k++) {
-      const char *value = expansionsList[k].value;
-      if (strncmp(bytes + i, value, expansionsList[k].length) == 0 && expansionsList[k].length > foundLength) {
+    struct expansion *table = NULL;
+    unsigned int tableLength = 0;
+    if (i == 0) {
+      table = prefixExpansionsList;
+      tableLength =
+          sizeof(prefixExpansionsList) / sizeof(prefixExpansionsList[0]);
+    } else {
+      table = expansionsList;
+      tableLength = sizeof(expansionsList) / sizeof(expansionsList[0]);
+    }
+    for (unsigned int k = 0; k < tableLength; k++) {
+      const char *value = table[k].value;
+      if (strncmp(bytes + i, value, table[k].length) == 0 &&
+          table[k].length > foundLength) {
         found = k;
-        foundLength = expansionsList[k].length;
+        foundLength = table[k].length;
       }
     }
     if (found != -1) {
       char b = (char)found;
       [encodedData appendBytes:&b length:1];
-      i += expansionsList[found].length;
+      i += table[found].length;
     } else {
       [encodedData appendBytes:bytes + i length:1];
       i++;
@@ -96,5 +124,10 @@ __attribute__((constructor)) static void initialize() {
        i < sizeof(expansionsList) / sizeof(expansionsList[0]); i++) {
     expansionsMapping[expansionsList[i].code] = expansionsList[i].value;
     expansionsList[i].length = (int) strlen(expansionsList[i].value);
+  }
+  for (unsigned int i = 0;
+       i < sizeof(prefixExpansionsList) / sizeof(prefixExpansionsList[0]); i++) {
+    prefixExpansionsMapping[prefixExpansionsList[i].code] = prefixExpansionsList[i].value;
+    prefixExpansionsList[i].length = (int) strlen(prefixExpansionsList[i].value);
   }
 }

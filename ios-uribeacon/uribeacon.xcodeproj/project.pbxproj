@@ -78,7 +78,7 @@
 		BD039BCD19CA488C005A7F37 /* uribeacon-tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "uribeacon-tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BD039BD019CA488C005A7F37 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BD039BD119CA488C005A7F37 /* uribeacon_tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = uribeacon_tests.m; sourceTree = "<group>"; };
-		BD039BD619CA4B38005A7F37 /* testdata.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = testdata.json; sourceTree = "<group>"; };
+		BD039BD619CA4B38005A7F37 /* testdata.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = testdata.json; path = "../../android-uribeacon/uribeacon-library/src/androidTest/assets/testdata.json"; sourceTree = "<group>"; };
 		BD039BE219CB7A0E005A7F37 /* NSData+UBUnitTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+UBUnitTest.h"; sourceTree = "<group>"; };
 		BD039BE319CB7A0E005A7F37 /* NSData+UBUnitTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+UBUnitTest.m"; sourceTree = "<group>"; };
 		BD779295199C0AEF00278B6A /* liburibeacon.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = liburibeacon.a; sourceTree = BUILT_PRODUCTS_DIR; };
