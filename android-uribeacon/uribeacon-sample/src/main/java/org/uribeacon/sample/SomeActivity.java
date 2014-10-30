@@ -44,20 +44,20 @@ import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.UUID;
 
-public class SomeActivity extends Activity {
+public class SomeActivity extends Activity implements OnClickListener {
 
-  private static final UUID beaconService = UUID
+  private static final UUID BEACON_SERVICE = UUID
       .fromString("b35d7da6-eed4-4d59-8f89-f6573edea967");
-  private static final UUID beaconDataOneCharacteristic = UUID
+  private static final UUID DATA_ONE_CHARACTERISTIC = UUID
       .fromString("b35d7da7-eed4-4d59-8f89-f6573edea967");
-  private static final UUID beaconDataTwoCharacteristic = UUID
+  private static final UUID DATA_TWO_CHARACTERISTIC = UUID
       .fromString("b35d7da8-eed4-4d59-8f89-f6573edea967");
-  private static final UUID beaconDataSizeCharacteristic = UUID
+  private static final UUID DATA_SIZE_CHARACTERISTIC = UUID
       .fromString("b35d7da9-eed4-4d59-8f89-f6573edea967");
-  private TextView beaconValue = null;
-  private TextView beaconNewValue = null;
-  private Button beaconUpdateValue = null;
-  private ProgressDialog connectionDialog = null;
+  private TextView mBeaconValue = null;
+  private TextView mBeaconNewValue = null;
+  private Button mBeaconUpdateValue = null;
+  private ProgressDialog mConnectionDialog = null;
   private BluetoothDevice mDeviceToConnect = null;
   private GattService mService = null;
   private int mLength;
@@ -70,8 +70,8 @@ public class SomeActivity extends Activity {
       if (status == BluetoothGatt.GATT_FAILURE) {
         Toast.makeText(SomeActivity.this, "Failed to update the beacon", Toast.LENGTH_SHORT).show();
         // unblock the UI
-        beaconNewValue.setEnabled(true);
-        beaconUpdateValue.setEnabled(true);
+        mBeaconNewValue.setEnabled(true);
+        mBeaconUpdateValue.setEnabled(true);
         finish();
       }
     }
@@ -87,7 +87,7 @@ public class SomeActivity extends Activity {
             Util.byteArrayToHexString(value) + " <> " +
             Util.byteArrayToHexString(mDataWrite));
       }
-      if (mDataWrite.length <= 20 || beaconDataTwoCharacteristic.equals(characteristic.getUuid())) {
+      if (mDataWrite.length <= 20 || DATA_TWO_CHARACTERISTIC.equals(characteristic.getUuid())) {
         mService.disconnect();
         finish();
       }
@@ -110,31 +110,31 @@ public class SomeActivity extends Activity {
     public void onServicesDiscovered(BluetoothGatt gatt, int status) {
       Log.d(TAG, "onServicesDiscovered request queue");
       checkRequest(status);
-      mService.setService(beaconService);
-      mService.readCharacteristic(beaconDataSizeCharacteristic);
-      connectionDialog.dismiss();
+      mService.setService(BEACON_SERVICE);
+      mService.readCharacteristic(DATA_SIZE_CHARACTERISTIC);
+      mConnectionDialog.dismiss();
     }
 
     @Override
     public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
       checkRequest(status);
       UUID uuid = characteristic.getUuid();
-      if (beaconDataOneCharacteristic.equals(uuid)) {
+      if (DATA_ONE_CHARACTERISTIC.equals(uuid)) {
         mData = characteristic.getValue();
         if (mLength <= 20) {
           setBeaconValue();
         }
-      } else if (beaconDataTwoCharacteristic.equals(uuid)) {
+      } else if (DATA_TWO_CHARACTERISTIC.equals(uuid)) {
         mData = Util.concatenate(mData, characteristic.getValue());
         setBeaconValue();
-      } else if (beaconDataSizeCharacteristic.equals(uuid)) {
+      } else if (DATA_SIZE_CHARACTERISTIC.equals(uuid)) {
         if (characteristic.getValue() == null) {
           Log.e(TAG, "Null value!");
         } else {
           mLength = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_SINT8, 0);
-          mService.readCharacteristic(beaconDataOneCharacteristic);
+          mService.readCharacteristic(DATA_ONE_CHARACTERISTIC);
           if (mLength > 20) {
-            mService.readCharacteristic(beaconDataTwoCharacteristic);
+            mService.readCharacteristic(DATA_TWO_CHARACTERISTIC);
           }
           Log.d(TAG, "Length is " + mLength);
         }
@@ -155,7 +155,7 @@ public class SomeActivity extends Activity {
         // We have a connection to BtSmartService so now we can connect
         // and register the device handler.
         mService.connect(SomeActivity.this, mDeviceToConnect, mRequestCallback);
-        connectionDialog.show();
+        mConnectionDialog.show();
       }
     }
 
@@ -166,6 +166,34 @@ public class SomeActivity extends Activity {
   };
 
   @Override
+  public void onClick(View v) {
+    // block UI
+    mBeaconNewValue.setEnabled(false);
+    mBeaconUpdateValue.setEnabled(false);
+    String uri = mBeaconNewValue.getText().toString();
+    try {
+      UriBeacon uriBeacon = new UriBeacon.Builder().uriString(uri).build();
+      mDataWrite = uriBeacon.toByteArray();
+    } catch (URISyntaxException e) {
+      Toast.makeText(SomeActivity.this, "Invalid Uri", Toast.LENGTH_LONG).show();
+      return;
+    }
+
+    if (mDataWrite.length <= 20) {
+      // write the value
+      mService.writeCharacteristic(DATA_ONE_CHARACTERISTIC,
+          mDataWrite);
+    } else {
+      byte[] buff = Arrays.copyOfRange(mDataWrite, 0, 20);
+      Log.d(TAG, "Buffer length is " + buff.length);
+      mService.writeCharacteristic(DATA_ONE_CHARACTERISTIC,
+          buff);
+      mService.writeCharacteristic(DATA_TWO_CHARACTERISTIC,
+          Arrays.copyOfRange(mDataWrite, 20, mDataWrite.length));
+    }
+  }
+
+  @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
@@ -173,40 +201,11 @@ public class SomeActivity extends Activity {
     setContentView(R.layout.activity_configbeacon);
 
     // find the TextView to hold the current value
-    beaconValue = (TextView) findViewById(R.id.beaconCurValue);
-    beaconValue.setText(R.string.beacon_not_available);
-    beaconNewValue = (TextView) findViewById(R.id.beaconNewValue);
-    beaconUpdateValue = (Button) findViewById(R.id.writeNewValue);
-    beaconUpdateValue.setOnClickListener(new OnClickListener() {
-
-      @Override
-      public void onClick(View v) {
-        // block UI
-        beaconNewValue.setEnabled(false);
-        beaconUpdateValue.setEnabled(false);
-        String uri = beaconNewValue.getText().toString();
-        try {
-          UriBeacon uriBeacon = new UriBeacon.Builder().uriString(uri).build();
-          mDataWrite = uriBeacon.toByteArray();
-        } catch (URISyntaxException e) {
-          Toast.makeText(SomeActivity.this, "Invalid Uri", Toast.LENGTH_LONG).show();
-          return;
-        }
-
-        if (mDataWrite.length <= 20) {
-          // write the value
-          mService.writeCharacteristic(beaconDataOneCharacteristic,
-              mDataWrite);
-        } else {
-          byte[] buff = Arrays.copyOfRange(mDataWrite, 0, 20);
-          Log.d(TAG, "Buffer length is " + buff.length);
-          mService.writeCharacteristic(beaconDataOneCharacteristic,
-              buff);
-          mService.writeCharacteristic(beaconDataTwoCharacteristic,
-              Arrays.copyOfRange(mDataWrite, 20, mDataWrite.length));
-        }
-      }
-    });
+    mBeaconValue = (TextView) findViewById(R.id.beaconCurValue);
+    mBeaconValue.setText(R.string.beacon_not_available);
+    mBeaconNewValue = (TextView) findViewById(R.id.beaconNewValue);
+    mBeaconUpdateValue = (Button) findViewById(R.id.writeNewValue);
+    mBeaconUpdateValue.setOnClickListener(this);
 
     // Get the device to connect to that was passed to us by the scan
     // results Activity.
@@ -222,10 +221,10 @@ public class SomeActivity extends Activity {
             Context.BIND_AUTO_CREATE);
 
         // start connection progress
-        connectionDialog = new ProgressDialog(this);
-        connectionDialog.setIndeterminate(true);
-        connectionDialog.setMessage("Connecting to device...");
-        connectionDialog
+        mConnectionDialog = new ProgressDialog(this);
+        mConnectionDialog.setIndeterminate(true);
+        mConnectionDialog.setMessage("Connecting to device...");
+        mConnectionDialog
             .setOnCancelListener(new DialogInterface.OnCancelListener() {
 
               @Override
@@ -245,8 +244,8 @@ public class SomeActivity extends Activity {
 
   private void setBeaconValue() {
     UriBeacon uriBeacon = UriBeacon.parseFromBytes(mData);
-    if (beaconValue != null) {
-      beaconValue.setText(uriBeacon.getUriString());
+    if (mBeaconValue != null) {
+      mBeaconValue.setText(uriBeacon.getUriString());
     }
   }
 
