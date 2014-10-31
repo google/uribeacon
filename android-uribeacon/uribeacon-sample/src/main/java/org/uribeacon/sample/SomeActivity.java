@@ -63,9 +63,9 @@ public class SomeActivity extends Activity implements OnClickListener {
   private int mLength;
   private byte[] mData;
   private byte[] mDataWrite;
-  private String TAG = "ConfigActivity";
+  private final String TAG = "ConfigActivity";
 
-  private BluetoothGattCallback mRequestCallback = new BluetoothGattCallback() {
+  private final BluetoothGattCallback mRequestCallback = new BluetoothGattCallback() {
     public void checkRequest(int status) {
       if (status == BluetoothGatt.GATT_FAILURE) {
         Toast.makeText(SomeActivity.this, "Failed to update the beacon", Toast.LENGTH_SHORT).show();
@@ -146,7 +146,7 @@ public class SomeActivity extends Activity implements OnClickListener {
   /**
    * Callbacks for changes to the state of the connection to BtSmartService.
    */
-  private ServiceConnection mServiceConnection = new ServiceConnection() {
+  private final ServiceConnection mServiceConnection = new ServiceConnection() {
     @Override
     public void onServiceConnected(ComponentName className,
                                    IBinder rawBinder) {
@@ -160,7 +160,7 @@ public class SomeActivity extends Activity implements OnClickListener {
     }
 
     @Override
-    public void onServiceDisconnected(ComponentName classname) {
+    public void onServiceDisconnected(ComponentName className) {
       mService = null;
     }
   };
@@ -244,7 +244,7 @@ public class SomeActivity extends Activity implements OnClickListener {
 
   private void setBeaconValue() {
     UriBeacon uriBeacon = UriBeacon.parseFromBytes(mData);
-    if (mBeaconValue != null) {
+    if (mBeaconValue != null && uriBeacon != null) {
       mBeaconValue.setText(uriBeacon.getUriString());
     }
   }
@@ -255,9 +255,7 @@ public class SomeActivity extends Activity implements OnClickListener {
     if (mService != null) {
       mService.close();
     }
-    if (mServiceConnection != null) {
-      unbindService(mServiceConnection);
-    }
+    unbindService(mServiceConnection);
     Toast.makeText(this, "Disconnected from beacon", Toast.LENGTH_SHORT).show();
     super.onDestroy();
   }
