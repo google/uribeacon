@@ -373,14 +373,14 @@ public class UriBeacon {
     buffer.put(mFlags);
     buffer.put(mTxPowerLevel);
     buffer.put(uriBytes);
-    return buffer.array();
+    return byteBufferToArray(buffer);
   }
 
   private static byte[] UuidToByteArray(UUID uuid) {
     ByteBuffer bb = ByteBuffer.wrap(new byte[16]);
     bb.putLong(uuid.getMostSignificantBits());
     bb.putLong(uuid.getLeastSignificantBits());
-    return bb.array();
+    return byteBufferToArray(bb);
   }
 
   // Compute the size of the advertisement data in the Service UUID and Service Data fields.

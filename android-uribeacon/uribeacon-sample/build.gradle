@@ -22,6 +22,11 @@ android {
     }
     productFlavors {
     }
+    sourceSets {
+        main {
+            manifest.srcFile 'src/test/AndroidManifest.xml'
+        }
+    }
 }
 
 dependencies {
