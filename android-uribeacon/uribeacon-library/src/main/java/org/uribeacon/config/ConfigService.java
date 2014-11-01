@@ -112,7 +112,7 @@ public abstract class ConfigService {
           onUriBeaconRead(mData, status);
         }
       } else if (DATA_TWO.equals(uuid)) {
-        mData = concatenate(mData, characteristic.getValue());
+        mData = Util.concatenate(mData, characteristic.getValue());
         onUriBeaconRead(mData, status);
       }
     } else {
@@ -121,6 +121,8 @@ public abstract class ConfigService {
   }
 
   private void handleCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+    onUriBeaconWrite(status);
+
   }
 
   private void readCharacteristic(UUID uuid) {
@@ -145,19 +147,5 @@ public abstract class ConfigService {
       mBluetoothGatt.close();
       mBluetoothGatt = null;
     }
-  }
-
-  /**
-   * Concatenates two byte arrays.
-   *
-   * @param a the first array.
-   * @param b the second array.
-   * @return the concatenated array.
-   */
-  private static byte[] concatenate(byte[] a, byte[] b) {
-    byte[] result = new byte[a.length + b.length];
-    System.arraycopy(a, 0, result, 0, a.length);
-    System.arraycopy(b, 0, result, a.length, b.length);
-    return result;
   }
 }
