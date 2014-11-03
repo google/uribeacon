@@ -40,6 +40,7 @@ and sample code for advertisers and scanners:
 * **[android-uribeacon](android-uribeacon) - Allows Android apps to interact with UriBeacons.**
 * **[ios-uribeacon](ios-uribeacon) - Allows iOS apps to interact with UriBeacons.**
 * **[linux-uribeacon](linux-uribeacon) - Allows Linux users to experiment with UriBeacons.**
+* **[nRF51822-uribeacon](nRF51822-uribeacon) - Flash instructons for the Nordic Semiconductor nRF51822 beacon.**
 
 We will also be providing instructions on how to assemble and 
 program standalone UriBeacon tags.
