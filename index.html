@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="UriBeacon : The Web Uri Open Beacon">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>UriBeacon</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/google/uribeacon">View on GitHub</a>
+
+          <h1 id="project_title">UriBeacon</h1>
+          <h2 id="project_tagline">The Web Uri Open Beacon</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/google/uribeacon/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/google/uribeacon/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <p><em>(pronounced YUR-ee-BEE-kun)</em></p>
+
+<p>Check out how UriBeacons are used in the <a href="http://google.github.io/physical-web/">Physical Web</a> project.</p>
+
+<p>Note: this is a preview-release intended for comments and experimentation.</p>
+
+<h2>
+<a name="why-we-created-uribeacon" class="anchor" href="#why-we-created-uribeacon"><span class="octicon octicon-link"></span></a>Why We Created UriBeacon</h2>
+
+<p>The UriBeacon Specification is designed with one goal in mind: to
+create the easiest, most open way to discover and use nearby smart
+things.</p>
+
+<p>UriBeacon is a wireless advertisement format for broadcasting Uris to
+any nearby device. By leveraging the Open Web it enables a
+<em>real</em>-World Wide Web where every person, place and thing can have its
+own Web presence. Our design is:</p>
+
+<ol>
+<li>Compliant with Bluetooth 4.0 Advertising messages.</li>
+<li>Compatable with iOS and Android low power scanning modes.</li>
+<li>Independent of any particular hardware, user-agent, service or mobile platform.</li>
+<li>Openly licensed under Apache 2.0 and as such free of restrictive or proprietary terms.</li>
+</ol>
+
+<p>In short, UriBeacon connects low power beacons to the family of Open
+Web technologies and is one step towards making the Internet of Things as
+easy to use as the World Wide Web.</p>
+
+<h2>
+<a name="what-is-a-uri" class="anchor" href="#what-is-a-uri"><span class="octicon octicon-link"></span></a>What is a Uri?</h2>
+
+<p>One can classify URIs as Locators (URLs), or Names (URNs), or both. A Name functions like a person’s name (or Government ID number), while a Locator resembles that person’s postal address. In other words: URN is an item’s identity, while the URL is a method for finding it.</p>
+
+<ul>
+<li>
+<code>urn:uuid:f81d4fae-7dec-11d0-a765-00a0c91e6bf6</code> <a href="http://www.ietf.org/rfc/rfc4122.txt">RFC4122</a>
+</li>
+<li>
+<code>https://www.ietf.org/rfc/rfc2141.txt</code> <a href="http://www.ietf.org/rfc/rfc1738.txt">RFC1738</a>
+</li>
+</ul>
+
+<p>UriBeacons can broadcast familiar HTTP URLs (<code>http</code> and <code>https</code>) as well as UUID URNs (128-bit universally unique identifiers).</p>
+
+<h2>
+<a name="uribeacon-devices-and-tags" class="anchor" href="#uribeacon-devices-and-tags"><span class="octicon octicon-link"></span></a>UriBeacon Devices and Tags</h2>
+
+<p>Various things may broadcast UriBeacons. Smart devices such as phones,
+tablets, laptops, vending machines, irrigation controllers may
+incorporate built in UriBeacons. Other things such as movie posters,
+bus stops, and meeting rooms may use small hardware devices, or tags,
+specifically designed to emit a UriBeacon advertisement. The libraries
+and sample code in this repository are a resource for developers who
+want to add UriBeacons in existing devices and also to create
+standalone UriBeacon tags.</p>
+
+<h2>
+<a name="disclaimer" class="anchor" href="#disclaimer"><span class="octicon octicon-link"></span></a>Disclaimer</h2>
+
+<p>This is not an official Google product. This is an early-stage experiment that we are developing in the open as we do all things related to the web. This should only be of interest to developers looking to provide feedback and <a href="CONTRIBUTING.md">contribute</a>.</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">UriBeacon maintained by <a href="https://github.com/google">google</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-56387145-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+
+  </body>
+</html>
