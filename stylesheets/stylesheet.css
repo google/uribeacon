@@ -133,6 +133,17 @@ strong {
   font-weight: bold;
 }
 
+.header {
+  width: 80px;
+  border: 0px;
+  vertical-align: middle;
+  box-shadow: 0 0 0px;
+  -webkit-box-shadow: 0 0 0px;
+  -moz-box-shadow: 0 0 0px;
+  -o-box-shadow: 0 0 0px;
+  -ms-box-shadow: 0 0 0px;
+}
+
 img {
   position: relative;
   margin: 0 auto;
