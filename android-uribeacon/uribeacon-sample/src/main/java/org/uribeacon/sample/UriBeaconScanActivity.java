@@ -314,10 +314,12 @@ public class UriBeaconScanActivity extends ListActivity {
       DeviceSighting deviceSighting = getItem(i);
       ScanResult scanResult = deviceSighting.scanResult;
       UriBeacon beacon;
+      byte txPowerLevel = 0;
       beacon = UriBeacon.parseFromBytes(scanResult.getScanRecord().getBytes());
 
       if (beacon != null) {
         displayName = beacon.getUriString();
+        txPowerLevel = beacon.getTxPowerLevel();
       }
       if (displayName == null) {
         displayName = scanResult.getDevice().getName();
@@ -333,6 +335,8 @@ public class UriBeaconScanActivity extends ListActivity {
           mRegionResolver.getDistance(scanResult.getDevice().getAddress()));
       deviceData.append("\nTimestamp: ")
           .append(formatMillis(tsMillis))
+          .append(" Tx: ")
+          .append(txPowerLevel)
           .append(" RSSI: ")
           .append(scanResult.getRssi())
           .append(" Distance: ")
