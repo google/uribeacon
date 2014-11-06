@@ -41,7 +41,7 @@ public class ConfigActivity extends Activity implements OnClickListener {
   private TextView mBeaconNewValue = null;
   private Button mBeaconUpdateValue = null;
   private ProgressDialog mConnectionDialog = null;
-  private GattService mService = null;
+  private final byte DEFAULT_TX_POWER = -63;
   private int mLength;
   private byte[] mData;
   private final String TAG = "ConfigActivity";
@@ -61,7 +61,7 @@ public class ConfigActivity extends Activity implements OnClickListener {
     @Override
     public void onUriBeaconWrite(int status) {
       checkRequest(status);
-      mService.disconnect();
+      mUriBeaconConfig.closeUriBeacon();
       finish();
     }
 
@@ -80,7 +80,8 @@ public class ConfigActivity extends Activity implements OnClickListener {
     mBeaconUpdateValue.setEnabled(false);
     String uri = mBeaconNewValue.getText().toString();
     try {
-      UriBeacon uriBeacon = new UriBeacon.Builder().uriString(uri).build();
+      UriBeacon uriBeacon = new UriBeacon.Builder().uriString(uri)
+          .txPowerLevel(DEFAULT_TX_POWER).build();
       byte[] scanRecord = uriBeacon.toByteArray();
       mUriBeaconConfig.writeUriBeacon(scanRecord);
     } catch (URISyntaxException e) {

@@ -29,6 +29,7 @@ import android.os.IBinder;
 import android.os.ParcelUuid;
 import android.util.Log;
 
+import java.util.Arrays;
 import java.util.UUID;
 
 /**
@@ -45,6 +46,7 @@ public abstract class BaseUriBeaconConfig {
   private final Context mContext;
   private Integer mDataLength;
   private byte[] mData;
+  private byte[] mDataWrite;
   private GattService mService;
   private BluetoothDevice mDevice;
 
@@ -70,10 +72,7 @@ public abstract class BaseUriBeaconConfig {
     public void onConnectionStateChange(android.bluetooth.BluetoothGatt gatt, int status, int newState) {
       super.onConnectionStateChange(gatt, status, newState);
       if (newState == BluetoothProfile.STATE_CONNECTED) {
-        if (mService.setService(CONFIG_SERVICE_UUID.getUuid())) {
-          // Kick off the reading
-          mService.discoverServices();
-        }
+        mService.discoverServices();
       }
     }
 
@@ -112,7 +111,9 @@ public abstract class BaseUriBeaconConfig {
     @Override
     public void onCharacteristicWrite(android.bluetooth.BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
       super.onCharacteristicWrite(gatt, characteristic, status);
-      onUriBeaconWrite(status);
+      if (mDataWrite.length <= 20 || DATA_TWO.equals(characteristic.getUuid())) {
+        onUriBeaconWrite(status);
+      }
     }
   };
 
@@ -132,7 +133,17 @@ public abstract class BaseUriBeaconConfig {
   }
 
   public void writeUriBeacon(byte[] scanRecord) {
-    mService.writeCharacteristic(DATA_LENGTH, scanRecord);
+    mDataWrite = scanRecord;
+    if (mDataWrite.length <= 20) {
+      // write the value
+      mService.writeCharacteristic(DATA_ONE, mDataWrite);
+    } else {
+      byte[] buff = Arrays.copyOfRange(mDataWrite, 0, 20);
+      Log.d(TAG, "Buffer length is " + buff.length);
+      mService.writeCharacteristic(DATA_ONE, buff);
+      mService.writeCharacteristic(DATA_TWO,
+          Arrays.copyOfRange(mDataWrite, 20, mDataWrite.length));
+    }
   }
 
   public void closeUriBeacon() {
