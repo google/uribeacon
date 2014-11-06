@@ -100,6 +100,9 @@ public class GattService extends Service {
         mRequestQueue.newGattCallbackOnUiThread(callback));
   }
 
+  public void discoverServices() {
+    mBluetoothGatt.discoverServices();
+  }
   /*
   * Once close() is called we are done. If you want to re-connect you will have to call connectGatt()
   * on the BluetoothDevice again; close() will release resources held by BluetoothGatt.
@@ -124,8 +127,12 @@ public class GattService extends Service {
   /**
    * Set the service UUID for subsequent GATT calls.
    */
-  public void setService(UUID uuid) {
+  public boolean setService(UUID uuid) {
     mBluetoothGattService = mBluetoothGatt.getService(uuid);
+    if (mBluetoothGattService == null) {
+      Log.e(TAG, "setService not found: " + uuid);
+    }
+    return mBluetoothGattService != null;
   }
 
   /**

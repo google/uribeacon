@@ -25,14 +25,14 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.uribeacon.beacon.UriBeacon;
+import org.uribeacon.config.BaseUriBeaconConfig;
 import org.uribeacon.scan.compat.BluetoothLeScannerCompat;
 import org.uribeacon.scan.compat.BluetoothLeScannerCompatProvider;
 import org.uribeacon.scan.compat.ScanCallback;
@@ -50,33 +50,26 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-import static android.preference.PreferenceManager.getDefaultSharedPreferences;
-
 /**
  * Activity for scanning and displaying available Bluetooth LE devices.
  */
-public class UriBeaconScanActivity extends ListActivity {
+public class ConfigListActivity extends ListActivity {
 
-  private static final String TAG = "UriBeaconScan";
+  private static final String TAG = "ConfigListActivity";
   private static final int REQUEST_ENABLE_BT = 1;
   private static final SimpleDateFormat TIMESTAMP_FORMAT =
       new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSS", Locale.US);
-  private static final int DEVICE_LIFETIME_SECONDS = 30;
-  static enum RunningScan {NONE, SERIAL}
 
-  private LeDeviceListAdapter mLeDeviceListAdapter;
+  private ConfigDeviceAdapter mLeDeviceListAdapter;
   private BluetoothAdapter mBluetoothAdapter;
-  private RunningScan scanRunning;
-  private boolean sortByDistance = true;
 
-  private final ScanCallback mCallback = new ScanCallback() {
+  private final ScanCallback mScanCallback = new ScanCallback() {
     @Override
     public void onScanResult(int callbackType, ScanResult result) {
-      if (callbackType == ScanSettings.CALLBACK_TYPE_ALL_MATCHES ||
-          callbackType == ScanSettings.CALLBACK_TYPE_FIRST_MATCH) {
+      if (callbackType == ScanSettings.CALLBACK_TYPE_ALL_MATCHES) {
         handleScanMatch(result);
       } else {
-        Log.e(TAG, "Unrecognized callback type received: " + callbackType);
+        Log.e(TAG, "Unrecognized callback type constant received: " + callbackType);
       }
     }
 
@@ -93,12 +86,11 @@ public class UriBeaconScanActivity extends ListActivity {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    getActionBar().setTitle(R.string.title_devices);
 
-    // Use this check to determine whether BLE is supported on the device. Then you can
+    // Use this check to determine whether BLE is supported on the device. Then we can
     // selectively disable BLE-related features.
     if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
-      Toast.makeText(this, R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
+      Toast.makeText(this, R.string.ble_not_supported, Toast.LENGTH_LONG).show();
       finish();
     }
 
@@ -110,69 +102,18 @@ public class UriBeaconScanActivity extends ListActivity {
 
     // Checks if Bluetooth is supported on the device.
     if (mBluetoothAdapter == null) {
-      Toast.makeText(this, R.string.error_bluetooth_not_supported, Toast.LENGTH_SHORT).show();
+      Toast.makeText(this, R.string.error_bluetooth_not_supported, Toast.LENGTH_LONG).show();
       finish();
     }
   }
 
   @Override
-  public boolean onCreateOptionsMenu(Menu menu) {
-    getMenuInflater().inflate(R.menu.main, menu);
-    menu.findItem(R.id.menu_refresh).setActionView(R.layout.actionbar_indeterminate_progress);
-    invalidateOptionsMenu();
-    return true;
-  }
-
-  @Override
-  public boolean onPrepareOptionsMenu(Menu menu) {
-    menu.findItem(R.id.menu_stop_serial).setVisible(scanRunning == RunningScan.SERIAL);
-    menu.findItem(R.id.menu_scan).setVisible(scanRunning == RunningScan.NONE);
-    menu.findItem(R.id.menu_refresh).setVisible(scanRunning != RunningScan.NONE);
-    menu.findItem(R.id.menu_sort_dist).setVisible(sortByDistance);
-    menu.findItem(R.id.menu_sort_addr).setVisible(!sortByDistance);
-    return true;
-  }
-
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    Intent intent;
-    switch (item.getItemId()) {
-      case R.id.menu_scan:
-        startScanning();
-        break;
-      case R.id.menu_stop_serial:
-        stopScanning();
-        break;
-      case R.id.menu_settings:
-        intent = new Intent(this, SettingsActivity.class);
-        startActivity(intent);
-        break;
-      case R.id.menu_config:
-        intent = new Intent(this, ConfigListActivity.class);
-        startActivity(intent);
-        break;
-      case R.id.menu_sort_dist:
-        sortByDistance = false;
-        mLeDeviceListAdapter.notifyDataSetChanged();
-        invalidateOptionsMenu();
-        break;
-      case R.id.menu_sort_addr:
-        sortByDistance = true;
-        mLeDeviceListAdapter.notifyDataSetChanged();
-        invalidateOptionsMenu();
-        break;
-    }
-    return true;
-  }
-
-  @Override
   protected void onResume() {
     super.onResume();
-
-    getActionBar().setTitle(getString(R.string.title_devices));
+    getActionBar().setTitle(getString(R.string.title_config));
 
     // Initializes list view adapter.
-    mLeDeviceListAdapter = new LeDeviceListAdapter();
+    mLeDeviceListAdapter = new ConfigDeviceAdapter();
     setListAdapter(mLeDeviceListAdapter);
 
     // Try to start scanning
@@ -181,7 +122,6 @@ public class UriBeaconScanActivity extends ListActivity {
 
   private void startScanning() {
     Log.v(TAG, "startScanning() called");
-
     // Ensures Bluetooth is enabled on the device. If Bluetooth is not currently enabled,
     // fire an intent to display a dialog asking the user to grant permission to enable it.
     if (!mBluetoothAdapter.isEnabled()) {
@@ -189,54 +129,35 @@ public class UriBeaconScanActivity extends ListActivity {
       Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
       startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
     } else {
-      launchSerialScan();
+      List<ScanFilter> filters = new ArrayList<>();
+      ScanFilter.Builder builder = new ScanFilter.Builder()
+          .setServiceUuid(BaseUriBeaconConfig.CONFIG_SERVICE_UUID);
+      filters.add(builder.build());
+      ScanSettings settings = new ScanSettings.Builder()
+          .setCallbackType(ScanSettings.CALLBACK_TYPE_ALL_MATCHES)
+          .setScanMode(ScanSettings.SCAN_MODE_BALANCED)
+          .build();
+      getLeScanner().startScan(filters, settings, mScanCallback);
     }
-    invalidateOptionsMenu();
   }
 
   private void stopScanning() {
-    Log.v(TAG, "stopScanning() called");
-
-    getLeScanner().stopScan(mCallback);
-    scanRunning = RunningScan.NONE;
-
+    Log.v(TAG, "stopScanning() called in ConfigListActivity");
+    getLeScanner().stopScan(mScanCallback);
     runOnUiThread(new Runnable() {
       @Override
       public void run() {
-        invalidateOptionsMenu();
         mLeDeviceListAdapter.clear();
       }
     });
   }
 
-  private List<ScanFilter> getFilters() {
-    List<ScanFilter> filters = new ArrayList<>();
-    if (getBooleanPreference(R.string.pref_key_uribeacon)) {
-      ScanFilter.Builder builder = new ScanFilter.Builder()
-          .setServiceData(UriBeacon.URI_SERVICE_UUID,
-              new byte[]{},
-              new byte[]{});
-      filters.add(builder.build());
-    }
-    return filters;
-  }
-
-  /**
-   * Considers launching the standard Serial Scan using the given settings.
-   */
-  private void launchSerialScan() {
-    Log.v(TAG, "attempting to start serial scan...");
-
-    // Determine Serial Scan Mode Preference
-    int scanMode = ScanSettings.SCAN_MODE_BALANCED;
-
-    ScanSettings settings = new ScanSettings.Builder()
-        .setCallbackType(ScanSettings.CALLBACK_TYPE_ALL_MATCHES)
-        .setScanMode(scanMode)
-        .build();
-    boolean started = getLeScanner().startScan(getFilters(), settings, mCallback);
-    Log.v(TAG, started ? "... scan started" : "... scan NOT started");
-    scanRunning = started ? RunningScan.SERIAL : RunningScan.NONE;
+  @Override
+  protected void onListItemClick (ListView l, View v, int position, long id) {
+    Toast.makeText(this, "Clicked row " + position, Toast.LENGTH_SHORT).show();
+    ScanResultAdapter.DeviceSighting sighting = mLeDeviceListAdapter.getItem(position);
+    stopScanning();
+    ConfigActivity.startConfigureActivity(this, sighting.scanResult.getDevice());
   }
 
   @Override
@@ -252,33 +173,22 @@ public class UriBeaconScanActivity extends ListActivity {
   @Override
   protected void onPause() {
     super.onPause();
-    // on Pause stop any scans that are running if not in background mode
-  stopScanning();
-
+    stopScanning();
   }
 
   private int getTxPowerLevel(ScanResult scanResult) {
-    byte[] scanRecord = scanResult.getScanRecord().getBytes();
-    UriBeacon uriBeacon =
-        UriBeacon.parseFromBytes(scanRecord);
-
-    if (uriBeacon != null) {
-      int txPowerLevel = uriBeacon.getTxPowerLevel();
-      Log.d(TAG, "Tx Power Level: " + txPowerLevel);
-      return uriBeacon.getTxPowerLevel();
-    }
-
+    // Note: Config Service has no TX Power.
     return RangingUtils.DEFAULT_TX_POWER_LEVEL;
   }
 
   private void handleScanMatch(final ScanResult scanResult) {
-    Log.v(TAG, "Scan Match: " + scanResult.getDevice() + " rssi:" + scanResult.getRssi() + " sr:"
+    Log.v(TAG, "Scan Matches: " + scanResult.getDevice() + " Rssi:" + scanResult.getRssi() + " sr:"
         + AdvertisingData.toHexString(scanResult.getScanRecord().getBytes()));
     runOnUiThread(new Runnable() {
       @Override
       public void run() {
-        int txPower = getTxPowerLevel(scanResult);
-        mLeDeviceListAdapter.add(scanResult, txPower, DEVICE_LIFETIME_SECONDS);
+        int txPowerLevel = getTxPowerLevel(scanResult);
+        mLeDeviceListAdapter.add(scanResult, txPowerLevel, 5);
       }
     });
   }
@@ -288,9 +198,10 @@ public class UriBeaconScanActivity extends ListActivity {
   }
 
   // Adapter for holding devices found through scanning.
-  private class LeDeviceListAdapter extends ScanResultAdapter {
-    public LeDeviceListAdapter() {
-      super(UriBeaconScanActivity.this.getLayoutInflater());
+  private class ConfigDeviceAdapter extends ScanResultAdapter {
+
+    ConfigDeviceAdapter() {
+      super(ConfigListActivity.this.getLayoutInflater());
     }
 
     @SuppressLint("InflateParams")
@@ -333,7 +244,7 @@ public class UriBeaconScanActivity extends ListActivity {
           mRegionResolver.getDistance(scanResult.getDevice().getAddress()));
       deviceData.append("\nTimestamp: ")
           .append(formatMillis(tsMillis))
-          .append(" RSSI: ")
+          .append(" Rssi: ")
           .append(scanResult.getRssi())
           .append(" Distance: ")
           .append(distance);
@@ -372,13 +283,5 @@ public class UriBeaconScanActivity extends ListActivity {
   static class ViewHolder {
     TextView deviceName;
     TextView deviceAddress;
-  }
-
-  private String getStringPreference(int resId, int defaultResId) {
-    return getDefaultSharedPreferences(this).getString(getString(resId), getString(defaultResId));
-  }
-
-  private boolean getBooleanPreference(int resId) {
-    return getDefaultSharedPreferences(this).getBoolean(getString(resId), false);
   }
 }
