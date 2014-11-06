@@ -1,1 +1,1 @@
-include ':uribeacon-library', ':myapplication'
+include ':uribeacon-library', ':uribeacon-sample'
