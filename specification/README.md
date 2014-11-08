@@ -150,18 +150,18 @@ below.
 |:------- | :--------- | :--------
 |0        | 0x00       | .com/
 |1        | 0x01       | .org/
-|2        | 0x01       | .edu/
-|3        | 0x02       | .net/
-|4        | 0x03       | .info/
-|5        | 0x04       | .biz/
-|6        | 0x05       | .gov/
+|2        | 0x02       | .edu/
+|3        | 0x03       | .net/
+|4        | 0x04       | .info/
+|5        | 0x05       | .biz/
+|6        | 0x06       | .gov/
 |7        | 0x07       | .com
 |8        | 0x08       | .org
 |9        | 0x09       | .edu
 |10       | 0x0a       | .net
 |11       | 0x0b       | .info
 |12       | 0x0c       | .biz
-|13       | 0x0d      | .gov
+|13       | 0x0d       | .gov
 |14..32   | 0x0e..0x20 | Reserved for Future Use
 |127..255 | 0x7F..0xFF | Reserved for Future Use
 
