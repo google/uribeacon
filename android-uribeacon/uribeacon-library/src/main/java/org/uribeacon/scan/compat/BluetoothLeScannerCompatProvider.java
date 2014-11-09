@@ -102,7 +102,7 @@ public class BluetoothLeScannerCompatProvider {
   /**
    * Check that the hardware has indeed the features used by the L-specific implementation.
    */
-  @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
+  @TargetApi(Build.VERSION_CODES.LOLLIPOP)
   private static boolean areHardwareFeaturesSupported(BluetoothManager bluetoothManager) {
     BluetoothAdapter bluetoothAdapter = bluetoothManager.getAdapter();
     return bluetoothAdapter != null
