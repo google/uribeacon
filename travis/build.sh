@@ -2,4 +2,4 @@
 
 # Browse to the android library project and build
 cd android-uribeacon
-./gradlew assembleRelease
+./gradlew build
