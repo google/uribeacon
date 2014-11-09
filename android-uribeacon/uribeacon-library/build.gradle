@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 21
-    buildToolsVersion '21.0.1'
+    buildToolsVersion '21'
     defaultConfig {
         applicationId "org.uribeacon.library"
         minSdkVersion 18
@@ -30,6 +30,6 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:20.0.0'
+    compile 'com.android.support:support-v4:21.0.0'
     androidTestCompile 'org.mockito:mockito-core:1.9.5'
 }

@@ -1,5 +1,7 @@
 # Welcome to the UriBeacon<br> Open Source Project
 
+[![Build Status](https://travis-ci.org/google/uribeacon.png?branch=master)](https://travis-ci.org/google/uribeacon)
+
 **The Web Uri Open Beacon specification for the Internet of Things**
 
 *(pronounced YUR-ee-BEE-kun)*
