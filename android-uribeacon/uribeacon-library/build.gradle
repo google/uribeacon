@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 21
-    buildToolsVersion '21.1'
+    buildToolsVersion '21.1.1'
     defaultConfig {
         applicationId "org.uribeacon.library"
         minSdkVersion 18
