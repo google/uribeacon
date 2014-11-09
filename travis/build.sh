@@ -2,4 +2,4 @@
 
 # Browse to the android library project and build
 cd android-uribeacon
-./gradlew build
+./gradlew build --full-stacktrace
