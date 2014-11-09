@@ -26,6 +26,7 @@ import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.UUID;
 
 /**
@@ -268,7 +269,7 @@ public class UriBeacon {
   }
 
   private static Byte encodeUriScheme(String uri) {
-    String lowerCaseUri = uri.toLowerCase();
+    String lowerCaseUri = uri.toLowerCase(Locale.ENGLISH);
     for (int i = 0; i < URI_SCHEMES.size(); i++) {
       // get the key and value.
       int key = URI_SCHEMES.keyAt(i);
@@ -347,7 +348,7 @@ public class UriBeacon {
 
   @Override
   public String toString() {
-    return String.format(
+    return String.format(Locale.ENGLISH,
         "%s@(uri:'%s' txPowerLevel:%d flags:%d)",
         getClass().getSimpleName(), mUriString, mTxPowerLevel, mFlags);
   }
