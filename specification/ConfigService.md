@@ -42,19 +42,19 @@ The assigned number for `<<UriBeacon Config Service>>` is
 
         ee0c2080-8786-40ba-ab96-99b91ac981d8
 
-This represents **Revision 2.0** of the specification.
-
 ## 3 Service Characteristics
 
 
-| Characteristic          | Requirement  | 
-|:------------------------|:--------------------|
-| Lock Code | Mandatory| 
-| Unlock | Mandatory|
-| Uri | Mandatory|
-| Tx Power Level | Mandatory|
-| Beacon Period | Mandatory|
-| Reset | Mandatory|
+| Characteristic     | Ref.     | Requirement  | 
+|:-------------------|:-----|:--------------------|
+| Lock Code | [3.1](#31-lock) | Mandatory| 
+| Unlock | [3.2](#32-unlock) | Mandatory|
+| Uri Data | [3.3](#33-uri-data) | Mandatory|
+| Uri Flags | [3.4](#34-flags)  | Mandatory|
+| Advertised Tx Power Level | [3.5](#35-advertised-tx-power-level)  | Mandatory|
+| Tx Power Mode | [3.6](#36-tx-power-mode) | Mandatory |
+| Beacon Period | [3.7](#37-beacon-period)| Mandatory|
+| Reset | [3.8](#38-reset) | Mandatory|
 
 
 <style type="text/css">
