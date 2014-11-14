@@ -35,3 +35,7 @@ After loading the firmware file, the tag will be in a dormant mode and will not 
 
 1. Press SW2 on the tag to enter `CONFIG MODE.`
 2. Using the [Physical Web](http://github.com/google/physical-web) Android App, input the desired Uri.
+
+##nRF51822 UriBeacon Source code
+
+Source code and project setup instructions can be found in the folder ble_uri_beacon.
