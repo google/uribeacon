@@ -111,7 +111,7 @@ contents of the parameter.
 
 ### 3.5 Advertised TX Power Level
 
-| Name | Flags |
+| Name | Advertised TX Power Level |
 |:-----|:----------|
 | UUID  | ee0c<b>2085</b>-8786-40ba-ab96-99b91ac981d8|
 |  Description| Reads/writes the Advertised Power Level. |
@@ -128,7 +128,7 @@ the advertisement when that mode is active.
 
 ### 3.6 TX Power Mode
 
-| Name | TX Power Level |
+| Name | TX Power Mode |
 |:-----|:----------|
 | UUID  | ee0c<b>2086</b>-8786-40ba-ab96-99b91ac981d8|
 |  Description| Reads/writes the TX Power Mode. |
