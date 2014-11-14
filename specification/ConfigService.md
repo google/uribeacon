@@ -125,10 +125,10 @@ The Flags characteristic is a sinlge unsigned byte value containing the
 |  Type | uint8[] |
 |  Lock State | For write, must be unlocked.|
 
-This characteristic is a variable length array of byte pairs. The first byte is [TX Power Mode](#36-tx-power-mode). The second byte is the TX Power Level, in dBm, to be included in
-the [UriBeacon TX Power](https://github.com/google/uribeacon/tree/master/specification#uribeacon-tx-power-level) field of the advertisement when that mode is active.
+This characteristic is a variable length array of byte pairs. The first byte is
+[TX Power Mode](#36-tx-power-mode). The second byte is a value, in dBm, to be included in the 
+[UriBeacon TX Power Level](https://github.com/google/uribeacon/tree/master/specification#uribeacon-tx-power-level) field of the advertisement when that mode is active.
 
-The TX Power Level represents a transmit power level in dBm and has values from -100 dBm to +20 dBm to a resolution of 1 dBm.
 
 ### 3.6 TX Power Mode
 
