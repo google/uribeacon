@@ -1,0 +1,235 @@
+# UriBeacon Configuration Service 
+
+***Revision v2r0***
+
+The material contained on this page is informative only and subject to change. 
+
+## 1 Introduction
+
+The UriBeacon Config Service allows setting UriBeacon fields and transmission characteristics. This information includes the following:
+
+*   Lock code
+*   Uri
+*   Flags
+*   Transmit Power
+*   Duty Cycle
+
+This document is formatted according to the Bluetooth 
+[service](https://developer.bluetooth.org/TechnologyOverview/Pages/ANS.aspx) and 
+[profile](https://developer.bluetooth.org/gatt/profiles/Pages/ProfileViewer.aspx?u=org.bluetooth.profile.blood_pressure.xml) formatting styles.
+
+### 1.1 Service Dependencies
+
+This service is not dependent upon any other [services](https://developer.bluetooth.org/gatt/services/Pages/ServicesHome.aspx).
+
+### 1.2 Transport Dependencies
+
+|Transport   | Supported |
+|:-----------|-----------|
+| Classic	| false	 |
+| Low Energy | true	  |
+
+### 1.3 Error Codes
+
+| Code | Description  |
+|:-----|:-------------|
+| 0xA0 | The beacon is not writable. |
+
+
+## 2 Service Declaration
+
+The assigned number for `<<UriBeacon Config Service>>` is
+
+        ee0c2080-8786-40ba-ab96-99b91ac981d8
+
+This represents **Revision 2.0** of the specification.
+
+## 3 Service Characteristics
+
+
+| Characteristic          | Requirement  | 
+|:------------------------|:--------------------|
+| Lock Code | Mandatory| 
+| Unlock | Mandatory|
+| Uri | Mandatory|
+| Tx Power Level | Mandatory|
+| Beacon Period | Mandatory|
+| Reset | Mandatory|
+
+
+<style type="text/css">
+th.rotate {
+  /* Something you can count on */
+  height: 140px;
+  white-space: nowrap;
+}
+
+th.rotate > div {
+  transform: 
+    /* Magic Numbers */
+    translate(25px, 51px)
+    /* 45 is really 360 - 45 */
+    rotate(315deg);
+  width: 30px;
+}
+th.rotate > div > span {
+  border-bottom: 1px solid #ccc;
+  padding: 5px 10px;
+}
+</style>
+
+<table>
+<tr>
+<th></th>
+<th class="rotate"><div><span>Broadcast</span></div></th>
+<th class="rotate"><div><span>Read</span></div></th>
+<th class="rotate"><div><span>Write without Response</span></div></th>
+<th class="rotate"><div><span>Write</span></div></th>
+<th class="rotate"><div><span>Notify</span></div></th>
+<th class="rotate"><div><span>Indicate</span></div></th>
+<th class="rotate"><div><span>Signed Write</span></div></th>
+<th class="rotate"><div><span>Reliable Write</span></div></th>
+<th class="rotate"><div><span>Writable Auxiliaries</span></div></th>
+</tr>
+<tr>
+  <td>Lock Code</td>
+  <td>X</td><td>M</td><td>X</td><td>M*</td>
+  <td>X</td><td>X</td><td>X</td><td>X</td><td>X</td>
+</tr>
+<tr>
+  <td>Unlock</td>
+  <td>X</td><td>M</td><td>X</td><td>M</td>
+  <td>X</td><td>X</td><td>X</td><td>X</td><td>X</td>
+</tr>
+<tr>
+  <td>Uri</td>
+  <td>X</td><td>M</td><td>X</td><td>M*</td>
+  <td>X</td><td>X</td><td>X</td><td>X</td><td>X</td>
+</tr>
+<tr>
+  <td>Tx Power Level</td>
+  <td>X</td><td>M</td><td>X</td><td>M*</td>
+  <td>X</td><td>X</td><td>X</td><td>X</td><td>X</td>
+</tr>
+<tr>
+  <td>Beacon Period</td>
+  <td>X</td><td>M</td><td>X</td><td>M*</td>
+  <td>X</td><td>X</td><td>X</td><td>X</td><td>X</td>
+</tr>
+<tr>
+  <td>Reset</td>
+  <td>X</td><td>X</td><td>M*</td><td>X</td>
+  <td>X</td><td>X</td><td>X</td><td>X</td><td>X</td>
+</tr>
+</table>
+
+\* Must be in unlock state.
+
+### 3.1 Lock
+
+| Name | Lock |
+|:-----|:----------|
+| UUID  | ee0c<b>2081</b>-8786-40ba-ab96-99b91ac981d8|
+|  Description| Locks the beacon or reads the lock state. |
+|  Type | uint128 (write) boolean (read) |
+|  Lock State | Must be unlocked. Will be locked after successful write.|
+
+Read returns true if the device is locked.
+
+### 3.2 Unlock
+
+| Name | Unlock |
+|:-----|:----------|
+| UUID  | ee0c<b>2082</b>-8786-40ba-ab96-99b91ac981d8|
+|  Description| Unlocks the beacon. |
+|  Type | uint128 |
+|  Lock State | Will be unlocked after successful write.|
+
+If the beacon is unlocked then the write will return success regardless of the
+contents of the parameter.
+
+### 3.3 Uri Data
+
+| Name | Uri Data |
+|:-----|:----------|
+| UUID  | ee0c<b>2083</b>-8786-40ba-ab96-99b91ac981d8|
+|  Description| Reads/writes the Uri. |
+|  Type | byte[20] |
+|  Lock State | For write, must be unlocked.|
+
+### 3.4 Flags
+
+| Name | Flags |
+|:-----|:----------|
+| UUID  | ee0c<b>2084</b>-8786-40ba-ab96-99b91ac981d8|
+|  Description| Reads/writes the Uri flags. |
+|  Type | byte |
+|  Lock State | For write, must be unlocked.|
+
+### 3.5 Advertised TX Power Level
+
+| Name | Flags |
+|:-----|:----------|
+| UUID  | ee0c<b>2085</b>-8786-40ba-ab96-99b91ac981d8|
+|  Description| Reads/writes the Advertised Power Level. |
+|  Type | uint8[8] |
+|  Lock State | For write, must be unlocked.|
+
+The [TX Power Level Bluetooth Characteristic](
+https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.tx_power_level.xml)
+represents a transmit power level in
+dBm and has values from -100 dBm to +20 dBm to a resolution of 1 dBm. A TX Power Level is included in the UriBeacon [TX Power Level](https://github.com/google/uribeacon/blob/master/specification/README.md#uribeacon-tx-power-level) field in the advertisement.
+
+This characteristic is an array of byte pairs. The first byte is TX Power Mode. The second byte is the TX Power Level, in dBm, to be included in
+the advertisement when that mode is active.
+
+### 3.6 TX Power Mode
+
+| Name | TX Power Level |
+|:-----|:----------|
+| UUID  | ee0c<b>2086</b>-8786-40ba-ab96-99b91ac981d8|
+|  Description| Reads/writes the TX Power Mode. |
+|  Type | uint8 |
+|  Lock State | For write, must be unlocked.|
+
+Sets the transmission power mode to one of:
+
+| Power Level | Value |
+|:-----|:----------|
+| TX_POWER_MODE_HIGH | 3 |
+| TX_POWER_MODE_MEDIUM | 2 | 
+| TX_POWER_MODE_LOW | 1 | 
+| TX_POWER_MODE_LOWEST | 0 |
+
+
+### 3.7 Beacon Period
+
+| Name | Beacon Period |
+|:-----|:----------|
+| UUID  | ee0c<b>2087</b>-8786-40ba-ab96-99b91ac981d8|
+|  Description| The period in milliseconds that a UriBeacon packet is transmitted. |
+|  Type | uint8  |
+|  Lock State | For write, must be unlocked.|
+
+The period in milliseconds that a UriBeacon packet is transmitted. A value of zero disables UriBeacon transmissions.
+
+### 3.8 Reset
+
+| Name | Reset |
+|:-----|:----------|
+| UUID  | ee0c<b>2088</b>-8786-40ba-ab96-99b91ac981d8|
+|  Description| Reset to default values. |
+|  Type | boolean  |
+|  Lock State | Must be unlocked.|
+
+Writing a non-zero value to this characteristic will set all characteristics to their initial values and reset the GATT connection:
+
+| Characteristic | Default Value |
+|:---------------|:--------------|
+| Uri Data | None |
+| Uri Flags | 0 |
+| TX Power Mode | TX_POWER_MODE_LOW |
+| Beacon Period | 0 (disabled) |
+| Lock | 00000000-00000-0000-0000-000000000000 |
+
+
