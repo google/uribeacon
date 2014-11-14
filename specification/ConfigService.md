@@ -16,7 +16,8 @@ The UriBeacon Config Service allows setting UriBeacon fields and transmission ch
 
 This document is formatted according to the Bluetooth 
 [service](https://developer.bluetooth.org/TechnologyOverview/Pages/ANS.aspx) and 
-[profile](https://developer.bluetooth.org/gatt/profiles/Pages/ProfileViewer.aspx?u=org.bluetooth.profile.blood_pressure.xml) formatting styles.
+[profile](https://developer.bluetooth.org/gatt/profiles/Pages/ProfileViewer.aspx?u=org.bluetooth.profile.blood_pressure.xml) formatting styles.
+
 
 ### 1.1 Service Dependencies
 
@@ -97,17 +98,23 @@ contents of the parameter.
 |:-----|:----------|
 | UUID  | ee0c<b>2083</b>-8786-40ba-ab96-99b91ac981d8|
 |  Description| Reads/writes the Uri. |
-|  Type | byte[20] |
+|  Type | uint8[] |
 |  Lock State | For write, must be unlocked.|
+
+The Uri Data characteristic is a variable length structure. The first byte contains the [Uri Scheme Prefix](https://github.com/google/uribeacon/tree/master/specification#uribeacon-uri-scheme-prefix).
+The remaining bytes contain either [urn:uuid encoding](https://github.com/google/uribeacon/tree/master/specification#uribeacon-urnuuid-encoding) or  [HTTP URL encoding](https://github.com/google/uribeacon/tree/master/specification#uribeacon-http-url-encoding).
 
 ### 3.4 Flags
 
 | Name | Flags |
 |:-----|:----------|
 | UUID  | ee0c<b>2084</b>-8786-40ba-ab96-99b91ac981d8|
-|  Description| Reads/writes the Uri flags. |
-|  Type | byte |
+|  Description| Reads/writes the flags. |
+|  Type | uint8 |
 |  Lock State | For write, must be unlocked.|
+
+The Flags characteristic is a sinlge unsigned byte value containing the
+[UriBeacon Flags](https://github.com/google/uribeacon/tree/master/specification#uribeacon-flags).
 
 ### 3.5 Advertised TX Power Level
 
@@ -115,16 +122,13 @@ contents of the parameter.
 |:-----|:----------|
 | UUID  | ee0c<b>2085</b>-8786-40ba-ab96-99b91ac981d8|
 |  Description| Reads/writes the Advertised Power Level. |
-|  Type | uint8[8] |
+|  Type | uint8[] |
 |  Lock State | For write, must be unlocked.|
 
-The [TX Power Level Bluetooth Characteristic](
-https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicViewer.aspx?u=org.bluetooth.characteristic.tx_power_level.xml)
-represents a transmit power level in
-dBm and has values from -100 dBm to +20 dBm to a resolution of 1 dBm. A TX Power Level is included in the UriBeacon [TX Power Level](https://github.com/google/uribeacon/blob/master/specification/README.md#uribeacon-tx-power-level) field in the advertisement.
+This characteristic is a variable length array of byte pairs. The first byte is [TX Power Mode](#36-tx-power-mode). The second byte is the TX Power Level, in dBm, to be included in
+the [UriBeacon TX Power](https://github.com/google/uribeacon/tree/master/specification#uribeacon-tx-power-level) field of the advertisement when that mode is active.
 
-This characteristic is an array of byte pairs. The first byte is TX Power Mode. The second byte is the TX Power Level, in dBm, to be included in
-the advertisement when that mode is active.
+The TX Power Level represents a transmit power level in dBm and has values from -100 dBm to +20 dBm to a resolution of 1 dBm.
 
 ### 3.6 TX Power Mode
 
