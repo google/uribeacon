@@ -47,81 +47,24 @@ The assigned number for `<<UriBeacon Config Service>>` is
 
 | Characteristic     | Ref.     | Requirement  | 
 |:-------------------|:-----|:--------------------|
-| Lock Code | [3.1](#31-lock) | Mandatory| 
-| Unlock | [3.2](#32-unlock) | Mandatory|
-| Uri Data | [3.3](#33-uri-data) | Mandatory|
-| Uri Flags | [3.4](#34-flags)  | Mandatory|
+| Lock               | [3.1](#31-lock) | Mandatory| 
+| Unlock             | [3.2](#32-unlock) | Mandatory|
+| Uri Data           | [3.3](#33-uri-data) | Mandatory|
+| Uri Flags          | [3.4](#34-flags)  | Mandatory|
 | Advertised Tx Power Level | [3.5](#35-advertised-tx-power-level)  | Mandatory|
-| Tx Power Mode | [3.6](#36-tx-power-mode) | Mandatory |
-| Beacon Period | [3.7](#37-beacon-period)| Mandatory|
-| Reset | [3.8](#38-reset) | Mandatory|
+| Tx Power Mode      | [3.6](#36-tx-power-mode) | Mandatory |
+| Beacon Period      | [3.7](#37-beacon-period)| Mandatory|
+| Reset              | [3.8](#38-reset) | Mandatory|
 
-
-<style type="text/css">
-th.rotate {
-  /* Something you can count on */
-  height: 140px;
-  white-space: nowrap;
-}
-
-th.rotate > div {
-  transform: 
-    /* Magic Numbers */
-    translate(25px, 51px)
-    /* 45 is really 360 - 45 */
-    rotate(315deg);
-  width: 30px;
-}
-th.rotate > div > span {
-  border-bottom: 1px solid #ccc;
-  padding: 5px 10px;
-}
-</style>
-
-<table>
-<tr>
-<th></th>
-<th class="rotate"><div><span>Broadcast</span></div></th>
-<th class="rotate"><div><span>Read</span></div></th>
-<th class="rotate"><div><span>Write without Response</span></div></th>
-<th class="rotate"><div><span>Write</span></div></th>
-<th class="rotate"><div><span>Notify</span></div></th>
-<th class="rotate"><div><span>Indicate</span></div></th>
-<th class="rotate"><div><span>Signed Write</span></div></th>
-<th class="rotate"><div><span>Reliable Write</span></div></th>
-<th class="rotate"><div><span>Writable Auxiliaries</span></div></th>
-</tr>
-<tr>
-  <td>Lock Code</td>
-  <td>X</td><td>M</td><td>X</td><td>M*</td>
-  <td>X</td><td>X</td><td>X</td><td>X</td><td>X</td>
-</tr>
-<tr>
-  <td>Unlock</td>
-  <td>X</td><td>M</td><td>X</td><td>M</td>
-  <td>X</td><td>X</td><td>X</td><td>X</td><td>X</td>
-</tr>
-<tr>
-  <td>Uri</td>
-  <td>X</td><td>M</td><td>X</td><td>M*</td>
-  <td>X</td><td>X</td><td>X</td><td>X</td><td>X</td>
-</tr>
-<tr>
-  <td>Tx Power Level</td>
-  <td>X</td><td>M</td><td>X</td><td>M*</td>
-  <td>X</td><td>X</td><td>X</td><td>X</td><td>X</td>
-</tr>
-<tr>
-  <td>Beacon Period</td>
-  <td>X</td><td>M</td><td>X</td><td>M*</td>
-  <td>X</td><td>X</td><td>X</td><td>X</td><td>X</td>
-</tr>
-<tr>
-  <td>Reset</td>
-  <td>X</td><td>X</td><td>M*</td><td>X</td>
-  <td>X</td><td>X</td><td>X</td><td>X</td><td>X</td>
-</tr>
-</table>
+||<sup>Broadcast</sup>|<sup>Read</sup>|<sup>Write without Response</sup>|<sup>Write</sup>|<sup>Notify</sup>|<sup>Indicate</sup>|<sup>Signed Write</sup>|<sup>Reliable Write</sup>|<sup>Writable Auxiliaries</sup>|
+|-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+|Lock                      |X|M|X|M\*|X|X|X|X|X|
+|Unlock                    |X|X|X|M  |X|X|X|X|X|
+|Uri Data                  |X|M|X|M\*|X|X|X|X|X|
+|Advertised Tx Power Level |X|M|X|M\*|X|X|X|X|X|
+|Tx Power Mode             |X|M|X|M\*|X|X|X|X|X|
+|Beacon Period             |X|M|X|M\*|X|X|X|X|X|
+|Reset                     |X|X|X|M\*|X|X|X|X|X|
 
 \* Must be in unlock state.
 
