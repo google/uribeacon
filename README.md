@@ -42,9 +42,11 @@ and sample code for advertisers and scanners:
 * **[android-uribeacon](android-uribeacon) - Allows Android apps to interact with UriBeacons.**
 * **[ios-uribeacon](ios-uribeacon) - Allows iOS apps to interact with UriBeacons.**
 * **[linux uribeacon](beacons/linux) - Allows Linux users to experiment with UriBeacons.**
-* **[nRF51 uribeacon](beacons/nRF51) - Flash instructons for the Nordic Semiconductor nRF51822 beacon.**
+* **[nRF51 uribeacon](beacons/nRF51) - Flash instructions for the Nordic Semiconductor nRF51822 beacon.**
+* **[android uribeacon](beacons/android) - Allows Android 5.0 devices to broadcast beacons.**
+* **[NodeJS uribeacon](beacons/nodejs) - Allows Linux user to create UriBeacons with NodeJS.**
 
-We will also be providing instructions on how to assemble and 
+We will also be providing instructions on how to assemble and
 program standalone UriBeacon tags.
 
 ## What is a Uri?
@@ -100,4 +102,3 @@ short and show long URLs, titles, etc. and configuration tools can
 automatically shorten long Urls when writing beacons. Also this
 specification does not preclude additional information exchange over a
 GATT service following discovery.
-
