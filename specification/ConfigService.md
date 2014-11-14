@@ -57,14 +57,14 @@ The assigned number for `<<UriBeacon Config Service>>` is
 | Reset              | [3.8](#38-reset) | Mandatory|
 
 ||<sup>Broadcast</sup>|<sup>Read</sup>|<sup>Write without Response</sup>|<sup>Write</sup>|<sup>Notify</sup>|<sup>Indicate</sup>|<sup>Signed Write</sup>|<sup>Reliable Write</sup>|<sup>Writable Auxiliaries</sup>|
-|-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+|-------------------------:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 |Lock                      |X|M|X|M\*|X|X|X|X|X|
 |Unlock                    |X|X|X|M  |X|X|X|X|X|
 |Uri Data                  |X|M|X|M\*|X|X|X|X|X|
 |Advertised Tx Power Level |X|M|X|M\*|X|X|X|X|X|
 |Tx Power Mode             |X|M|X|M\*|X|X|X|X|X|
 |Beacon Period             |X|M|X|M\*|X|X|X|X|X|
-|Reset                     |X|X|X|M\*|X|X|X|X|X|
+|Reset                     |X|X|M\*|X|X|X|X|X|X|
 
 \* Must be in unlock state.
 
