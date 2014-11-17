@@ -23,7 +23,7 @@
 
 	* Copy ble_uri_beacon into folder into
 C:\Nordic Semiconductor\nRF51822 Beacon v1.0.1\Source Code\Nordic\nrf51822\Board\nrf51_beacon\pca20006.
-	* Copy C:\Nordic Semiconductor\nRF51822 Beacon v1.0.1\Source Code\Nordic\nrf51822\Board\nrf51_beacon\pca20006\ble_app_beacon_bcs\pstoraege_platfrom.h to the new ble_uri_beacon directory.
+	* Copy C:\Nordic Semiconductor\nRF51822 Beacon v1.0.1\Source Code\Nordic\nrf51822\Board\nrf51_beacon\pca20006\ble_app_beacon_bcs\pstorage_platfrom.h to the new ble_uri_beacon directory.
 
 2. Open ble_uri_beacon.uvprojx with Keil mVision. 
 	* Build the app, and then Load the app to the connected tag.
