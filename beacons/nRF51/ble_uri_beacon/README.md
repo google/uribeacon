@@ -1,7 +1,7 @@
 #Setup Windows environment for Nordic Smart Beacons
-1. Setup the Keil mVision IDE - current version 5.12
-2. Setup the nRF51822 Bluetooth Smart Beacon environment
-	* Use the SD S110-SD-v6 (version 6.0.0)- S110 SoftDevice
+1. Setup the Keil mVision IDE - current version 5.12.
+2. Setup the nRF51822 Bluetooth Smart Beacon environment.
+	* Use the SD S110-SD-v6 (version 6.0.0)- S110 SoftDevice.
 3. Necessary Equipment
  	* Tag from nRF51822 Bluetooth Smart Beacon Kit
 	* J-Link Lite CortexM-9 JTAG/SWD Emulator from nRF51822 Development Kit
@@ -9,22 +9,21 @@
 
 
 4. Reset the Tag
-
-	* Connect tag to J-Link emulator using the "No Legs" Cable
-	* Reset tag using nRFgo Studio to erase the tag and reload the softdevice and bootloader, if desired. 
-		* Use C:\s110_nrf51822_6.0.0\s110_nrf51822_6.0.0_softdevice.hex
+	* Connect tag to J-Link emulator using the "No Legs" Cable.
+	* Reset tag using nRFgo Studio to erase the tag and reload the softdevice and bootloader, if desired.
+		* Use C:\s110_nrf51822_6.0.0\s110_nrf51822_6.0.0_softdevice.hex.
 	* (Optional) Enabling over the air direct firmware update (DFU)
-		* Program the bootloader: C:\Nordic Semiconductor\nRF51822 Beacon v1.0.1\Precompiled hex\bootloader.hex
-		* Make sure you program the softdevice first, then the bootloader, then the app can be loaded
+		* Program the bootloader: C:\Nordic Semiconductor\nRF51822 Beacon v1.0.1\Precompiled hex\bootloader.hex.
+		* Make sure you program the softdevice first, then the bootloader, then the app can be loaded.
 
 
 #Setup ble_uri_beacon Project in Keil mVision
 
 1. Set up working directory
 
-	* Copy pstoraege_platfrom.h from .... to ble_uri_beacon
 	* Copy ble_uri_beacon into folder into
-C:\Nordic Semiconductor\nRF51822 Beacon v1.0.1\Source Code\Nordic\nrf51822\Board\nrf51_beacon\pca20006
+C:\Nordic Semiconductor\nRF51822 Beacon v1.0.1\Source Code\Nordic\nrf51822\Board\nrf51_beacon\pca20006.
+	* Copy C:\Nordic Semiconductor\nRF51822 Beacon v1.0.1\Source Code\Nordic\nrf51822\Board\nrf51_beacon\pca20006\ble_app_beacon_bcs\pstoraege_platfrom.h to the new ble_uri_beacon directory.
 
 2. Open ble_uri_beacon.uvprojx with Keil mVision. 
 	* Build the app, and then Load the app to the connected tag.
