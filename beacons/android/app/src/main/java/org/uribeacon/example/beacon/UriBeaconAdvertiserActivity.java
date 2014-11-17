@@ -104,6 +104,18 @@ public class UriBeaconAdvertiserActivity extends Activity {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             this.startActivityForResult(enableBtIntent, ENABLE_BLUETOOTH_REQUEST);
 
+        } else if (!bluetoothAdapter.isMultipleAdvertisementSupported()) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(R.string.bluetooth_error);
+            builder.setMessage(R.string.no_bluetooth_advertise)
+            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    finish();
+                }
+            });
+            builder.show();
+
         } else {
             advertiseUriBeacon();
         }
