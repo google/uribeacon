@@ -155,7 +155,7 @@ Sets the transmission power mode to one of:
 |:-----|:----------|
 | UUID  | ee0c<b>2087</b>-8786-40ba-ab96-99b91ac981d8|
 |  Description| The period in milliseconds that a UriBeacon packet is transmitted. |
-|  Type | uint8  |
+|  Type | uint16  |
 |  Lock State | For write, must be unlocked.|
 
 The period in milliseconds that a UriBeacon packet is transmitted. A value of zero disables UriBeacon transmissions.
