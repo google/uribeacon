@@ -16,7 +16,7 @@ uint8_t advdata[] =
   'A',
   'B',
   'C',
-  0x07,  // .".com"
+  0x00,  // .".com"
 };
 
 void setup() {
