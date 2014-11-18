@@ -6,6 +6,8 @@
 
 Note: this is a preview-release intended for comments and experimentation.
 
+Also see the [UriBeacon Config Service](ConfigService.md).
+
 ## Overview
 
 The Uniform Resource Identifier Beacon (UriBeacon) defines Bluetooth 4.0 Advertisement Data that contain Web Uris. UriBeacon provides a way for Bluetooth Low Energy devices to discover nearby Uris, for example, provides a way for a user to discover a short Url and then download it on their smartphone.
