@@ -71,7 +71,7 @@ The format for the Advertising Data that includes the `<<Service UUID>>` and `<<
 
 |Offset | Size | Value  | Name        | Description
 |:----- | :--- | :----- | :---------- | :----------------
-|0      |  1   | 2      | AD Length   |
+|0      |  1   | 3      | AD Length   |
 |1      |  1   | 0x03   | AD Type     | Complete List of 16-Bit Service |Class UUIDs
 |2      |  2   | 0xFED8 | Service ID  | Assigned Uri Service UUID
 |4      |  1   | 5..23  | AD Length   |
