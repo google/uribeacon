@@ -32,8 +32,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.uribeacon.beacon.UriBeacon;
-import org.uribeacon.config.UriBeaconCallbackV1;
-import org.uribeacon.config.UriBeaconCallbackV2;
+import org.uribeacon.config.UriBeaconReaderWriterV1;
+import org.uribeacon.config.UriBeaconReaderWriterV2;
 import org.uribeacon.scan.compat.BluetoothLeScannerCompat;
 import org.uribeacon.scan.compat.BluetoothLeScannerCompatProvider;
 import org.uribeacon.scan.compat.ScanCallback;
@@ -132,11 +132,11 @@ public class ConfigListActivity extends ListActivity {
     } else {
       List<ScanFilter> filters = new ArrayList<>();
       ScanFilter filterV1 = new ScanFilter.Builder()
-          .setServiceUuid(UriBeaconCallbackV1.CONFIG_SERVICE_UUID)
+          .setServiceUuid(UriBeaconReaderWriterV1.CONFIG_SERVICE_UUID)
           .build();
       filters.add(filterV1);
       ScanFilter filterV2 = new ScanFilter.Builder()
-          .setServiceUuid(UriBeaconCallbackV2.CONFIG_SERVICE_UUID)
+          .setServiceUuid(UriBeaconReaderWriterV2.CONFIG_SERVICE_UUID)
           .build();
       filters.add(filterV2);
       ScanSettings settings = new ScanSettings.Builder()
@@ -163,7 +163,7 @@ public class ConfigListActivity extends ListActivity {
     Toast.makeText(this, "Clicked row " + position, Toast.LENGTH_SHORT).show();
     ScanResultAdapter.DeviceSighting sighting = mLeDeviceListAdapter.getItem(position);
     stopScanning();
-    ConfigActivity.startConfigureActivity(this, sighting.scanResult.getDevice());
+    ConfigActivity.startConfigureActivity(this, sighting.scanResult);
   }
 
   @Override

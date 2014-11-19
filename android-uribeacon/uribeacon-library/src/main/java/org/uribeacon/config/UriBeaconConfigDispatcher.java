@@ -35,14 +35,15 @@ import org.uribeacon.beacon.UriBeacon;
  * Common base class for configuring the UriBeacon. Provides simple methods and callbacks for
  * reading and writing the entire UriBeacon which may involve multiple GATT requests.
  */
-public abstract class BaseUriBeaconConfig extends BluetoothGattCallback {
+public class UriBeaconConfigDispatcher extends BluetoothGattCallback {
 
   private static final String TAG = "BaseUriBeaconConfig";
 
   private final Context mContext;
   private GattService mService;
   private BluetoothDevice mDevice;
-  private BaseUriBeaconCallback mBluetoothCallback;
+  private BaseUriBeaconReaderWriter mBluetoothCallback;
+  private UriBeaconCallback mUriBeaconCallback;
   // Defines callbacks for service binding, passed to bindService()
   private final ServiceConnection mServiceConnection = new ServiceConnection() {
     @Override
@@ -50,7 +51,7 @@ public abstract class BaseUriBeaconConfig extends BluetoothGattCallback {
       GattService.LocalBinder binder = (GattService.LocalBinder) service;
       mService = binder.getService();
       // Initiate the connection and continue through callbacks.
-      mService.connect(mContext, mDevice, BaseUriBeaconConfig.this);
+      mService.connect(mContext, mDevice, UriBeaconConfigDispatcher.this);
     }
 
     @Override
@@ -59,24 +60,18 @@ public abstract class BaseUriBeaconConfig extends BluetoothGattCallback {
     }
   };
 
-  public BaseUriBeaconConfig(Context context) {
+  public UriBeaconConfigDispatcher(Context context, UriBeaconCallback uriBeaconCallback,
+      ParcelUuid uuid) {
     mContext = context;
+    mUriBeaconCallback = uriBeaconCallback;
+    if (UriBeaconReaderWriterV2.CONFIG_SERVICE_UUID.getUuid().equals(uuid.getUuid())) {
+      mBluetoothCallback = new UriBeaconReaderWriterV2(mService, mUriBeaconCallback);
+    }
+    else if (UriBeaconReaderWriterV1.CONFIG_SERVICE_UUID.getUuid().equals(uuid.getUuid())){
+      mBluetoothCallback = new UriBeaconReaderWriterV1(mService, mUriBeaconCallback);
+    }
   }
 
-  /**
-   * Called when the data has been read from the beacon.
-   *
-   * @param beacon UriBeacon with all the fields read
-   * @param status Status code from the gatt request
-   */
-  public abstract void onUriBeaconRead(UriBeacon beacon, int status);
-
-  /**
-   * Called when the data has been written to the beacon.
-   *
-   * @param status Status code from the gatt request.
-   */
-  public abstract void onUriBeaconWrite(int status);
 
   /**
    * Initiate the Gatt connection to the beacon
@@ -135,13 +130,7 @@ public abstract class BaseUriBeaconConfig extends BluetoothGattCallback {
   @Override
   public void onServicesDiscovered(BluetoothGatt gatt, int status) {
     Log.d(TAG, "onServicesDiscovered request queue");
-    if (mService.setService(UriBeaconCallbackV2.CONFIG_SERVICE_UUID.getUuid())) {
-      mBluetoothCallback = new UriBeaconCallbackV2(mService, this);
       mBluetoothCallback.startReading();
-    } else if (mService.setService(UriBeaconCallbackV1.CONFIG_SERVICE_UUID.getUuid())) {
-      mBluetoothCallback = new UriBeaconCallbackV1(mService, this);
-      mBluetoothCallback.startReading();
-    }
   }
 
   @Override
@@ -152,7 +141,7 @@ public abstract class BaseUriBeaconConfig extends BluetoothGattCallback {
     if (status == BluetoothGatt.GATT_SUCCESS) {
       mBluetoothCallback.onCharacteristicRead(gatt, characteristic, status);
     } else {
-      onUriBeaconRead(null, status);
+      mUriBeaconCallback.onUriBeaconRead(null, status);
     }
   }
 
@@ -164,7 +153,25 @@ public abstract class BaseUriBeaconConfig extends BluetoothGattCallback {
     if (status == BluetoothGatt.GATT_SUCCESS) {
       mBluetoothCallback.onCharacteristicWrite(gatt, characteristic, status);
     } else {
-      onUriBeaconWrite(status);
+      mUriBeaconCallback.onUriBeaconWrite(status);
     }
   }
+
+  public interface UriBeaconCallback {
+    /**
+     * Called when the data has been read from the beacon.
+     *
+     * @param beacon UriBeacon with all the fields read
+     * @param status Status code from the gatt request
+     */
+    public void onUriBeaconRead(UriBeacon beacon, int status);
+
+    /**
+     * Called when the data has been written to the beacon.
+     *
+     * @param status Status code from the gatt request.
+     */
+    public void onUriBeaconWrite(int status);
+  }
+
 }

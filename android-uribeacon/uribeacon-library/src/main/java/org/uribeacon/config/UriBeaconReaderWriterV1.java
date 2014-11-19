@@ -6,11 +6,12 @@ import android.os.ParcelUuid;
 import android.util.Log;
 
 import org.uribeacon.beacon.UriBeacon;
+import org.uribeacon.config.UriBeaconConfigDispatcher.UriBeaconCallback;
 
 import java.util.Arrays;
 import java.util.UUID;
 
-public class UriBeaconCallbackV1 extends BaseUriBeaconCallback {
+public class UriBeaconReaderWriterV1 implements BaseUriBeaconReaderWriter {
 
   public static final ParcelUuid CONFIG_SERVICE_UUID = ParcelUuid
       .fromString("b35d7da6-eed4-4d59-8f89-f6573edea967");
@@ -20,22 +21,21 @@ public class UriBeaconCallbackV1 extends BaseUriBeaconCallback {
   private static final UUID DATA_LENGTH = UUID.fromString("b35d7da9-eed4-4d59-8f89-f6573edea967");
   private static final int DATA_LENGTH_MAX = 20;
   private final GattService mService;
-  private final BaseUriBeaconConfig mBeaconConfig;
+  private final UriBeaconCallback mUriBeaconCallback;
   private Integer mDataLength;
   private byte[] mData;
-  private UUID mLastUUID;
+  private byte[] mDataWrite;
 
-  public UriBeaconCallbackV1(GattService serviceConnection, BaseUriBeaconConfig beaconConfig) {
+  public UriBeaconReaderWriterV1(GattService serviceConnection,
+      UriBeaconCallback uriBeaconCallback) {
     mService = serviceConnection;
-    mBeaconConfig = beaconConfig;
+    mUriBeaconCallback = uriBeaconCallback;
   }
 
-  @Override
   public ParcelUuid getVersion() {
     return CONFIG_SERVICE_UUID;
   }
 
-  @Override
   public void startReading() {
     mService.readCharacteristic(DATA_LENGTH);
   }
@@ -52,37 +52,34 @@ public class UriBeaconCallbackV1 extends BaseUriBeaconCallback {
       if (mDataLength > DATA_LENGTH_MAX) {
         mService.readCharacteristic(DATA_TWO);
       } else {
-        mBeaconConfig.onUriBeaconRead(UriBeacon.parseFromBytes(mData), status);
+        mUriBeaconCallback.onUriBeaconRead(UriBeacon.parseFromBytes(mData), status);
       }
     } else if (DATA_TWO.equals(uuid)) {
       mData = Util.concatenate(mData, characteristic.getValue());
-      mBeaconConfig.onUriBeaconRead(UriBeacon.parseFromBytes(mData), status);
+      mUriBeaconCallback.onUriBeaconRead(UriBeacon.parseFromBytes(mData), status);
     }
   }
 
-  @Override
   public void startWriting(UriBeacon uriBeacon) {
 
-    byte[] dataWrite = uriBeacon.toByteArray();
-    if (dataWrite.length <= 20) {
-      mLastUUID = DATA_ONE;
+    mDataWrite = uriBeacon.toByteArray();
+    if (mDataWrite.length <= 20) {
       // write the value
-      mService.writeCharacteristic(DATA_ONE, dataWrite);
+      mService.writeCharacteristic(DATA_ONE, mDataWrite);
     } else {
-      mLastUUID = DATA_TWO;
-      byte[] buff = Arrays.copyOfRange(dataWrite, 0, 20);
+      byte[] buff = Arrays.copyOfRange(mDataWrite, 0, 20);
       Log.d(TAG, "Buffer length is " + buff.length);
       mService.writeCharacteristic(DATA_ONE, buff);
       mService.writeCharacteristic(DATA_TWO,
-          Arrays.copyOfRange(dataWrite, 20, dataWrite.length));
+          Arrays.copyOfRange(mDataWrite, 20, mDataWrite.length));
     }
   }
 
   @Override
   public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic,
       int status) {
-    if (mLastUUID.equals(characteristic.getUuid())) {
-      mBeaconConfig.onUriBeaconWrite(status);
+    if (mDataWrite.length <= 20 || DATA_TWO.equals(characteristic.getUuid())) {
+      mUriBeaconCallback.onUriBeaconWrite(status);
     }
   }
 
