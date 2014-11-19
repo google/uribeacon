@@ -32,7 +32,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.uribeacon.beacon.UriBeacon;
-import org.uribeacon.config.BaseUriBeaconConfig;
+import org.uribeacon.config.UriBeaconCallbackV1;
+import org.uribeacon.config.UriBeaconCallbackV2;
 import org.uribeacon.scan.compat.BluetoothLeScannerCompat;
 import org.uribeacon.scan.compat.BluetoothLeScannerCompatProvider;
 import org.uribeacon.scan.compat.ScanCallback;
@@ -130,9 +131,14 @@ public class ConfigListActivity extends ListActivity {
       startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
     } else {
       List<ScanFilter> filters = new ArrayList<>();
-      ScanFilter.Builder builder = new ScanFilter.Builder()
-          .setServiceUuid(BaseUriBeaconConfig.CONFIG_SERVICE_UUID);
-      filters.add(builder.build());
+      ScanFilter filterV1 = new ScanFilter.Builder()
+          .setServiceUuid(UriBeaconCallbackV1.CONFIG_SERVICE_UUID)
+          .build();
+      filters.add(filterV1);
+      ScanFilter filterV2 = new ScanFilter.Builder()
+          .setServiceUuid(UriBeaconCallbackV2.CONFIG_SERVICE_UUID)
+          .build();
+      filters.add(filterV2);
       ScanSettings settings = new ScanSettings.Builder()
           .setCallbackType(ScanSettings.CALLBACK_TYPE_ALL_MATCHES)
           .setScanMode(ScanSettings.SCAN_MODE_BALANCED)
@@ -153,7 +159,7 @@ public class ConfigListActivity extends ListActivity {
   }
 
   @Override
-  protected void onListItemClick (ListView l, View v, int position, long id) {
+  protected void onListItemClick(ListView l, View v, int position, long id) {
     Toast.makeText(this, "Clicked row " + position, Toast.LENGTH_SHORT).show();
     ScanResultAdapter.DeviceSighting sighting = mLeDeviceListAdapter.getItem(position);
     stopScanning();
@@ -176,7 +182,7 @@ public class ConfigListActivity extends ListActivity {
     stopScanning();
   }
 
-  private int getTxPowerLevel(ScanResult scanResult) {
+  private int getTxPowerLevel() {
     // Note: Config Service has no TX Power.
     return RangingUtils.DEFAULT_TX_POWER_LEVEL;
   }
@@ -187,7 +193,7 @@ public class ConfigListActivity extends ListActivity {
     runOnUiThread(new Runnable() {
       @Override
       public void run() {
-        int txPowerLevel = getTxPowerLevel(scanResult);
+        int txPowerLevel = getTxPowerLevel();
         mLeDeviceListAdapter.add(scanResult, txPowerLevel, 5);
       }
     });
@@ -281,6 +287,7 @@ public class ConfigListActivity extends ListActivity {
   }
 
   static class ViewHolder {
+
     TextView deviceName;
     TextView deviceAddress;
   }

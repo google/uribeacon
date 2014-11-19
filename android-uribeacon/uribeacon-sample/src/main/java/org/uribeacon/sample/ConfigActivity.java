@@ -32,7 +32,8 @@ import android.widget.Toast;
 
 import org.uribeacon.beacon.UriBeacon;
 import org.uribeacon.config.BaseUriBeaconConfig;
-import org.uribeacon.config.GattService;
+import org.uribeacon.config.UriBeaconCallbackV1;
+import org.uribeacon.config.UriBeaconCallbackV2;
 
 import java.net.URISyntaxException;
 
@@ -41,21 +42,18 @@ public class ConfigActivity extends Activity implements OnClickListener {
   private TextView mBeaconNewValue = null;
   private Button mBeaconUpdateValue = null;
   private ProgressDialog mConnectionDialog = null;
-  private final byte DEFAULT_TX_POWER = -63;
-  private int mLength;
-  private byte[] mData;
+  private static final byte DEFAULT_TX_POWER = -63;
   private final String TAG = "ConfigActivity";
   private UriBeaconConfig mUriBeaconConfig;
-
   class UriBeaconConfig extends BaseUriBeaconConfig {
     public UriBeaconConfig(Context context) {
       super(context);
     }
 
     @Override
-    public void onUriBeaconRead(byte[] scanRecord, int status) {
+    public void onUriBeaconRead(UriBeacon uriBeacon, int status) {
       checkRequest(status);
-      setBeaconValue(scanRecord);
+      setBeaconValue(uriBeacon);
     }
 
     @Override
@@ -80,10 +78,20 @@ public class ConfigActivity extends Activity implements OnClickListener {
     mBeaconUpdateValue.setEnabled(false);
     String uri = mBeaconNewValue.getText().toString();
     try {
-      UriBeacon uriBeacon = new UriBeacon.Builder().uriString(uri)
-          .txPowerLevel(DEFAULT_TX_POWER).build();
-      byte[] scanRecord = uriBeacon.toByteArray();
-      mUriBeaconConfig.writeUriBeacon(scanRecord);
+      UriBeacon uriBeacon;
+      if (mUriBeaconConfig.getVersion().equals(UriBeaconCallbackV1.CONFIG_SERVICE_UUID)) {
+        uriBeacon = new UriBeacon.Builder()
+            .uriString(uri)
+            .txPowerLevel(DEFAULT_TX_POWER)
+            .build();
+      }
+      else {
+        // TODO(g-ortuno): Set other characteristics
+        uriBeacon = new UriBeacon.Builder()
+            .uriString(uri)
+            .build();
+      }
+      mUriBeaconConfig.writeUriBeacon(uriBeacon);
     } catch (URISyntaxException e) {
       Toast.makeText(ConfigActivity.this, "Invalid Uri", Toast.LENGTH_LONG).show();
       mUriBeaconConfig.closeUriBeacon();
@@ -133,10 +141,17 @@ public class ConfigActivity extends Activity implements OnClickListener {
     context.startActivity(intent);
   }
 
-  private void setBeaconValue(byte[] scanRecord) {
-    UriBeacon uriBeacon = UriBeacon.parseFromBytes(scanRecord);
+  private void setBeaconValue(UriBeacon uriBeacon) {
     if (mBeaconValue != null && uriBeacon != null) {
       mBeaconValue.setText(uriBeacon.getUriString());
+      TextView version = (TextView) findViewById(R.id.textViewVersion);
+      if (mUriBeaconConfig.getVersion().equals(UriBeaconCallbackV2.CONFIG_SERVICE_UUID)) {
+        version.setText(getString(R.string.version_text) + "2");
+        //TODO(g-ortuno): Set the rest of the characteristics for V2
+      }
+      else if (mUriBeaconConfig.getVersion().equals(UriBeaconCallbackV1.CONFIG_SERVICE_UUID)) {
+        version.setText(getString(R.string.version_text) + "1");
+      }
     }
   }
 
