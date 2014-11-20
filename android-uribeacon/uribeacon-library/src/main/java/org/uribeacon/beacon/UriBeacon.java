@@ -164,8 +164,6 @@ public class UriBeacon {
       }
       return new UriBeacon(mFlags, mTxPowerLevel, mUriString);
     }
-
-
   }
 
 
