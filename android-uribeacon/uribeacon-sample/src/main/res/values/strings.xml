@@ -30,5 +30,6 @@
     <string name="menu_config">Config</string>
     <string name="menu_sort_dist">Sorting by Distance</string>
     <string name="menu_sort_addr">Sorting by Address</string>
+    <string name="version_text">Version:</string>
 
 </resources>

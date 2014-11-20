@@ -15,6 +15,8 @@
  */
 package org.uribeacon.sample;
 
+import static android.preference.PreferenceManager.getDefaultSharedPreferences;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ListActivity;
@@ -49,8 +51,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
-
-import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
 /**
  * Activity for scanning and displaying available Bluetooth LE devices.
@@ -212,11 +212,12 @@ public class UriBeaconScanActivity extends ListActivity {
   private List<ScanFilter> getFilters() {
     List<ScanFilter> filters = new ArrayList<>();
     if (getBooleanPreference(R.string.pref_key_uribeacon)) {
-      ScanFilter.Builder builder = new ScanFilter.Builder()
+      ScanFilter filter = new ScanFilter.Builder()
           .setServiceData(UriBeacon.URI_SERVICE_UUID,
               new byte[]{},
-              new byte[]{});
-      filters.add(builder.build());
+              new byte[]{})
+          .build();
+      filters.add(filter);
     }
     return filters;
   }

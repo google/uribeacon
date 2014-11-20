@@ -24,38 +24,37 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.ParcelUuid;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.uribeacon.beacon.UriBeacon;
-import org.uribeacon.config.BaseUriBeaconConfig;
-import org.uribeacon.config.GattService;
+import org.uribeacon.beacon.ConfigUriBeacon;
+import org.uribeacon.config.ProtocolV1;
+import org.uribeacon.config.ProtocolV2;
+import org.uribeacon.config.UriBeaconConfig;
+import org.uribeacon.config.UriBeaconConfig.UriBeaconCallback;
+import org.uribeacon.scan.compat.ScanResult;
 
 import java.net.URISyntaxException;
+import java.util.List;
 
-public class ConfigActivity extends Activity implements OnClickListener {
+public class ConfigActivity extends Activity implements OnClickListener{
   private TextView mBeaconValue = null;
   private TextView mBeaconNewValue = null;
   private Button mBeaconUpdateValue = null;
   private ProgressDialog mConnectionDialog = null;
-  private final byte DEFAULT_TX_POWER = -63;
-  private int mLength;
-  private byte[] mData;
+  private static final byte DEFAULT_TX_POWER = -63;
   private final String TAG = "ConfigActivity";
   private UriBeaconConfig mUriBeaconConfig;
 
-  class UriBeaconConfig extends BaseUriBeaconConfig {
-    public UriBeaconConfig(Context context) {
-      super(context);
-    }
-
+  private final UriBeaconCallback mUriBeaconCallback = new UriBeaconCallback() {
     @Override
-    public void onUriBeaconRead(byte[] scanRecord, int status) {
+    public void onUriBeaconRead(ConfigUriBeacon configUriBeacon, int status) {
       checkRequest(status);
-      setBeaconValue(scanRecord);
+      setBeaconValue(configUriBeacon);
     }
 
     @Override
@@ -67,11 +66,13 @@ public class ConfigActivity extends Activity implements OnClickListener {
 
     private void checkRequest(int status) {
       if (status == BluetoothGatt.GATT_FAILURE) {
-        Toast.makeText(ConfigActivity.this, "Failed to update the beacon", Toast.LENGTH_SHORT).show();
+        Toast.makeText(ConfigActivity.this, "Failed to update the beacon", Toast.LENGTH_SHORT)
+            .show();
         finish();
       }
     }
-  }
+  };
+
 
   @Override
   public void onClick(View v) {
@@ -80,10 +81,11 @@ public class ConfigActivity extends Activity implements OnClickListener {
     mBeaconUpdateValue.setEnabled(false);
     String uri = mBeaconNewValue.getText().toString();
     try {
-      UriBeacon uriBeacon = new UriBeacon.Builder().uriString(uri)
-          .txPowerLevel(DEFAULT_TX_POWER).build();
-      byte[] scanRecord = uriBeacon.toByteArray();
-      mUriBeaconConfig.writeUriBeacon(scanRecord);
+      ConfigUriBeacon configUriBeacon = new ConfigUriBeacon.Builder()
+          .uriString(uri)
+          .txPowerLevel(DEFAULT_TX_POWER)
+          .build();
+      mUriBeaconConfig.writeUriBeacon(configUriBeacon);
     } catch (URISyntaxException e) {
       Toast.makeText(ConfigActivity.this, "Invalid Uri", Toast.LENGTH_LONG).show();
       mUriBeaconConfig.closeUriBeacon();
@@ -109,7 +111,8 @@ public class ConfigActivity extends Activity implements OnClickListener {
     // results Activity.
     Intent intent = getIntent();
     if (intent.getExtras() != null) {
-      BluetoothDevice device = intent.getExtras().getParcelable(BluetoothDevice.EXTRA_DEVICE);
+      ScanResult scanResult = intent.getExtras().getParcelable(ScanResult.class.getCanonicalName());
+      BluetoothDevice device = scanResult.getDevice();
       if (device != null) {
         // start connection progress
         mConnectionDialog = new ProgressDialog(this);
@@ -122,21 +125,31 @@ public class ConfigActivity extends Activity implements OnClickListener {
           }
         });
       }
-      mUriBeaconConfig = new UriBeaconConfig(this);
+      List<ParcelUuid> uuids = scanResult.getScanRecord().getServiceUuids();
+      // Assuming the first uuid is the config uuid
+      ParcelUuid uuid = uuids.get(0);
+      mUriBeaconConfig = new UriBeaconConfig(this, mUriBeaconCallback, uuid);
       mUriBeaconConfig.connectUriBeacon(device);
     }
   }
 
-  public static void startConfigureActivity(Context context, BluetoothDevice deviceToConnect) {
+  public static void startConfigureActivity(Context context, ScanResult scanResult) {
     Intent intent = new Intent(context, ConfigActivity.class);
-    intent.putExtra(BluetoothDevice.EXTRA_DEVICE, deviceToConnect);
+    intent.putExtra(ScanResult.class.getCanonicalName(), scanResult);
     context.startActivity(intent);
   }
 
-  private void setBeaconValue(byte[] scanRecord) {
-    UriBeacon uriBeacon = UriBeacon.parseFromBytes(scanRecord);
-    if (mBeaconValue != null && uriBeacon != null) {
-      mBeaconValue.setText(uriBeacon.getUriString());
+  private void setBeaconValue(ConfigUriBeacon  configUriBeacon) {
+    if (mBeaconValue != null && configUriBeacon != null) {
+      mBeaconValue.setText(configUriBeacon.getUriString());
+      TextView version = (TextView) findViewById(R.id.textViewVersion);
+      if (mUriBeaconConfig.getVersion().equals(ProtocolV2.CONFIG_SERVICE_UUID)) {
+        version.setText(getString(R.string.version_text) + "2");
+        //TODO(g-ortuno): Set the rest of the characteristics for V2
+      }
+      else if (mUriBeaconConfig.getVersion().equals(ProtocolV1.CONFIG_SERVICE_UUID)) {
+        version.setText(getString(R.string.version_text) + "1");
+      }
     }
   }
 
