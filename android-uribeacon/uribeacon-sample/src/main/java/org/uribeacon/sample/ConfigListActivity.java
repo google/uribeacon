@@ -159,7 +159,7 @@ public class ConfigListActivity extends ListActivity {
   }
 
   @Override
-  protected void onListItemClick(ListView l, View v, int position, long id) {
+  protected void onListItemClick (ListView l, View v, int position, long id) {
     Toast.makeText(this, "Clicked row " + position, Toast.LENGTH_SHORT).show();
     ScanResultAdapter.DeviceSighting sighting = mLeDeviceListAdapter.getItem(position);
     stopScanning();
@@ -287,7 +287,6 @@ public class ConfigListActivity extends ListActivity {
   }
 
   static class ViewHolder {
-
     TextView deviceName;
     TextView deviceAddress;
   }

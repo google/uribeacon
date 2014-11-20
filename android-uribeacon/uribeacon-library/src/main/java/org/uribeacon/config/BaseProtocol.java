@@ -33,7 +33,6 @@ abstract class BaseProtocol extends BluetoothGattCallback{
 
   /**
    * Write the ConfigUriBeacon provided to the actual beacon.
-   *
    * @param configUriBeacon ConfigUriBeacon containing all the data of the new beacon.
    */
   public abstract void writeUriBeacon(ConfigUriBeacon configUriBeacon) throws URISyntaxException;
@@ -43,8 +42,7 @@ abstract class BaseProtocol extends BluetoothGattCallback{
    */
   public abstract ParcelUuid getVersion();
 
-  public abstract void onConnectionStateChange(BluetoothGatt gatt, int status,
-      int newState);
+  public abstract void onConnectionStateChange(BluetoothGatt gatt, int status, int newState);
 
   public abstract void onServicesDiscovered(BluetoothGatt gatt, int status);
 

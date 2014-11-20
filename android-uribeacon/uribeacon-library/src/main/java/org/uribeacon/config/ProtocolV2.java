@@ -29,7 +29,6 @@ public class ProtocolV2 extends BaseProtocol {
   public ProtocolV2(GattService serviceConnection,
       UriBeaconCallback beaconCallback) {
     mService = serviceConnection;
-    Log.d(TAG, "SERVICE SET");
     mUriBeaconCallback = beaconCallback;
   }
 
