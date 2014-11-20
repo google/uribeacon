@@ -32,8 +32,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.uribeacon.beacon.UriBeacon;
-import org.uribeacon.config.UriBeaconReaderWriterV1;
-import org.uribeacon.config.UriBeaconReaderWriterV2;
+import org.uribeacon.config.ProtocolV1;
+import org.uribeacon.config.ProtocolV2;
 import org.uribeacon.scan.compat.BluetoothLeScannerCompat;
 import org.uribeacon.scan.compat.BluetoothLeScannerCompatProvider;
 import org.uribeacon.scan.compat.ScanCallback;
@@ -132,11 +132,11 @@ public class ConfigListActivity extends ListActivity {
     } else {
       List<ScanFilter> filters = new ArrayList<>();
       ScanFilter filterV1 = new ScanFilter.Builder()
-          .setServiceUuid(UriBeaconReaderWriterV1.CONFIG_SERVICE_UUID)
+          .setServiceUuid(ProtocolV1.CONFIG_SERVICE_UUID)
           .build();
       filters.add(filterV1);
       ScanFilter filterV2 = new ScanFilter.Builder()
-          .setServiceUuid(UriBeaconReaderWriterV2.CONFIG_SERVICE_UUID)
+          .setServiceUuid(ProtocolV2.CONFIG_SERVICE_UUID)
           .build();
       filters.add(filterV2);
       ScanSettings settings = new ScanSettings.Builder()

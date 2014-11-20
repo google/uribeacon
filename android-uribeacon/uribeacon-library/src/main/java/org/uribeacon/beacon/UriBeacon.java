@@ -82,7 +82,6 @@ public class UriBeacon {
   private final byte mFlags;
   private final byte mTxPowerLevel;
   private final String mUriString;
-  //TODO(g-ortuno): Add the rest of the V2 characteristics
 
   private static final int FLAGS_FIELD_SIZE = 3;
   private static final int URI_SERVICE_FLAGS_TXPOWER_SIZE = 2;
@@ -90,14 +89,14 @@ public class UriBeacon {
       (byte) 0xFE};
   private static final byte[] URI_SERVICE_DATA_FIELD_HEADER = {0x16, (byte) 0xD8, (byte) 0xFE};
   private static final int MAX_ADVERTISING_DATA_BYTES = 31;
+  private static final int MAX_URI_LENGTH = 18;
 
   public static final class Builder {
 
     private byte mFlags;
     private byte mTxPowerLevel;
     private String mUriString;
-    //TODO(g-ortuno): Add the rest of the V2 characteristics
-
+    private byte[] mUriBytes;
     /**
      * Add flags to the UriBeacon advertised data.
      *
@@ -119,18 +118,10 @@ public class UriBeacon {
       mUriString = uriString;
       return this;
     }
-
-    /**
-     * Add a Uri to the UriBeacon advertised data.
-     *
-     * @param uriBytes The Uri to be advertised
-     * @return The UriBeacon Builder
-     */
     public Builder uriString(byte[] uriBytes) {
-      mUriString = decodeUri(uriBytes, 0);
+      mUriBytes = uriBytes;
       return this;
     }
-
     /**
      * Add a Tx Power Level to the UriBeacon advertised data.
      *
@@ -149,6 +140,13 @@ public class UriBeacon {
      * @throws URISyntaxException if the uri provided is not valid
      */
     public UriBeacon build() throws URISyntaxException {
+      if (mUriBytes != null) {
+        mUriString = decodeUri(mUriBytes, 0);
+        if (mUriString == null) {
+          throw new IllegalArgumentException("Could not decode URI");
+        }
+      }
+
       if (mUriString == null) {
         throw new IllegalArgumentException(
             "UriBeacon advertisements must include a URI");
@@ -157,24 +155,17 @@ public class UriBeacon {
       // The Service UUID is 4 bytes. The Service Data contains a header (4 bytes),
       // Flags (1 byte) and  TX Power Level (1 byte).
       // So this works out to 28 - 4 - 4 - 1 - 1 = 18 bytes for Service Data Uri.
-      if (totalBytes(mUriString) > MAX_ADVERTISING_DATA_BYTES - FLAGS_FIELD_SIZE) {
-        throw new URISyntaxException(mUriString, "Uri size is larger than 18 bytes");
-      }
-      if (encodeUri(mUriString) == null) {
-        throw new URISyntaxException(mUriString, "Could not encode URI");
+      int length = uriLength(mUriString);
+      if (length > MAX_URI_LENGTH) {
+        throw new URISyntaxException(mUriString, "Uri size is larger than "
+            + MAX_URI_LENGTH + " bytes");
+      } else if (length == 0) {
+        throw new URISyntaxException(mUriString, "Not a valid URI");
       }
       return new UriBeacon(mFlags, mTxPowerLevel, mUriString);
     }
 
-    /**
-     * Builds a beacon. Use with data read from the beacon since this method doesn't check for uri
-     * errors.
-     *
-     * @return The UriBeacon
-     */
-    public UriBeacon buildExisting() {
-      return new UriBeacon(mFlags, mTxPowerLevel, mUriString);
-    }
+
   }
 
 
@@ -194,6 +185,7 @@ public class UriBeacon {
     byte flags = serviceData[currentPos++];
     byte txPowerLevel = serviceData[currentPos++];
     String uri = decodeUri(serviceData, currentPos);
+    //TODO: Use builder instead since builder checks for errors
     return new UriBeacon(flags, txPowerLevel, uri);
   }
 
@@ -435,7 +427,15 @@ public class UriBeacon {
     size += encodedUri.length;
     return size;
   }
-
+  private static int uriLength(String uriString) {
+    byte[] encodedUri = encodeUri(uriString);
+    if (encodedUri == null) {
+      return 0;
+    }
+    else {
+      return encodedUri.length;
+    }
+  }
   /**
    * Return the Service Data for Uri Service.
    *

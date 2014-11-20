@@ -31,11 +31,11 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.uribeacon.beacon.UriBeacon;
-import org.uribeacon.config.UriBeaconConfigDispatcher;
-import org.uribeacon.config.UriBeaconConfigDispatcher.UriBeaconCallback;
-import org.uribeacon.config.UriBeaconReaderWriterV1;
-import org.uribeacon.config.UriBeaconReaderWriterV2;
+import org.uribeacon.beacon.ConfigUriBeacon;
+import org.uribeacon.config.ProtocolV1;
+import org.uribeacon.config.ProtocolV2;
+import org.uribeacon.config.UriBeaconConfig;
+import org.uribeacon.config.UriBeaconConfig.UriBeaconCallback;
 import org.uribeacon.scan.compat.ScanResult;
 
 import java.net.URISyntaxException;
@@ -48,13 +48,13 @@ public class ConfigActivity extends Activity implements OnClickListener{
   private ProgressDialog mConnectionDialog = null;
   private static final byte DEFAULT_TX_POWER = -63;
   private final String TAG = "ConfigActivity";
-  private UriBeaconConfigDispatcher mUriBeaconConfig;
+  private UriBeaconConfig mUriBeaconConfig;
 
   private final UriBeaconCallback mUriBeaconCallback = new UriBeaconCallback() {
     @Override
-    public void onUriBeaconRead(UriBeacon uriBeacon, int status) {
+    public void onUriBeaconRead(ConfigUriBeacon configUriBeacon, int status) {
       checkRequest(status);
-      setBeaconValue(uriBeacon);
+      setBeaconValue(configUriBeacon);
     }
 
     @Override
@@ -81,20 +81,11 @@ public class ConfigActivity extends Activity implements OnClickListener{
     mBeaconUpdateValue.setEnabled(false);
     String uri = mBeaconNewValue.getText().toString();
     try {
-      UriBeacon uriBeacon;
-      if (mUriBeaconConfig.getVersion().equals(UriBeaconReaderWriterV1.CONFIG_SERVICE_UUID)) {
-        uriBeacon = new UriBeacon.Builder()
-            .uriString(uri)
-            .txPowerLevel(DEFAULT_TX_POWER)
-            .build();
-      }
-      else {
-        // TODO(g-ortuno): Set other characteristics
-        uriBeacon = new UriBeacon.Builder()
-            .uriString(uri)
-            .build();
-      }
-      mUriBeaconConfig.writeUriBeacon(uriBeacon);
+      ConfigUriBeacon configUriBeacon = new ConfigUriBeacon.Builder()
+          .uriString(uri)
+          .txPowerLevel(DEFAULT_TX_POWER)
+          .build();
+      mUriBeaconConfig.writeUriBeacon(configUriBeacon);
     } catch (URISyntaxException e) {
       Toast.makeText(ConfigActivity.this, "Invalid Uri", Toast.LENGTH_LONG).show();
       mUriBeaconConfig.closeUriBeacon();
@@ -137,7 +128,7 @@ public class ConfigActivity extends Activity implements OnClickListener{
       List<ParcelUuid> uuids = scanResult.getScanRecord().getServiceUuids();
       // Assuming the first uuid is the config uuid
       ParcelUuid uuid = uuids.get(0);
-      mUriBeaconConfig = new UriBeaconConfigDispatcher(this, mUriBeaconCallback, uuid);
+      mUriBeaconConfig = new UriBeaconConfig(this, mUriBeaconCallback, uuid);
       mUriBeaconConfig.connectUriBeacon(device);
     }
   }
@@ -148,15 +139,15 @@ public class ConfigActivity extends Activity implements OnClickListener{
     context.startActivity(intent);
   }
 
-  private void setBeaconValue(UriBeacon uriBeacon) {
-    if (mBeaconValue != null && uriBeacon != null) {
-      mBeaconValue.setText(uriBeacon.getUriString());
+  private void setBeaconValue(ConfigUriBeacon  configUriBeacon) {
+    if (mBeaconValue != null && configUriBeacon != null) {
+      mBeaconValue.setText(configUriBeacon.getUriString());
       TextView version = (TextView) findViewById(R.id.textViewVersion);
-      if (mUriBeaconConfig.getVersion().equals(UriBeaconReaderWriterV2.CONFIG_SERVICE_UUID)) {
+      if (mUriBeaconConfig.getVersion().equals(ProtocolV2.CONFIG_SERVICE_UUID)) {
         version.setText(getString(R.string.version_text) + "2");
         //TODO(g-ortuno): Set the rest of the characteristics for V2
       }
-      else if (mUriBeaconConfig.getVersion().equals(UriBeaconReaderWriterV1.CONFIG_SERVICE_UUID)) {
+      else if (mUriBeaconConfig.getVersion().equals(ProtocolV1.CONFIG_SERVICE_UUID)) {
         version.setText(getString(R.string.version_text) + "1");
       }
     }
