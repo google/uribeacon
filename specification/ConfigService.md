@@ -46,32 +46,34 @@ The assigned number for `<<UriBeacon Config Service>>` is
 ## 3 Service Characteristics
 
 
-| Characteristic     | Ref.     | Requirement  | 
-|:-------------------|:-----|:--------------------|
-| Lock               | [3.1](#31-lock) | Mandatory| 
-| Unlock             | [3.2](#32-unlock) | Mandatory|
-| Uri Data           | [3.3](#33-uri-data) | Mandatory|
-| Uri Flags          | [3.4](#34-flags)  | Mandatory|
-| Advertised Tx Power Level | [3.5](#35-advertised-tx-power-level)  | Mandatory|
-| Tx Power Mode      | [3.6](#36-tx-power-mode) | Mandatory |
-| Beacon Period      | [3.7](#37-beacon-period)| Mandatory|
-| Reset              | [3.8](#38-reset) | Mandatory|
+| Characteristic            | Ref. | Requirement  | 
+|:--------------------------|:-----|:--------------------|
+| Lock State                | [3.1](#31-lock-state) | Mandatory|
+| Lock                      | [3.2](#32-lock) | Optional| 
+| Unlock                    | [3.3](#33-unlock) | Optional|
+| Uri Data                  | [3.4](#34-uri-data) | Mandatory|
+| Uri Flags                 | [3.5](#35-flags)  | Mandatory|
+| Advertised Tx Power Level | [3.6](#36-advertised-tx-power-level)  | Mandatory|
+| Tx Power Mode             | [3.7](#37-tx-power-mode) | Mandatory |
+| Beacon Period             | [3.8](#38-beacon-period)| Mandatory|
+| Reset                     | [3.9](#39-reset) | Mandatory|
 
-||<sup>Broadcast</sup>|<sup>Read</sup>|<sup>Write without Response</sup>|<sup>Write</sup>|<sup>Notify</sup>|<sup>Indicate</sup>|<sup>Signed Write</sup>|<sup>Reliable Write</sup>|<sup>Writable Auxiliaries</sup>|
+||<sup>Broadcast</sup>|<sup>Read</sup>|<sup>Write<br>without<br> Response</sup>|<sup>Write</sup>|<sup>Notify</sup>|<sup>Indicate</sup>|<sup>Signed Write</sup>|<sup>Reliable Write</sup>|<sup>Writable Auxiliaries</sup>|
 |-------------------------:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
-|Lock                      |X|M|X|M\*|X|X|X|X|X|
+|Lock State                |X|M|X|X  |X|X|X|X|X|
+|Lock                      |X|X|X|M\*|X|X|X|X|X|
 |Unlock                    |X|X|X|M  |X|X|X|X|X|
 |Uri Data                  |X|M|X|M\*|X|X|X|X|X|
 |Advertised Tx Power Level |X|M|X|M\*|X|X|X|X|X|
 |Tx Power Mode             |X|M|X|M\*|X|X|X|X|X|
 |Beacon Period             |X|M|X|M\*|X|X|X|X|X|
-|Reset                     |X|X|M\*|X|X|X|X|X|X|
+|Reset                     |X|X|X|M\*|X|X|X|X|X|
 
 \* Must be in unlock state.
 
-### 3.1 Lock
+### 3.1 Lock State
 
-| Name | Lock |
+| Name | Lock State |
 |:-----|:----------|
 | UUID  | ee0c<b>2081</b>-8786-40ba-ab96-99b91ac981d8|
 |  Description| Locks the beacon or reads the lock state. |
@@ -80,11 +82,22 @@ The assigned number for `<<UriBeacon Config Service>>` is
 
 Read returns true if the device is locked.
 
-### 3.2 Unlock
+### 3.2 Lock
+
+| Name | Lock |
+|:-----|:----------|
+| UUID  | ee0c<b>2082</b>-8786-40ba-ab96-99b91ac981d8|
+|  Description| Locks the beacon or reads the lock state. |
+|  Type | uint128 (write) boolean (read) |
+|  Lock State | Must be unlocked. Will be locked after successful write.|
+
+Read returns true if the device is locked.
+
+### 3.3 Unlock
 
 | Name | Unlock |
 |:-----|:----------|
-| UUID  | ee0c<b>2082</b>-8786-40ba-ab96-99b91ac981d8|
+| UUID  | ee0c<b>2083</b>-8786-40ba-ab96-99b91ac981d8|
 |  Description| Unlocks the beacon. |
 |  Type | uint128 |
 |  Lock State | Will be unlocked after successful write.|
@@ -92,11 +105,11 @@ Read returns true if the device is locked.
 If the beacon is unlocked then the write will return success regardless of the
 contents of the parameter.
 
-### 3.3 Uri Data
+### 3.4 Uri Data
 
 | Name | Uri Data |
 |:-----|:----------|
-| UUID  | ee0c<b>2083</b>-8786-40ba-ab96-99b91ac981d8|
+| UUID  | ee0c<b>2084</b>-8786-40ba-ab96-99b91ac981d8|
 |  Description| Reads/writes the Uri. |
 |  Type | uint8[] |
 |  Lock State | For write, must be unlocked.|
@@ -104,11 +117,11 @@ contents of the parameter.
 The Uri Data characteristic is a variable length structure. The first byte contains the [Uri Scheme Prefix](https://github.com/google/uribeacon/tree/master/specification#uribeacon-uri-scheme-prefix).
 The remaining bytes contain either [urn:uuid encoding](https://github.com/google/uribeacon/tree/master/specification#uribeacon-urnuuid-encoding) or  [HTTP URL encoding](https://github.com/google/uribeacon/tree/master/specification#uribeacon-http-url-encoding).
 
-### 3.4 Flags
+### 3.5 Flags
 
 | Name | Flags |
 |:-----|:----------|
-| UUID  | ee0c<b>2084</b>-8786-40ba-ab96-99b91ac981d8|
+| UUID  | ee0c<b>2085</b>-8786-40ba-ab96-99b91ac981d8|
 |  Description| Reads/writes the flags. |
 |  Type | uint8 |
 |  Lock State | For write, must be unlocked.|
@@ -116,25 +129,23 @@ The remaining bytes contain either [urn:uuid encoding](https://github.com/google
 The Flags characteristic is a sinlge unsigned byte value containing the
 [UriBeacon Flags](https://github.com/google/uribeacon/tree/master/specification#uribeacon-flags).
 
-### 3.5 Advertised TX Power Level
+### 3.6 Advertised TX Power Level
 
 | Name | Advertised TX Power Level |
 |:-----|:----------|
-| UUID  | ee0c<b>2085</b>-8786-40ba-ab96-99b91ac981d8|
+| UUID  | ee0c<b>2086</b>-8786-40ba-ab96-99b91ac981d8|
 |  Description| Reads/writes the Advertised Power Level. |
-|  Type | uint8[] |
+|  Type | uint8[4] |
 |  Lock State | For write, must be unlocked.|
 
-This characteristic is a variable length array of byte pairs. The first byte is
-[TX Power Mode](#36-tx-power-mode). The second byte is a value, in dBm, to be included in the 
-[UriBeacon TX Power Level](https://github.com/google/uribeacon/tree/master/specification#uribeacon-tx-power-level) field of the advertisement when that mode is active.
+This characteristic is a fixed length array of values, in dBm, to be included in the 
+[UriBeacon TX Power Level](https://github.com/google/uribeacon/tree/master/specification#uribeacon-tx-power-level) field of the advertisement when that mode is active. The index into the array is [TX Power Mode](#36-tx-power-mode). 
 
-
-### 3.6 TX Power Mode
+### 3.7 TX Power Mode
 
 | Name | TX Power Mode |
 |:-----|:----------|
-| UUID  | ee0c<b>2086</b>-8786-40ba-ab96-99b91ac981d8|
+| UUID  | ee0c<b>2087</b>-8786-40ba-ab96-99b91ac981d8|
 |  Description| Reads/writes the TX Power Mode. |
 |  Type | uint8 |
 |  Lock State | For write, must be unlocked.|
@@ -149,27 +160,27 @@ Sets the transmission power mode to one of:
 | TX_POWER_MODE_LOWEST | 0 |
 
 
-### 3.7 Beacon Period
+### 3.8 Beacon Period
 
 | Name | Beacon Period |
 |:-----|:----------|
-| UUID  | ee0c<b>2087</b>-8786-40ba-ab96-99b91ac981d8|
+| UUID  | ee0c<b>2088</b>-8786-40ba-ab96-99b91ac981d8|
 |  Description| The period in milliseconds that a UriBeacon packet is transmitted. |
 |  Type | uint16  |
 |  Lock State | For write, must be unlocked.|
 
 The period in milliseconds that a UriBeacon packet is transmitted. A value of zero disables UriBeacon transmissions.
 
-### 3.8 Reset
+### 3.9 Reset
 
 | Name | Reset |
 |:-----|:----------|
-| UUID  | ee0c<b>2088</b>-8786-40ba-ab96-99b91ac981d8|
+| UUID  | ee0c<b>2089</b>-8786-40ba-ab96-99b91ac981d8|
 |  Description| Reset to default values. |
 |  Type | boolean  |
 |  Lock State | Must be unlocked.|
 
-Writing a non-zero value to this characteristic will set all characteristics to their initial values and reset the GATT connection:
+Writing a non-zero value to this characteristic will set all characteristics to their initial values:
 
 | Characteristic | Default Value |
 |:---------------|:--------------|
@@ -178,5 +189,15 @@ Writing a non-zero value to this characteristic will set all characteristics to 
 | TX Power Mode | TX_POWER_MODE_LOW |
 | Beacon Period | 0 (disabled) |
 | Lock | 00000000-00000-0000-0000-000000000000 |
+
+### 4 Reserved Characteristics
+
+The following Characteristic UUIDs are are reserved for future use:
+
+| UUID |
+|:----------|
+|ee0c<b>2090</b>-8786-40ba-ab96-99b91ac981d8|
+
+
 
 
