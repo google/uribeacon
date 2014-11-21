@@ -89,6 +89,9 @@ static stateChange stateGraph[] = {
     {STATE_STARTED, TRANSITION_ON,
      STATE_SCANNING},  // start scanning, set timer
     {STATE_STARTED, TRANSITION_RESIGN_ACTIVE, STATE_INACTIVE_STARTED},
+    {STATE_STARTED, TRANSITION_BECOME_ACTIVE,
+     STATE_STARTED},  // if -startScanningWithUpdateBlock: is called in
+                      // -applicationDidBecomeActive:
     {STATE_SCANNING, TRANSITION_STOP, STATE_IDLE_ON},
     {STATE_SCANNING, TRANSITION_OFF, STATE_STARTED},  // stop scanning
     {STATE_SCANNING, TRANSITION_SCAN_DELAY_EXPIRED,

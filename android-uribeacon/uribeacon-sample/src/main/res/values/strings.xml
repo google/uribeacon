@@ -27,5 +27,6 @@
     <string name="menu_stop_refresh">Stop Refresh</string>
     <string name="menu_settings">Settings</string>
     <string name="menu_config">Configure UriBeacon</string>
+    <string name="version_text">Version:</string>
 
 </resources>

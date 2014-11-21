@@ -15,6 +15,9 @@
  */
 package org.uribeacon.sample;
 
+import static android.preference.PreferenceManager.getDefaultSharedPreferences;
+
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ListActivity;
 import android.bluetooth.BluetoothAdapter;
@@ -39,8 +42,6 @@ import org.uribeacon.scan.util.RangingUtils;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
-import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
 /**
  * Activity for scanning and displaying available Bluetooth LE devices.

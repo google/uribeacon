@@ -45,6 +45,7 @@ and sample code for advertisers and scanners:
 * **[nRF51 uribeacon](beacons/nRF51) - Flash instructions for the Nordic Semiconductor nRF51822 beacon.**
 * **[android uribeacon](beacons/android) - Allows Android 5.0 devices to broadcast beacons.**
 * **[NodeJS uribeacon](beacons/nodejs) - Allows Linux user to create UriBeacons with NodeJS.**
+* **[RFduino uribeacon](beacons/RFduino) - Allows RFduino to broadcast as a UriBeacon.**
 
 We will also be providing instructions on how to assemble and
 program standalone UriBeacon tags.

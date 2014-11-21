@@ -6,6 +6,8 @@
 
 Note: this is a preview-release intended for comments and experimentation.
 
+Also see the [UriBeacon Config Service](ConfigService.md).
+
 ## Overview
 
 The Uniform Resource Identifier Beacon (UriBeacon) defines Bluetooth 4.0 Advertisement Data that contain Web Uris. UriBeacon provides a way for Bluetooth Low Energy devices to discover nearby Uris, for example, provides a way for a user to discover a short Url and then download it on their smartphone.
@@ -69,7 +71,7 @@ The format for the Advertising Data that includes the `<<Service UUID>>` and `<<
 
 |Offset | Size | Value  | Name        | Description
 |:----- | :--- | :----- | :---------- | :----------------
-|0      |  1   | 2      | AD Length   |
+|0      |  1   | 3      | AD Length   |
 |1      |  1   | 0x03   | AD Type     | Complete List of 16-Bit Service |Class UUIDs
 |2      |  2   | 0xFED8 | Service ID  | Assigned Uri Service UUID
 |4      |  1   | 5..23  | AD Length   |
@@ -89,10 +91,10 @@ EIR Data Type and Advertising Data Type (AD Type) Values](https://www.bluetooth.
 
 Bit   | Description
 :---- | :----------
-0     | Hidden
+0     | Invisible Hint
 1..7  | Reserved for future use. Must be zero.
 
-The `Hidden` flag is a command for the user-agent that tells it not to access a particular UriBeacon. This is a guideline only, and is not a blocking method. User agents may, with user approval, display hidden beacons.
+The `Invisible Hint` flag is a command for the user-agent that tells it not to access or display the UriBeacon. This is a guideline only, and is not a blocking method. User agents may, with user approval, display invisible beacons.
 
 ### UriBeacon Tx Power Level
 
