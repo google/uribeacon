@@ -1,6 +1,6 @@
 # UriBeacon Configuration Service 
 
-***Revision v2r0***
+***Revision v2r1***
 
 The material contained on this page is informative only and subject to change. 
 
