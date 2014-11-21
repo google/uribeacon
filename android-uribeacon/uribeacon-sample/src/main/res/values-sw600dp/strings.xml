@@ -24,4 +24,5 @@
     <string name="menu_stop_serial">Stop Serial Scan</string>
     <string name="menu_sort_dist">Sorting by Distance</string>
     <string name="menu_sort_addr">Sorting by Address</string>
+    <string name="menu_save">Menu Save</string>
 </resources>

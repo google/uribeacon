@@ -31,5 +31,17 @@
     <string name="menu_sort_dist">Sorting by Distance</string>
     <string name="menu_sort_addr">Sorting by Address</string>
     <string name="version_text">Version:</string>
-
+    <string name="uri">URI</string>
+    <string name="uriBeacon_characteristics">UriBeacon Characteristics</string>
+    <string name="menu_save">Menu Save</string>
+    <string name="flags">Flags</string>
+    <string name="txPowerMode">Tx Power Mode</string>
+    <string name="tx_power_lowest">Lowest</string>
+    <string name="tx_power_low">Low</string>
+    <string name="tx_power_medium">Medium</string>
+    <string name="tx_power_high">High</string>
+    <string name="beacon_period">Beacon Period</string>
+    <string name="tx_power_mode">Tx Power Mode</string>
+    <string name="advertisedTxPowerLevel">Advertised Tx Power Level</string>
+    <string name="resetBeacon">Reset Beacon</string>
 </resources>

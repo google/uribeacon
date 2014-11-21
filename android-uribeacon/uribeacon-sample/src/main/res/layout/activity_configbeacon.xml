@@ -5,57 +5,93 @@
               android:paddingLeft="@dimen/activity_horizontal_margin"
               android:paddingRight="@dimen/activity_horizontal_margin"
               android:orientation="vertical"
+              tools:context=".MainActivity" android:background="#ffffffff">
+    <LinearLayout style="@style/inputWithLabel">
+        <TextView style="@style/floatingLabel"
+                android:text="@string/uri"
+                android:id="@+id/uriLabel"/>
+        <EditText style="@style/editTextWithLabel"
+                  android:layout_width="fill_parent"
+                  android:inputType="textUri"
+                  android:hint="@string/uri"
+                  android:id="@+id/editText_uri"/>
+    </LinearLayout>
+    <LinearLayout style="@style/inputWithLabel">
+        <TextView style="@style/floatingLabel"
+                  android:text="@string/flags"
+                  android:id="@+id/flagsLabel"/>
+        <EditText style="@style/editTextWithLabel"
+                  android:layout_width="fill_parent"
+                  android:inputType="textCapWords"
+                  android:hint="@string/flags"
+                  android:id="@+id/editText_flags"/>
+    </LinearLayout>
+    <TextView android:layout_width="wrap_content"
+              android:layout_height="48dp"
+              android:textSize="18sp"
               android:gravity="center_vertical"
-              tools:context=".MainActivity" >
-
-    <TextView
-            android:id="@+id/textViewVersion"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="@string/version_text"/>
-
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="@string/beacon_old_value_title" />
-
-    <TextView
-        android:id="@+id/beaconCurValue"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:layout_height="wrap_content"
-        android:text="@string/beacon_new_value_title" />
-
+              android:text="@string/advertisedTxPowerLevel"
+              android:id="@+id/advertisedTxPowerLabel"/>
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-        <EditText
-            android:id="@+id/beaconNewValue"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:ems="10" >
-
-            <requestFocus />
-        </EditText>
-
-        <Button
-            android:id="@+id/writeNewValue"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/beacon_new_value_write_title" />
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:paddingTop="14dp"
+            android:paddingBottom="8dp"
+            android:orientation="horizontal">
+        <EditText style="@style/noLabel"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:maxLength="2"
+                android:hint="00"
+                android:id="@+id/editText_txCal1"/>
+        <EditText style="@style/noLabel"
+                  android:layout_width="0dp"
+                  android:layout_weight="1"
+                  android:maxLength="2"
+                  android:hint="01"
+                  android:id="@+id/editText_txCal2"/>
+        <EditText style="@style/noLabel"
+                  android:layout_width="0dp"
+                  android:layout_weight="1"
+                  android:maxLength="2"
+                  android:hint="10"
+                  android:id="@+id/editText_txCal3"/>
+        <EditText style="@style/noLabel"
+                  android:layout_width="0dp"
+                  android:layout_weight="1"
+                  android:maxLength="2"
+                  android:hint="11"
+                  android:id="@+id/editText_txCal4"/>
 
     </LinearLayout>
-
+    <RelativeLayout android:layout_width="fill_parent"
+                  android:layout_height="48dp">
+        <TextView android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:text="@string/txPowerMode"
+                  android:layout_centerVertical="true"
+                  android:layout_alignParentStart="true"
+                  android:textSize="18sp"
+                  android:id="@+id/txPowerMode"/>
+        <Spinner
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:entries="@array/powerModes"
+                android:id="@+id/spinner_powerMode"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"/>
+    </RelativeLayout>
+    <LinearLayout style="@style/inputWithLabel">
+        <TextView style="@style/floatingLabel"
+                  android:text="@string/beacon_period"
+                  android:id="@+id/periodLabel"/>
+        <EditText style="@style/editTextWithLabel"
+                  android:layout_width="fill_parent"
+                  android:inputType="textUri"
+                  android:hint="@string/beacon_period"
+                  android:id="@+id/editText_beaconPeriod"/>
+    </LinearLayout>
+    <Button android:layout_width="wrap_content" android:layout_height="wrap_content"
+           android:text="@string/resetBeacon"
+            android:id="@+id/button_resetBeacon"/>
 </LinearLayout>

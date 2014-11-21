@@ -36,11 +36,13 @@ public class ProtocolV2 extends BaseProtocol {
       .fromString("ee0c2087-8786-40ba-ab96-99b91ac981d8");
   //TODO(g-ortuno): Add the rest of the V2 characteristics
   private static final UUID DATA = UUID.fromString("ee0c208a-8786-40ba-ab96-99b91ac981d8");
+  private static final UUID FLAGS = UUID.fromString("ee0c208c-8786-40ba-ab96-99b91ac981d8");
 
   private final GattService mService;
   private final UriBeaconCallback mUriBeaconCallback;
   private UUID mLastUUID;
   private ConfigUriBeacon mConfigUriBeacon;
+  private ConfigUriBeacon.Builder mBuilder;
 
   public ProtocolV2(GattService serviceConnection,
       UriBeaconCallback beaconCallback) {
@@ -91,14 +93,15 @@ public class ProtocolV2 extends BaseProtocol {
       try {
         //TODO(g-ortuno): Add the rest of V2 characteristics
         if (DATA.equals(uuid)) {
-          mConfigUriBeacon = new ConfigUriBeacon.Builder()
-              .uriString(characteristic.getValue())
-              .build();
+          mBuilder = new ConfigUriBeacon.Builder()
+              .uriString(characteristic.getValue());
+        } else if (FLAGS.equals(uuid)) {
+          mBuilder.flags(characteristic.getValue()[0]);
         }
+        mUriBeaconCallback.onUriBeaconRead(mBuilder.build(), status);
       } catch (URISyntaxException e) {
         mUriBeaconCallback.onUriBeaconRead(null, status);
       }
-      mUriBeaconCallback.onUriBeaconRead(mConfigUriBeacon, status);
     } else {
       mUriBeaconCallback.onUriBeaconRead(null, status);
     }
