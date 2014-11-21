@@ -15,9 +15,6 @@
  */
 package org.uribeacon.sample;
 
-import static android.preference.PreferenceManager.getDefaultSharedPreferences;
-
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ListActivity;
 import android.bluetooth.BluetoothAdapter;
@@ -25,23 +22,33 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.ParcelUuid;
+import android.os.Parcelable;
 import android.os.SystemClock;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import org.uribeacon.beacon.UriBeacon;
+import org.uribeacon.config.ProtocolV1;
+import org.uribeacon.config.ProtocolV2;
 import org.uribeacon.scan.compat.ScanRecord;
 import org.uribeacon.scan.compat.ScanResult;
 import org.uribeacon.scan.util.RangingUtils;
+import org.uribeacon.widget.ScanResultAdapter;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
 /**
  * Activity for scanning and displaying available Bluetooth LE devices.
@@ -58,8 +65,8 @@ public class UriBeaconScanActivity extends ListActivity implements SwipeRefreshL
   private DeviceListAdapter mLeDeviceListAdapter;
   private BluetoothAdapter mBluetoothAdapter;
   private boolean mIsScanRunning;
-  private boolean mShowAllDevices;
   private SwipeRefreshLayout mSwipeLayout;
+  private Parcelable[] mScanFilterUuids;
 
   // Run when the SCAN_TIME_MILLIS has elapsed.
   private Runnable mScanTimeout = new Runnable() {
@@ -70,8 +77,18 @@ public class UriBeaconScanActivity extends ListActivity implements SwipeRefreshL
   };
 
   private boolean leScanMatches(ScanRecord scanRecord) {
+    if (mScanFilterUuids == null) {
+      return true;
+    }
     List services = scanRecord.getServiceUuids();
-    return (mShowAllDevices || (services != null && services.contains(UriBeacon.URI_SERVICE_UUID)));
+    if (services != null) {
+      for (Parcelable uuid : mScanFilterUuids) {
+        if (services.contains(uuid)) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   /**
@@ -103,8 +120,6 @@ public class UriBeaconScanActivity extends ListActivity implements SwipeRefreshL
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.uribeacon_scan_layout);
-
-    getActionBar().setTitle(R.string.title_devices);
 
     mSwipeLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
     mSwipeLayout.setOnRefreshListener(this);
@@ -165,28 +180,62 @@ public class UriBeaconScanActivity extends ListActivity implements SwipeRefreshL
         intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
         break;
-      case R.id.menu_config:
-        intent = new Intent(this, ConfigListActivity.class);
+      case R.id.menu_config: {
+        // Start another copy of this activity with different filtering options.
+        ParcelUuid services[] = {
+            ProtocolV1.CONFIG_SERVICE_UUID, ProtocolV2.CONFIG_SERVICE_UUID};
+        intent = new Intent(this, UriBeaconScanActivity.class);
+        intent.putExtra(BluetoothDevice.EXTRA_UUID, services);
         startActivity(intent);
-        break;
+      }
+      break;
     }
     return true;
+  }
+
+  @Override
+  protected void onListItemClick(ListView l, View v, int position, long id) {
+    ScanResultAdapter.DeviceSighting sighting = mLeDeviceListAdapter.getItem(position);
+    List serviceUuids = sighting.scanResult.getScanRecord().getServiceUuids();
+    // Only open configuration activity if the selected devices advertises configuration.
+    if (serviceUuids.contains(ProtocolV1.CONFIG_SERVICE_UUID) ||
+        serviceUuids.contains(ProtocolV2.CONFIG_SERVICE_UUID)) {
+      ConfigActivity.startConfigureActivity(this, sighting.scanResult);
+      // On exit from configuration, return to the main scan screen.
+      finish();
+    }
   }
 
   @Override
   protected void onResume() {
     super.onResume();
 
-    getActionBar().setTitle(getString(R.string.title_devices));
+    Parcelable configServices[] = getIntent().getParcelableArrayExtra(BluetoothDevice.EXTRA_UUID);
+    // If we are invoked with EXTRA_UUID then we are configuration mode so set title.
+    if (configServices != null) {
+      getActionBar().setTitle(R.string.title_config);
+    } else {
+      getActionBar().setTitle(R.string.title_devices);
+    }
 
     // Initializes list view adapter.
-
     mLeDeviceListAdapter = new DeviceListAdapter(getLayoutInflater());
     setListAdapter(mLeDeviceListAdapter);
 
-    mShowAllDevices = !getDefaultSharedPreferences(this).getBoolean(getString(R.string.pref_key_uribeacon), false);
+    // Set the scan filter to be one of three filtering modes: all beacons, UriBeacons,
+    // UriBeacons in config mode.
+    final String keyUriBeacon = getString(R.string.pref_key_uribeacon);
+    final SharedPreferences prefs = getDefaultSharedPreferences(this);
+    boolean filterUriBeacon = prefs.getBoolean(keyUriBeacon, false);
+    if (configServices != null) {
+      mScanFilterUuids = configServices;
+    } else if (filterUriBeacon) {
+      mScanFilterUuids = new ParcelUuid[]{UriBeacon.URI_SERVICE_UUID};
+    } else {
+      mScanFilterUuids = null;
+    }
 
-    // Try to start scanning
+    // Start scanning
     scanLeDevice(true);
   }
 
