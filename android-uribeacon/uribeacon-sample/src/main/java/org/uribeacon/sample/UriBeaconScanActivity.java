@@ -50,8 +50,8 @@ public class UriBeaconScanActivity extends ListActivity implements SwipeRefreshL
 
   private static final String TAG = "UriBeaconScan";
   private static final int REQUEST_ENABLE_BT = 1;
-
-  private static final int DEVICE_LIFETIME_SECONDS = 30;
+  // Keep devices in adapter on screen forever.
+  private static final int DEVICE_LIFETIME_SECONDS = Integer.MAX_VALUE;
   private static final Handler mHandler = new Handler();
   private static final long SCAN_TIME_MILLIS = TimeUnit.SECONDS.toMillis(5);
   private final BluetoothAdapter.LeScanCallback mLeScanCallback = new LeScanCallback();
