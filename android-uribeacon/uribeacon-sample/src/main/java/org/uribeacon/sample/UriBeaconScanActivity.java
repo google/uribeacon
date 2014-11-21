@@ -28,7 +28,6 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.ViewTreeObserver;
 import android.widget.Toast;
@@ -55,12 +54,19 @@ public class UriBeaconScanActivity extends ListActivity implements SwipeRefreshL
   private static final Handler mHandler = new Handler();
   private static final long SCAN_TIME_MILLIS = TimeUnit.SECONDS.toMillis(5);
   private final BluetoothAdapter.LeScanCallback mLeScanCallback = new LeScanCallback();
-  private final Runnable scanTimeout = new ScanTimeout();
   private DeviceListAdapter mLeDeviceListAdapter;
   private BluetoothAdapter mBluetoothAdapter;
   private boolean mIsScanRunning;
   private boolean mShowAllDevices;
   private SwipeRefreshLayout mSwipeLayout;
+
+  // Run when the SCAN_TIME_MILLIS has elapsed.
+  private Runnable mScanTimeout = new Runnable() {
+    @Override
+    public void run() {
+      scanLeDevice(false);
+    }
+  };
 
   private boolean leScanMatches(ScanRecord scanRecord) {
     List services = scanRecord.getServiceUuids();
@@ -68,7 +74,7 @@ public class UriBeaconScanActivity extends ListActivity implements SwipeRefreshL
   }
 
   /**
-   * Start or stop scanning. Only scan for a limited amount of time defined by SCAN_PERIOD.
+   * Start or stop scanning. Only scan for a limited amount of time defined by SCAN_TIME_MILLIS.
    *
    * @param enable Set to true to enable scanning, false to stop.
    */
@@ -76,14 +82,14 @@ public class UriBeaconScanActivity extends ListActivity implements SwipeRefreshL
     if (mIsScanRunning != enable) {
       mIsScanRunning = enable;
       if (enable) {
-        // Stops scanning after a predefined scan period.
-        mHandler.postDelayed(scanTimeout, SCAN_TIME_MILLIS);
+        // Stops scanning after the predefined scan time has elapsed.
+        mHandler.postDelayed(mScanTimeout, SCAN_TIME_MILLIS);
         mLeDeviceListAdapter.clear();
         mSwipeLayout.setRefreshing(true);
         mBluetoothAdapter.startLeScan(mLeScanCallback);
       } else {
         // Cancel the scan timeout callback if still active or else it may fire later.
-        mHandler.removeCallbacks(scanTimeout);
+        mHandler.removeCallbacks(mScanTimeout);
         mSwipeLayout.setRefreshing(false);
         mBluetoothAdapter.stopLeScan(mLeScanCallback);
       }
@@ -217,14 +223,6 @@ public class UriBeaconScanActivity extends ListActivity implements SwipeRefreshL
   @Override
   public void onRefresh() {
     scanLeDevice(true);
-  }
-
-
-  private class ScanTimeout implements Runnable {
-    @Override
-    public void run() {
-      scanLeDevice(false);
-    }
   }
 
   /**
