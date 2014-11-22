@@ -23,49 +23,160 @@ import java.net.URISyntaxException;
 public class ConfigUriBeacon {
 
   private final UriBeacon mUriBeacon;
-  //TODO(g-ortuno): Add V2 variables
-  private ConfigUriBeacon(UriBeacon uriBeacon) {
+  private final boolean mLockState;
+  private final byte[] mKey;
+  private final byte[] mAdvertisedTxPowerLevel;
+  private final byte mTxPowerMode;
+  private final int mPeriod;
+  private final boolean mReset;
+
+  private ConfigUriBeacon(UriBeacon uriBeacon, boolean lockState, byte[] key,
+      byte[] advertisedTxPowerLevel, byte txPowerMode, int period) {
     mUriBeacon = uriBeacon;
+    mLockState = lockState;
+    mKey = key;
+    mAdvertisedTxPowerLevel = advertisedTxPowerLevel;
+    mTxPowerMode = txPowerMode;
+    mPeriod = period;
+    mReset = false;
   }
 
+  private ConfigUriBeacon(byte[] key) {
+    mUriBeacon = null;
+    mLockState = false;
+    mKey = key;
+    mAdvertisedTxPowerLevel = null;
+    mTxPowerMode = 0;
+    mPeriod = 0;
+    mReset = true;
+  }
+
+  private ConfigUriBeacon(UriBeacon uriBeacon) {
+    mUriBeacon = uriBeacon;
+    mKey = null;
+    mLockState = false;
+    mAdvertisedTxPowerLevel = null;
+    mTxPowerMode = 0;
+    mPeriod = 0;
+    mReset = false;
+  }
+
+  /**
+   * @return The state of the lock
+   */
+  public boolean getLockState() {
+    return mLockState;
+  }
+
+  /**
+   * @return The key used to (un)lock the UriBeacon
+   */
+  public byte[] getKey() {
+    return mKey;
+  }
+
+  /**
+   * @return The Uri of the UriBeacon
+   */
+  public String getUriString() {
+    return mUriBeacon.getUriString();
+  }
+
+  /**
+   * @return The Uri of the UriBeacon
+   */
+  public byte[] getUriBytes() {
+    return mUriBeacon.getUriBytes();
+  }
+
+  /**
+   * @return The flags used in the UriBeacon
+   */
+  public byte getFlags() {
+    return mUriBeacon.getFlags();
+  }
+
+  /**
+   * @return The Advertised Tx Power Levels
+   */
+  public byte[] getAdvertisedTxPowerLevel() {
+    return mAdvertisedTxPowerLevel;
+  }
+
+  /**
+   * @return The Tx Power Mode the UriBeacon is using
+   */
+  public byte getTxPowerMode() {
+    return mTxPowerMode;
+  }
+
+  /**
+   * @return The period at which the beacon is transmitting
+   */
+  public int getPeriod() {
+    return mPeriod;
+  }
+
+  /**
+   * @return If the beacon should be reset or not
+   */
+  public boolean getReset() {
+    return mReset;
+  }
+
+  /**
+   * @return Tx Power Level at which the beacon is transmitting
+   */
+  public byte getTxPowerLevel() {
+    return mUriBeacon.getTxPowerLevel();
+  }
+
+  /**
+   * Generates the adv packet to be used in the V1 UriBeacon.
+   * @return A byte representation of the adv packet
+   * @throws URISyntaxException If there is a problem with the URI
+   */
+  public byte[] toByteArray() throws URISyntaxException {
+    return mUriBeacon.toByteArray();
+  }
+
+  /**
+   *
+   * @param scanRecordBytes
+   * @return
+   */
   public static ConfigUriBeacon parseFromBytes(byte[] scanRecordBytes) {
     UriBeacon uriBeacon = UriBeacon.parseFromBytes(scanRecordBytes);
     return new ConfigUriBeacon(uriBeacon);
   }
 
-  public byte[] toByteArray() throws URISyntaxException {
-    return mUriBeacon.toByteArray();
-  }
-
-  public String getUriString() {
-    return mUriBeacon.getUriString();
-  }
-
-  public byte getTxPowerLevel() {
-    return mUriBeacon.getTxPowerLevel();
-  }
-
-  public byte getFlags() {
-    return mUriBeacon.getFlags();
-  }
-
-  public byte[] getUriBytes() throws URISyntaxException {
-    return mUriBeacon.getUriBytes();
-  }
-
   public static final class Builder {
 
     private UriBeacon.Builder mBuilder = new UriBeacon.Builder();
-    //TODO(g-ortuno): Add the rest of the V2 characteristics
+    private boolean mLockState;
+    private byte[] mKey;
+    private byte[] mAdvertisedTxPowerLevel;
+    private byte mTxPowerMode;
+    private int mPeriod;
+    private boolean mReset;
 
     /**
-     * Add flags to the ConfigUriBeacon advertised data.
-     *
-     * @param flags The flags to be advertised.
-     * @return The ConfigUriBeacon Builder.
+     * Set the beacon's lock state
+     * @param lockState If the beacon is locked or not
+     * @return The Builder
      */
-    public Builder flags(byte flags) {
-      mBuilder.flags(flags);
+    public Builder lockState(boolean lockState) {
+      mLockState = lockState;
+      return this;
+    }
+
+    /**
+     * Set the key to (un)lock the UriBeacon with
+     * @param key The key used to (un)lock the UriBeacon
+     * @return The Builder
+     */
+    public Builder key(byte[] key) {
+      mKey = key;
       return this;
     }
 
@@ -90,7 +201,57 @@ public class ConfigUriBeacon {
     }
 
     /**
-     * Add a Tx Power Level to the UriBeacon advertised data.
+     * Add flags to the ConfigUriBeacon advertised data.
+     * @param flags The flags to be advertised.
+     * @return The ConfigUriBeacon Builder.
+     */
+    public Builder flags(byte flags) {
+      mBuilder.flags(flags);
+      return this;
+    }
+
+    /**
+     * Add the Tx Power table to the UriBeacon
+     * @param advertisedTxPowerLevel Array corresponding to the tx power level of each tx power mode
+     * @return
+     */
+    public Builder advertisedTxPower(byte[] advertisedTxPowerLevel) {
+      mAdvertisedTxPowerLevel = advertisedTxPowerLevel;
+      return this;
+    }
+
+    /**
+     * Set the Tx Power Mode that the UriBeacon will use to advertise the data
+     * @param txPowerMode The tx power mode
+     * @return
+     */
+    public Builder txPowerMode(byte txPowerMode) {
+      mTxPowerMode = txPowerMode;
+      return this;
+    }
+
+    /**
+     * Set the broadcasting period
+     * @param period
+     * @return
+     */
+    public Builder period(int period) {
+      mPeriod = period;
+      return this;
+    }
+
+    /**
+     * Set if the beacon should be reset or not
+     * @param reset
+     * @return
+     */
+    public Builder reset(boolean reset) {
+      mReset = reset;
+      return this;
+    }
+
+    /**
+     * Add a Tx Power Level to the UriBeacon advertised data. (Use for Beacon V1)
      * @param txPowerLevel The TX Power Level to be advertised.
      * @return The ConfigUriBeacon Builder.
      */
@@ -99,14 +260,17 @@ public class ConfigUriBeacon {
       return this;
     }
 
+
     /**
      * Build ConfigUriBeacon.
      * @return The ConfigUriBeacon
      */
     public ConfigUriBeacon build() throws URISyntaxException {
+      if (mReset) {
+        return new ConfigUriBeacon(mKey);
+      }
       UriBeacon uriBeacon = mBuilder.build();
-      return new ConfigUriBeacon(uriBeacon);
+      return new ConfigUriBeacon(uriBeacon, mLockState, mKey, mAdvertisedTxPowerLevel, mTxPowerMode, mPeriod);
     }
-
   }
 }

@@ -26,4 +26,9 @@
         <item>@string/tx_power_medium</item>
         <item>@string/tx_power_high</item>
     </string-array>
+    <string-array name="uriProtocols">
+        <item>@string/https</item>
+        <item>@string/http</item>
+        <item>@string/urnuuid</item>
+    </string-array>
 </resources>

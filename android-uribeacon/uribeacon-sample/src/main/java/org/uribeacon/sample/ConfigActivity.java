@@ -31,9 +31,9 @@ import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -56,6 +56,7 @@ public class ConfigActivity extends Activity{
   private EditText mTxCal4;
   private Spinner mTxPowerMode;
   private EditText mPeriod;
+  private Switch mLock;
 
   private ProgressDialog mConnectionDialog = null;
   private static final byte DEFAULT_TX_POWER = -63;
@@ -72,8 +73,10 @@ public class ConfigActivity extends Activity{
     @Override
     public void onUriBeaconWrite(int status) {
       checkRequest(status);
-      mUriBeaconConfig.closeUriBeacon();
-      finish();
+      if (status == BluetoothGatt.GATT_SUCCESS) {
+        mUriBeaconConfig.closeUriBeacon();
+        finish();
+      }
     }
 
     private void checkRequest(int status) {
@@ -140,16 +143,14 @@ public class ConfigActivity extends Activity{
 
   private void initializeTextFields() {
     mUriValue = (EditText) findViewById(R.id.editText_uri);
-    mUriValue.addTextChangedListener(textWatcherFactory(R.id.uriLabel, mUriValue));
-    mFlagsValue  = (EditText) findViewById(R.id.editText_flags);
-    mFlagsValue.addTextChangedListener(textWatcherFactory(R.id.flagsLabel, mFlagsValue));
-    mTxCal1  = (EditText) findViewById(R.id.editText_txCal1);
-    mTxCal2 = (EditText) findViewById(R.id.editText_txCal2);
-    mTxCal3 = (EditText) findViewById(R.id.editText_txCal3);
-    mTxCal4 = (EditText) findViewById(R.id.editText_txCal4);
-    //mTxPowerMode = (Spinner) findViewById(R.id.spinner_powerMode);
+    mFlagsValue = (EditText) findViewById(R.id.editText_flags);
     mPeriod = (EditText) findViewById(R.id.editText_beaconPeriod);
-    mPeriod.addTextChangedListener(textWatcherFactory(R.id.periodLabel, mPeriod));
+    mTxPowerMode = (Spinner) findViewById(R.id.spinner_powerMode);
+    mTxCal1 = (EditText) findViewById(R.id.editText_txCal1);
+    mTxCal1 = (EditText) findViewById(R.id.editText_txCal2);
+    mTxCal1 = (EditText) findViewById(R.id.editText_txCal3);
+    mTxCal1 = (EditText) findViewById(R.id.editText_txCal4);
+    mLock = (Switch) findViewById(R.id.switch_lock);
   }
 
 
@@ -193,27 +194,17 @@ public class ConfigActivity extends Activity{
     if (mUriValue != null && configUriBeacon != null) {
       mUriValue.setText(configUriBeacon.getUriString());
       if (mUriBeaconConfig.getVersion().equals(ProtocolV2.CONFIG_SERVICE_UUID)) {
-        //TODO(g-ortuno): Set the rest of the characteristics for V2
         mFlagsValue.setText(byteToHexString(configUriBeacon.getFlags()));
       }
       else if (mUriBeaconConfig.getVersion().equals(ProtocolV1.CONFIG_SERVICE_UUID)) {
         hideV2Fields();
       }
     }
+    else {
+      Toast.makeText(this, "Beacon Contains Invalid Data", Toast.LENGTH_SHORT).show();
+    }
   }
   private void hideV2Fields(){
-    mFlagsValue.setVisibility(View.GONE);
-    mTxCal1.setVisibility(View.GONE);
-    mTxCal2.setVisibility(View.GONE);
-    mTxCal3.setVisibility(View.GONE);
-    mTxCal4.setVisibility(View.GONE);
-    //mTxPowerMode.setVisibility(View.GONE);
-    mPeriod.setVisibility(View.GONE);
-    findViewById(R.id.advertisedTxPowerLabel).setVisibility(View.GONE);
-    findViewById(R.id.txPowerMode).setVisibility(View.GONE);
-    findViewById(R.id.spinner_powerMode).setVisibility(View.GONE);
-    findViewById(R.id.button_resetBeacon).setVisibility(View.GONE);
-
   }
   private String byteToHexString(byte theByte) {
     return String.format("%02X", theByte);

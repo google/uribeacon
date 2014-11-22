@@ -44,4 +44,14 @@
     <string name="tx_power_mode">Tx Power Mode</string>
     <string name="advertisedTxPowerLevel">Advertised Tx Power Level</string>
     <string name="resetBeacon">Reset Beacon</string>
+    <string name="https">https://</string>
+    <string name="http">http://</string>
+    <string name="urnuuid">urn:uuid:</string>
+    <string name="exampleCom">www.example.com</string>
+    <string name="period">Period</string>
+    <string name="powerMode">Power Mode</string>
+    <string name="unlocked">Unlocked</string>
+    <string name="lock">Lock</string>
+    <string name="ms">ms</string>
+    <string name="dbm">dBm</string>
 </resources>

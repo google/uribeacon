@@ -32,12 +32,16 @@ public class ProtocolV2 extends BaseProtocol {
 
   private static final String TAG = ProtocolV2.class.getCanonicalName();
 
-  public static final ParcelUuid CONFIG_SERVICE_UUID = ParcelUuid
-      .fromString("ee0c2087-8786-40ba-ab96-99b91ac981d8");
-  //TODO(g-ortuno): Add the rest of the V2 characteristics
-  private static final UUID DATA = UUID.fromString("ee0c208a-8786-40ba-ab96-99b91ac981d8");
-  private static final UUID FLAGS = UUID.fromString("ee0c208c-8786-40ba-ab96-99b91ac981d8");
-
+  public static final ParcelUuid CONFIG_SERVICE_UUID = ParcelUuid.fromString("ee0c2080-8786-40ba-ab96-99b91ac981d8");
+  private static final UUID LOCK_STATE                     = UUID.fromString("ee0c2081-8786-40ba-ab96-99b91ac981d8");
+  private static final UUID LOCK                           = UUID.fromString("ee0c2082-8786-40ba-ab96-99b91ac981d8");
+  private static final UUID UNLOCK                         = UUID.fromString("ee0c2083-8786-40ba-ab96-99b91ac981d8");
+  private static final UUID DATA                           = UUID.fromString("ee0c2084-8786-40ba-ab96-99b91ac981d8");
+  private static final UUID FLAGS                          = UUID.fromString("ee0c2085-8786-40ba-ab96-99b91ac981d8");
+  private static final UUID ADVERTISED_TX_POWER            = UUID.fromString("ee0c2086-8786-40ba-ab96-99b91ac981d8");
+  private static final UUID TX_POWER_MODE                  = UUID.fromString("ee0c2087-8786-40ba-ab96-99b91ac981d8");
+  private static final UUID PERIOD                         = UUID.fromString("ee0c2088-8786-40ba-ab96-99b91ac981d8");
+  private static final UUID RESET                          = UUID.fromString("ee0c2089-8786-40ba-ab96-99b91ac981d8");
   private final GattService mService;
   private final UriBeaconCallback mUriBeaconCallback;
   private UUID mLastUUID;
@@ -81,7 +85,12 @@ public class ProtocolV2 extends BaseProtocol {
   public void onServicesDiscovered(BluetoothGatt gatt, int status) {
     Log.d(TAG, "onServicesDiscovered request queue");
     mService.setService(CONFIG_SERVICE_UUID.getUuid());
+    mService.readCharacteristic(LOCK_STATE);
     mService.readCharacteristic(DATA);
+    mService.readCharacteristic(FLAGS);
+    mService.readCharacteristic(ADVERTISED_TX_POWER);
+    mService.readCharacteristic(TX_POWER_MODE);
+    mService.readCharacteristic(PERIOD);
   }
 
   @Override
@@ -90,16 +99,24 @@ public class ProtocolV2 extends BaseProtocol {
     // If the operation was successful
     if (status == BluetoothGatt.GATT_SUCCESS) {
       UUID uuid = characteristic.getUuid();
+      mBuilder = new ConfigUriBeacon.Builder();
       try {
-        //TODO(g-ortuno): Add the rest of V2 characteristics
-        if (DATA.equals(uuid)) {
-          mBuilder = new ConfigUriBeacon.Builder()
-              .uriString(characteristic.getValue());
+        if (LOCK_STATE.equals(uuid)) {
+          mBuilder.lockState(characteristic.getValue()[0] != 0);
+        } else if (DATA.equals(uuid)) {
+          mBuilder.uriString(characteristic.getValue());
         } else if (FLAGS.equals(uuid)) {
           mBuilder.flags(characteristic.getValue()[0]);
+        } else if (ADVERTISED_TX_POWER.equals(uuid)) {
+          mBuilder.advertisedTxPower(characteristic.getValue());
+        } else if (TX_POWER_MODE.equals(uuid)) {
+          mBuilder.txPowerMode(characteristic.getValue()[0]);
+        } else if (PERIOD.equals(uuid)) {
+          mBuilder.period(characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT16, 0));
+          mConfigUriBeacon = mBuilder.build();
+          mUriBeaconCallback.onUriBeaconRead(mConfigUriBeacon, status);
         }
-        mUriBeaconCallback.onUriBeaconRead(mBuilder.build(), status);
-      } catch (URISyntaxException e) {
+      } catch (URISyntaxException | IllegalArgumentException e) {
         mUriBeaconCallback.onUriBeaconRead(null, status);
       }
     } else {
