@@ -21,6 +21,10 @@
     <string name="title_devices">Scan</string>
     <string name="title_config">Config</string>
     <string name="error_bluetooth_not_supported">Bluetooth not supported.</string>
+    <string name="empty_scan_start">Searching for devices</string>
+    <string name="empty_scan_end">No devices found</string>
+    <string name="empty_config_start">Searching for configurable UriBeacons</string>
+    <string name="empty_config_end">No configurable UriBeacons found.\nVisit uribeacon.org</string>
 
     <!-- Menu items -->
     <string name="menu_refresh">Refresh</string>

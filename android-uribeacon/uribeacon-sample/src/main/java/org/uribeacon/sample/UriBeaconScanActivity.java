@@ -33,8 +33,9 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewTreeObserver;
+import android.view.Window;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.uribeacon.beacon.UriBeacon;
@@ -65,7 +66,8 @@ public class UriBeaconScanActivity extends ListActivity implements SwipeRefreshL
   private DeviceListAdapter mLeDeviceListAdapter;
   private BluetoothAdapter mBluetoothAdapter;
   private boolean mIsScanRunning;
-  private SwipeRefreshLayout mSwipeLayout;
+  private SwipeRefreshLayout mSwipeWidget;
+  private boolean mIsConfig;
   private Parcelable[] mScanFilterUuids;
 
   // Run when the SCAN_TIME_MILLIS has elapsed.
@@ -99,31 +101,39 @@ public class UriBeaconScanActivity extends ListActivity implements SwipeRefreshL
   @SuppressWarnings("deprecation")
   private void scanLeDevice(final boolean enable) {
     if (mIsScanRunning != enable) {
+      TextView view = (TextView) findViewById(android.R.id.empty);
       mIsScanRunning = enable;
+      setProgressBarIndeterminateVisibility(enable);
       if (enable) {
+        view.setText(mIsConfig ? R.string.empty_config_start : R.string.empty_scan_start);
         // Stops scanning after the predefined scan time has elapsed.
         mHandler.postDelayed(mScanTimeout, SCAN_TIME_MILLIS);
         mLeDeviceListAdapter.clear();
-        mSwipeLayout.setRefreshing(true);
         mBluetoothAdapter.startLeScan(mLeScanCallback);
       } else {
         // Cancel the scan timeout callback if still active or else it may fire later.
         mHandler.removeCallbacks(mScanTimeout);
-        mSwipeLayout.setRefreshing(false);
         mBluetoothAdapter.stopLeScan(mLeScanCallback);
+        view.setText(mIsConfig ? R.string.empty_config_end : R.string.empty_scan_end);
       }
       // update the refresh/stop refresh menu
       invalidateOptionsMenu();
     }
   }
 
+
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
     setContentView(R.layout.uribeacon_scan_layout);
 
-    mSwipeLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
-    mSwipeLayout.setOnRefreshListener(this);
+    mSwipeWidget = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_widget);
+    mSwipeWidget.setOnRefreshListener(this);
+
+    // Initializes list view adapter.
+    mLeDeviceListAdapter = new DeviceListAdapter(getLayoutInflater());
+    setListAdapter(mLeDeviceListAdapter);
 
     // Use this check to determine whether BLE is supported on the device. Then you can
     // selectively disable BLE-related features.
@@ -155,6 +165,7 @@ public class UriBeaconScanActivity extends ListActivity implements SwipeRefreshL
   public boolean onPrepareOptionsMenu(Menu menu) {
     menu.findItem(R.id.menu_stop_refresh).setVisible(mIsScanRunning);
     menu.findItem(R.id.menu_refresh).setVisible(!mIsScanRunning);
+    menu.findItem(R.id.menu_config).setVisible(!mIsConfig);
     return super.onPrepareOptionsMenu(menu);
   }
 
@@ -188,10 +199,8 @@ public class UriBeaconScanActivity extends ListActivity implements SwipeRefreshL
   @Override
   protected void onListItemClick(ListView l, View v, int position, long id) {
     ScanResultAdapter.DeviceSighting sighting = mLeDeviceListAdapter.getItem(position);
-    List serviceUuids = sighting.scanResult.getScanRecord().getServiceUuids();
     // Only open configuration activity if the selected devices advertises configuration.
-    if (serviceUuids.contains(ProtocolV1.CONFIG_SERVICE_UUID) ||
-        serviceUuids.contains(ProtocolV2.CONFIG_SERVICE_UUID)) {
+    if (mIsConfig) {
       ConfigActivity.startConfigureActivity(this, sighting.scanResult);
       // On exit from configuration, return to the main scan screen.
       finish();
@@ -201,33 +210,24 @@ public class UriBeaconScanActivity extends ListActivity implements SwipeRefreshL
   @Override
   protected void onResume() {
     super.onResume();
-
     Parcelable configServices[] = getIntent().getParcelableArrayExtra(BluetoothDevice.EXTRA_UUID);
-    // If we are invoked with EXTRA_UUID then we are configuration mode so set title.
-    if (configServices != null) {
-      getActionBar().setTitle(R.string.title_config);
-    } else {
-      getActionBar().setTitle(R.string.title_devices);
-    }
+    mIsConfig = configServices != null;
 
-    // Initializes list view adapter.
-    mLeDeviceListAdapter = new DeviceListAdapter(getLayoutInflater());
-    setListAdapter(mLeDeviceListAdapter);
+    // If we are invoked with EXTRA_UUID then we are configuration mode so set title.
+    getActionBar().setTitle(mIsConfig ? R.string.title_config : R.string.title_devices);
 
     // Set the scan filter to be one of three filtering modes: all beacons, UriBeacons,
     // UriBeacons in config mode.
     final String keyUriBeacon = getString(R.string.pref_key_uribeacon);
     final SharedPreferences prefs = getDefaultSharedPreferences(this);
     boolean filterUriBeacon = prefs.getBoolean(keyUriBeacon, false);
-    if (configServices != null) {
+    if (mIsConfig) {
       mScanFilterUuids = configServices;
     } else if (filterUriBeacon) {
       mScanFilterUuids = new ParcelUuid[]{UriBeacon.URI_SERVICE_UUID};
     } else {
       mScanFilterUuids = null;
     }
-
-    // Start scanning
     scanLeDevice(true);
   }
 
@@ -246,7 +246,6 @@ public class UriBeaconScanActivity extends ListActivity implements SwipeRefreshL
     super.onPause();
     // on Pause stop any scans that are running if not in background mode
     scanLeDevice(false);
-
   }
 
   private int getTxPowerLevel(ScanResult scanResult) {
@@ -264,6 +263,8 @@ public class UriBeaconScanActivity extends ListActivity implements SwipeRefreshL
 
   @Override
   public void onRefresh() {
+    // This obscures the contents, so keep in the action bar
+    mSwipeWidget.setRefreshing(false);
     scanLeDevice(true);
   }
 
