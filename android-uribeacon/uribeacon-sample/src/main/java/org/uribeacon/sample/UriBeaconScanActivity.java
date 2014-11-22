@@ -30,10 +30,10 @@ import android.os.ParcelUuid;
 import android.os.Parcelable;
 import android.os.SystemClock;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -66,8 +66,7 @@ public class UriBeaconScanActivity extends ListActivity implements SwipeRefreshL
   private DeviceListAdapter mLeDeviceListAdapter;
   private BluetoothAdapter mBluetoothAdapter;
   private boolean mIsScanRunning;
-  private SwipeRefreshLayout mSwipeListView;
-  private SwipeRefreshLayout mSwipeEmptyView;
+  private SwipeRefreshLayout mSwipeWidget;
   private boolean mIsConfig;
   private Parcelable[] mScanFilterUuids;
 
@@ -102,8 +101,9 @@ public class UriBeaconScanActivity extends ListActivity implements SwipeRefreshL
   @SuppressWarnings("deprecation")
   private void scanLeDevice(final boolean enable) {
     if (mIsScanRunning != enable) {
-      TextView view = (TextView) findViewById(R.id.empty_text);
+      TextView view = (TextView) findViewById(android.R.id.empty);
       mIsScanRunning = enable;
+      setProgressBarIndeterminateVisibility(enable);
       if (enable) {
         view.setText(mIsConfig ? R.string.empty_config_start : R.string.empty_scan_start);
         // Stops scanning after the predefined scan time has elapsed.
@@ -116,36 +116,20 @@ public class UriBeaconScanActivity extends ListActivity implements SwipeRefreshL
         mBluetoothAdapter.stopLeScan(mLeScanCallback);
         view.setText(mIsConfig ? R.string.empty_config_end : R.string.empty_scan_end);
       }
-
-      // Unknown why, but the animation doesn't show on the first refresh kicked off in the
-      // resume unless we delay here.
-      mHandler.postDelayed(new Runnable() {
-        @Override
-        public void run() {
-            Log.d(TAG, "setRefreshing mSwipeListView " + enable);
-            mSwipeListView.setRefreshing(enable);
-            Log.d(TAG, "setRefreshing SwipeEmptyView " + enable);
-            mSwipeEmptyView.setRefreshing(enable);
-
-        }}, 100);
       // update the refresh/stop refresh menu
       invalidateOptionsMenu();
     }
   }
 
 
-
-    @Override
+  @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
     setContentView(R.layout.uribeacon_scan_layout);
 
-    mSwipeListView = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
-    mSwipeListView.setOnRefreshListener(this);
-
-    // View shown when no list items are present
-    mSwipeEmptyView = (SwipeRefreshLayout) findViewById(android.R.id.empty);
-    mSwipeEmptyView.setOnRefreshListener(this);
+    mSwipeWidget = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_widget);
+    mSwipeWidget.setOnRefreshListener(this);
 
     // Initializes list view adapter.
     mLeDeviceListAdapter = new DeviceListAdapter(getLayoutInflater());
@@ -279,6 +263,8 @@ public class UriBeaconScanActivity extends ListActivity implements SwipeRefreshL
 
   @Override
   public void onRefresh() {
+    // This obscures the contents, so keep in the action bar
+    mSwipeWidget.setRefreshing(false);
     scanLeDevice(true);
   }
 
