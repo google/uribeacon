@@ -96,6 +96,7 @@ public class UriBeaconScanActivity extends ListActivity implements SwipeRefreshL
    *
    * @param enable Set to true to enable scanning, false to stop.
    */
+  @SuppressWarnings("deprecation")
   private void scanLeDevice(final boolean enable) {
     if (mIsScanRunning != enable) {
       mIsScanRunning = enable;
