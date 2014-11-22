@@ -123,15 +123,6 @@ public class UriBeaconScanActivity extends ListActivity implements SwipeRefreshL
 
     mSwipeLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
     mSwipeLayout.setOnRefreshListener(this);
-    mSwipeLayout.getViewTreeObserver().addOnGlobalLayoutListener(
-        new ViewTreeObserver.OnGlobalLayoutListener() {
-          @Override
-          public void onGlobalLayout() {
-            mSwipeLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-            int height = mSwipeLayout.getHeight();
-            mSwipeLayout.setProgressViewOffset(true, height / 3, height / 2);
-          }
-        });
 
     // Use this check to determine whether BLE is supported on the device. Then you can
     // selectively disable BLE-related features.
