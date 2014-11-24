@@ -79,7 +79,6 @@ public class ConfigUriBeacon extends UriBeacon {
       return this;
     }
 
-
     /**
      * Build ConfigUriBeacon.
      *

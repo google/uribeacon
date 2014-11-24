@@ -5,5 +5,7 @@
           android:icon="@drawable/ic_action_save"
           android:onClick="saveConfigBeacon"
           android:showAsAction="always"/>
-
+    <item android:id="@+id/menu_reset"
+          android:title="@string/resetBeacon"
+          android:showAsAction="never"/>
 </menu>

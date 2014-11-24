@@ -44,7 +44,7 @@
     <string name="beacon_period">Beacon Period</string>
     <string name="tx_power_mode">Tx Power Mode</string>
     <string name="advertisedTxPowerLevel">Advertised Tx Power Level</string>
-    <string name="resetBeacon">Reset Beacon</string>
+    <string name="resetBeacon">Reset to defaults</string>
     <string name="https">https://</string>
     <string name="http">http://</string>
     <string name="urnuuid">urn:uuid:</string>

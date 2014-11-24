@@ -118,7 +118,8 @@ public class ConfigActivity extends Activity{
     Intent intent = getIntent();
     if (intent.getExtras() != null) {
       ScanResult scanResult = intent.getExtras().getParcelable(ScanResult.class.getCanonicalName());
-      BluetoothDevice device = scanResult.getDevice();      if (device != null) {
+      BluetoothDevice device = scanResult.getDevice();
+      if (device != null) {
         // start connection progress
         mConnectionDialog = new ProgressDialog(this);
         mConnectionDialog.setIndeterminate(true);
