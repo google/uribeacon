@@ -64,6 +64,7 @@ The assigned number for `<<UriBeacon Config Service>>` is
 |Lock                      |X|X|X|O\*|X|X|X|X|X|
 |Unlock                    |X|X|X|O  |X|X|X|X|X|
 |Uri Data                  |X|M|X|M\*|X|X|X|X|X|
+|Uri Flags                 |X|M|X|M\*|X|X|X|X|X|
 |Advertised Tx Power Level |X|M|X|M\*|X|X|X|X|X|
 |Tx Power Mode             |X|M|X|M\*|X|X|X|X|X|
 |Beacon Period             |X|M|X|M\*|X|X|X|X|X|
@@ -133,7 +134,7 @@ The Flags characteristic is a sinlge unsigned byte value containing the
 |:------------|:--------------------------------------------|
 | UUID  | ee0c<b>2086</b>-8786-40ba-ab96-99b91ac981d8|
 |  Description| Reads/writes the Advertised Power Level. |
-|  Type | uint8[4] |
+|  Type | int8[4] |
 |  Lock State | For write, must be unlocked.|
 
 This characteristic is a fixed length array of values, in dBm, to be included in the 
