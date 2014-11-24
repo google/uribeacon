@@ -19,7 +19,7 @@
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
     android:orientation="vertical"
-    android:paddingLeft="10dp" >
+    android:paddingStart="10dp" >
 
     <TextView
         android:id="@+id/device_name"
