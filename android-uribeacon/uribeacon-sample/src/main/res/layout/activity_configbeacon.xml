@@ -37,6 +37,7 @@
                       android:id="@+id/periodLabel"/>
             <RelativeLayout style="@style/unitBox">
                 <EditText style="@style/editText"
+                          android:inputType="number"
                           android:id="@+id/editText_beaconPeriod"/>
                 <TextView style="@style/unit"
                           android:text="@string/ms"
