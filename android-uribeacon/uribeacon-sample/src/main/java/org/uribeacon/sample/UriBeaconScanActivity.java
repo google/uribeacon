@@ -15,85 +15,125 @@
  */
 package org.uribeacon.sample;
 
-import static android.preference.PreferenceManager.getDefaultSharedPreferences;
-
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ListActivity;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Handler;
+import android.os.ParcelUuid;
+import android.os.Parcelable;
+import android.os.SystemClock;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.uribeacon.beacon.UriBeacon;
-import org.uribeacon.scan.compat.BluetoothLeScannerCompat;
-import org.uribeacon.scan.compat.BluetoothLeScannerCompatProvider;
-import org.uribeacon.scan.compat.ScanCallback;
-import org.uribeacon.scan.compat.ScanFilter;
+import org.uribeacon.config.ProtocolV1;
+import org.uribeacon.config.ProtocolV2;
+import org.uribeacon.scan.compat.ScanRecord;
 import org.uribeacon.scan.compat.ScanResult;
-import org.uribeacon.scan.compat.ScanSettings;
-import org.uribeacon.scan.util.AdvertisingData;
 import org.uribeacon.scan.util.RangingUtils;
 import org.uribeacon.widget.ScanResultAdapter;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.TimeUnit;
+
+import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
 /**
  * Activity for scanning and displaying available Bluetooth LE devices.
  */
-public class UriBeaconScanActivity extends ListActivity {
+public class UriBeaconScanActivity extends ListActivity implements SwipeRefreshLayout.OnRefreshListener {
 
   private static final String TAG = "UriBeaconScan";
   private static final int REQUEST_ENABLE_BT = 1;
-  private static final SimpleDateFormat TIMESTAMP_FORMAT =
-      new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSS", Locale.US);
-  private static final int DEVICE_LIFETIME_SECONDS = 30;
-  static enum RunningScan {NONE, SERIAL}
-
-  private LeDeviceListAdapter mLeDeviceListAdapter;
+  // Keep devices in adapter on screen forever.
+  private static final int DEVICE_LIFETIME_SECONDS = Integer.MAX_VALUE;
+  private static final Handler mHandler = new Handler();
+  private static final long SCAN_TIME_MILLIS = TimeUnit.SECONDS.toMillis(5);
+  private final BluetoothAdapter.LeScanCallback mLeScanCallback = new LeScanCallback();
+  private DeviceListAdapter mLeDeviceListAdapter;
   private BluetoothAdapter mBluetoothAdapter;
-  private RunningScan scanRunning;
-  private boolean sortByDistance = true;
+  private boolean mIsScanRunning;
+  private SwipeRefreshLayout mSwipeWidget;
+  private boolean mIsConfig;
+  private Parcelable[] mScanFilterUuids;
 
-  private final ScanCallback mCallback = new ScanCallback() {
+  // Run when the SCAN_TIME_MILLIS has elapsed.
+  private Runnable mScanTimeout = new Runnable() {
     @Override
-    public void onScanResult(int callbackType, ScanResult result) {
-      if (callbackType == ScanSettings.CALLBACK_TYPE_ALL_MATCHES ||
-          callbackType == ScanSettings.CALLBACK_TYPE_FIRST_MATCH) {
-        handleScanMatch(result);
-      } else {
-        Log.e(TAG, "Unrecognized callback type received: " + callbackType);
-      }
-    }
-
-    @Override
-    public void onScanFailed(int errorCode) {
-      handleScanFailed(errorCode);
+    public void run() {
+      scanLeDevice(false);
     }
   };
 
-  private void handleScanFailed(int err) {
-    Log.e(TAG, "onScanFailed: " + err);
+  private boolean leScanMatches(ScanRecord scanRecord) {
+    if (mScanFilterUuids == null) {
+      return true;
+    }
+    List services = scanRecord.getServiceUuids();
+    if (services != null) {
+      for (Parcelable uuid : mScanFilterUuids) {
+        if (services.contains(uuid)) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
+
+  /**
+   * Start or stop scanning. Only scan for a limited amount of time defined by SCAN_TIME_MILLIS.
+   *
+   * @param enable Set to true to enable scanning, false to stop.
+   */
+  @SuppressWarnings("deprecation")
+  private void scanLeDevice(final boolean enable) {
+    if (mIsScanRunning != enable) {
+      TextView view = (TextView) findViewById(android.R.id.empty);
+      mIsScanRunning = enable;
+      setProgressBarIndeterminateVisibility(enable);
+      if (enable) {
+        view.setText(mIsConfig ? R.string.empty_config_start : R.string.empty_scan_start);
+        // Stops scanning after the predefined scan time has elapsed.
+        mHandler.postDelayed(mScanTimeout, SCAN_TIME_MILLIS);
+        mLeDeviceListAdapter.clear();
+        mBluetoothAdapter.startLeScan(mLeScanCallback);
+      } else {
+        // Cancel the scan timeout callback if still active or else it may fire later.
+        mHandler.removeCallbacks(mScanTimeout);
+        mBluetoothAdapter.stopLeScan(mLeScanCallback);
+        view.setText(mIsConfig ? R.string.empty_config_end : R.string.empty_scan_end);
+      }
+      // update the refresh/stop refresh menu
+      invalidateOptionsMenu();
+    }
+  }
+
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    getActionBar().setTitle(R.string.title_devices);
+    requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+    setContentView(R.layout.uribeacon_scan_layout);
+
+    mSwipeWidget = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_widget);
+    mSwipeWidget.setOnRefreshListener(this);
+
+    // Initializes list view adapter.
+    mLeDeviceListAdapter = new DeviceListAdapter(getLayoutInflater());
+    setListAdapter(mLeDeviceListAdapter);
 
     // Use this check to determine whether BLE is supported on the device. Then you can
     // selectively disable BLE-related features.
@@ -118,126 +158,77 @@ public class UriBeaconScanActivity extends ListActivity {
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     getMenuInflater().inflate(R.menu.main, menu);
-    menu.findItem(R.id.menu_refresh).setActionView(R.layout.actionbar_indeterminate_progress);
-    invalidateOptionsMenu();
-    return true;
+    return super.onCreateOptionsMenu(menu);
   }
 
   @Override
   public boolean onPrepareOptionsMenu(Menu menu) {
-    menu.findItem(R.id.menu_stop_serial).setVisible(scanRunning == RunningScan.SERIAL);
-    menu.findItem(R.id.menu_scan).setVisible(scanRunning == RunningScan.NONE);
-    menu.findItem(R.id.menu_refresh).setVisible(scanRunning != RunningScan.NONE);
-    menu.findItem(R.id.menu_sort_dist).setVisible(sortByDistance);
-    menu.findItem(R.id.menu_sort_addr).setVisible(!sortByDistance);
-    return true;
+    menu.findItem(R.id.menu_stop_refresh).setVisible(mIsScanRunning);
+    menu.findItem(R.id.menu_refresh).setVisible(!mIsScanRunning);
+    menu.findItem(R.id.menu_config).setVisible(!mIsConfig);
+    return super.onPrepareOptionsMenu(menu);
   }
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     Intent intent;
     switch (item.getItemId()) {
-      case R.id.menu_scan:
-        startScanning();
+      case R.id.menu_refresh:
+        scanLeDevice(true);
         break;
-      case R.id.menu_stop_serial:
-        stopScanning();
+      case R.id.menu_stop_refresh:
+        scanLeDevice(false);
         break;
       case R.id.menu_settings:
         intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
         break;
-      case R.id.menu_config:
-        intent = new Intent(this, ConfigListActivity.class);
+      case R.id.menu_config: {
+        // Start another copy of this activity with different filtering options.
+        ParcelUuid services[] = {
+            ProtocolV1.CONFIG_SERVICE_UUID, ProtocolV2.CONFIG_SERVICE_UUID};
+        intent = new Intent(this, UriBeaconScanActivity.class);
+        intent.putExtra(BluetoothDevice.EXTRA_UUID, services);
         startActivity(intent);
-        break;
-      case R.id.menu_sort_dist:
-        sortByDistance = false;
-        mLeDeviceListAdapter.notifyDataSetChanged();
-        invalidateOptionsMenu();
-        break;
-      case R.id.menu_sort_addr:
-        sortByDistance = true;
-        mLeDeviceListAdapter.notifyDataSetChanged();
-        invalidateOptionsMenu();
-        break;
+      }
+      break;
     }
     return true;
   }
 
   @Override
+  protected void onListItemClick(ListView l, View v, int position, long id) {
+    ScanResultAdapter.DeviceSighting sighting = mLeDeviceListAdapter.getItem(position);
+    // Only open configuration activity if the selected devices advertises configuration.
+    if (mIsConfig) {
+      ConfigActivity.startConfigureActivity(this, sighting.scanResult);
+      // On exit from configuration, return to the main scan screen.
+      finish();
+    }
+  }
+
+  @Override
   protected void onResume() {
     super.onResume();
+    Parcelable configServices[] = getIntent().getParcelableArrayExtra(BluetoothDevice.EXTRA_UUID);
+    mIsConfig = configServices != null;
 
-    getActionBar().setTitle(getString(R.string.title_devices));
+    // If we are invoked with EXTRA_UUID then we are configuration mode so set title.
+    getActionBar().setTitle(mIsConfig ? R.string.title_config : R.string.title_devices);
 
-    // Initializes list view adapter.
-    mLeDeviceListAdapter = new LeDeviceListAdapter();
-    setListAdapter(mLeDeviceListAdapter);
-
-    // Try to start scanning
-    startScanning();
-  }
-
-  private void startScanning() {
-    Log.v(TAG, "startScanning() called");
-
-    // Ensures Bluetooth is enabled on the device. If Bluetooth is not currently enabled,
-    // fire an intent to display a dialog asking the user to grant permission to enable it.
-    if (!mBluetoothAdapter.isEnabled()) {
-      Log.v(TAG, "Bluetooth not enabled; asking user to start it");
-      Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-      startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+    // Set the scan filter to be one of three filtering modes: all beacons, UriBeacons,
+    // UriBeacons in config mode.
+    final String keyUriBeacon = getString(R.string.pref_key_uribeacon);
+    final SharedPreferences prefs = getDefaultSharedPreferences(this);
+    boolean filterUriBeacon = prefs.getBoolean(keyUriBeacon, false);
+    if (mIsConfig) {
+      mScanFilterUuids = configServices;
+    } else if (filterUriBeacon) {
+      mScanFilterUuids = new ParcelUuid[]{UriBeacon.URI_SERVICE_UUID};
     } else {
-      launchSerialScan();
+      mScanFilterUuids = null;
     }
-    invalidateOptionsMenu();
-  }
-
-  private void stopScanning() {
-    Log.v(TAG, "stopScanning() called");
-
-    getLeScanner().stopScan(mCallback);
-    scanRunning = RunningScan.NONE;
-
-    runOnUiThread(new Runnable() {
-      @Override
-      public void run() {
-        invalidateOptionsMenu();
-        mLeDeviceListAdapter.clear();
-      }
-    });
-  }
-
-  private List<ScanFilter> getFilters() {
-    List<ScanFilter> filters = new ArrayList<>();
-    if (getBooleanPreference(R.string.pref_key_uribeacon)) {
-      ScanFilter filter = new ScanFilter.Builder()
-          .setServiceData(UriBeacon.URI_SERVICE_UUID,
-              new byte[]{},
-              new byte[]{})
-          .build();
-      filters.add(filter);
-    }
-    return filters;
-  }
-
-  /**
-   * Considers launching the standard Serial Scan using the given settings.
-   */
-  private void launchSerialScan() {
-    Log.v(TAG, "attempting to start serial scan...");
-
-    // Determine Serial Scan Mode Preference
-    int scanMode = ScanSettings.SCAN_MODE_BALANCED;
-
-    ScanSettings settings = new ScanSettings.Builder()
-        .setCallbackType(ScanSettings.CALLBACK_TYPE_ALL_MATCHES)
-        .setScanMode(scanMode)
-        .build();
-    boolean started = getLeScanner().startScan(getFilters(), settings, mCallback);
-    Log.v(TAG, started ? "... scan started" : "... scan NOT started");
-    scanRunning = started ? RunningScan.SERIAL : RunningScan.NONE;
+    scanLeDevice(true);
   }
 
   @Override
@@ -254,8 +245,7 @@ public class UriBeaconScanActivity extends ListActivity {
   protected void onPause() {
     super.onPause();
     // on Pause stop any scans that are running if not in background mode
-  stopScanning();
-
+    scanLeDevice(false);
   }
 
   private int getTxPowerLevel(ScanResult scanResult) {
@@ -265,125 +255,36 @@ public class UriBeaconScanActivity extends ListActivity {
 
     if (uriBeacon != null) {
       int txPowerLevel = uriBeacon.getTxPowerLevel();
-      Log.d(TAG, "Tx Power Level: " + txPowerLevel);
       return uriBeacon.getTxPowerLevel();
     }
 
     return RangingUtils.DEFAULT_TX_POWER_LEVEL;
   }
 
-  private void handleScanMatch(final ScanResult scanResult) {
-    Log.v(TAG, "Scan Match: " + scanResult.getDevice() + " rssi:" + scanResult.getRssi() + " sr:"
-        + AdvertisingData.toHexString(scanResult.getScanRecord().getBytes()));
-    runOnUiThread(new Runnable() {
-      @Override
-      public void run() {
-        int txPower = getTxPowerLevel(scanResult);
-        mLeDeviceListAdapter.add(scanResult, txPower, DEVICE_LIFETIME_SECONDS);
-      }
-    });
+  @Override
+  public void onRefresh() {
+    // This obscures the contents, so keep in the action bar
+    mSwipeWidget.setRefreshing(false);
+    scanLeDevice(true);
   }
 
-  private BluetoothLeScannerCompat getLeScanner() {
-    return BluetoothLeScannerCompatProvider.getBluetoothLeScannerCompat(this);
-  }
-
-  // Adapter for holding devices found through scanning.
-  private class LeDeviceListAdapter extends ScanResultAdapter {
-    public LeDeviceListAdapter() {
-      super(UriBeaconScanActivity.this.getLayoutInflater());
-    }
-
-    @SuppressLint("InflateParams")
+  /**
+   * Callback for LE scan results.
+   */
+  private class LeScanCallback implements BluetoothAdapter.LeScanCallback {
     @Override
-    public View getView(int i, View view, ViewGroup viewGroup) {
-      ViewHolder viewHolder;
-      // General ListView optimization code.
-      if (view == null) {
-        view = mInflater.inflate(R.layout.listitem_device, null);
-        viewHolder = new ViewHolder();
-        viewHolder.deviceAddress = (TextView) view.findViewById(R.id.device_address);
-        viewHolder.deviceName = (TextView) view.findViewById(R.id.device_name);
-        view.setTag(viewHolder);
-      } else {
-        viewHolder = (ViewHolder) view.getTag();
+    public void onLeScan(final BluetoothDevice device, final int rssi, final byte[] scanBytes) {
+      ScanRecord scanRecord = ScanRecord.parseFromBytes(scanBytes);
+      if (leScanMatches(scanRecord)) {
+        final ScanResult scanResult = new ScanResult(device, scanRecord, rssi, SystemClock.elapsedRealtimeNanos());
+        final int txPower = getTxPowerLevel(scanResult);
+        runOnUiThread(new Runnable() {
+          @Override
+          public void run() {
+            mLeDeviceListAdapter.add(scanResult, txPower, DEVICE_LIFETIME_SECONDS);
+          }
+        });
       }
-
-      String displayName = null, deviceAddress;
-      StringBuilder deviceData = new StringBuilder();
-      String nearest = mRegionResolver.getNearestAddress();
-      DeviceSighting deviceSighting = getItem(i);
-      ScanResult scanResult = deviceSighting.scanResult;
-      UriBeacon beacon;
-      byte txPowerLevel = 0;
-      beacon = UriBeacon.parseFromBytes(scanResult.getScanRecord().getBytes());
-
-      if (beacon != null) {
-        displayName = beacon.getUriString();
-        txPowerLevel = beacon.getTxPowerLevel();
-      }
-      if (displayName == null) {
-        displayName = scanResult.getDevice().getName();
-      }
-      if (displayName == null) {
-        displayName = "Unknown device";
-      }
-
-      deviceAddress = scanResult.getDevice().getAddress();
-
-      long tsMillis = TimeUnit.NANOSECONDS.toMillis(scanResult.getTimestampNanos());
-      String distance = String.format(Locale.US, "%.1f",
-          mRegionResolver.getDistance(scanResult.getDevice().getAddress()));
-      deviceData.append("\nTimestamp: ")
-          .append(formatMillis(tsMillis))
-          .append(" Tx: ")
-          .append(txPowerLevel)
-          .append(" RSSI: ")
-          .append(scanResult.getRssi())
-          .append(" Distance: ")
-          .append(distance);
-
-      // The stabilized region computed from the hysteresis.
-      int region = mRegionResolver.getRegion(scanResult.getDevice().getAddress());
-
-      if (scanResult.getDevice().getAddress().equals(nearest)) {
-        deviceData.append(" Region: NEAREST");
-        viewHolder.deviceName.setTextColor(0xff008800);
-      } else if (region == RangingUtils.Region.NEAR) {
-        deviceData.append(" Region: NEAR");
-        viewHolder.deviceName.setTextColor(0xaa004400);
-      } else if (region == RangingUtils.Region.MID) {
-        deviceData.append(" Region: MID");
-        viewHolder.deviceName.setTextColor(0xffaa6600);
-      } else if (region == RangingUtils.Region.FAR) {
-        deviceData.append(" Region: FAR");
-        viewHolder.deviceName.setTextColor(0xff880000);
-      } else {
-        viewHolder.deviceName.setTextColor(0xff000000);
-      }
-
-      viewHolder.deviceName.setText(displayName
-          + "  (" + String.format("%.1f", deviceSighting.latestDistance) + "m)");
-      viewHolder.deviceAddress.setText(deviceAddress + deviceData.toString());
-
-      return view;
     }
-  }
-
-  private static String formatMillis(long millis) {
-    return TIMESTAMP_FORMAT.format(new Date(millis));
-  }
-
-  static class ViewHolder {
-    TextView deviceName;
-    TextView deviceAddress;
-  }
-
-  private String getStringPreference(int resId, int defaultResId) {
-    return getDefaultSharedPreferences(this).getString(getString(resId), getString(defaultResId));
-  }
-
-  private boolean getBooleanPreference(int resId) {
-    return getDefaultSharedPreferences(this).getBoolean(getString(resId), false);
   }
 }

@@ -190,6 +190,13 @@ public abstract class ScanResultAdapter extends BaseAdapter {
       final String otherAddress = other.scanResult.getDevice().getAddress();
       // Sort by the stabilized region of the device, unless
       // they are the same, in which case sort by distance.
+      final String nearest = mRegionResolver.getNearestAddress();
+      if (address.equals(nearest)) {
+        return -1;
+      }
+      if (otherAddress.equals(nearest)) {
+        return 1;
+      }
       int r1 = mRegionResolver.getRegion(address);
       int r2 = mRegionResolver.getRegion(otherAddress);
       if (r1 != r2) {

@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="title_activity_config">Beacon Configuration</string>
-
     <string name="beacon_old_value_title">Old value</string>
     <string name="beacon_new_value_title">New value</string>
     <string name="beacon_new_value_write_title">Write</string>

@@ -21,15 +21,16 @@
     <string name="title_devices">Scan</string>
     <string name="title_config">Config</string>
     <string name="error_bluetooth_not_supported">Bluetooth not supported.</string>
+    <string name="empty_scan_start">Searching for devices</string>
+    <string name="empty_scan_end">No devices found</string>
+    <string name="empty_config_start">Searching for configurable UriBeacons</string>
+    <string name="empty_config_end">No configurable UriBeacons found.\nVisit uribeacon.org</string>
 
     <!-- Menu items -->
     <string name="menu_refresh">Refresh</string>
-    <string name="menu_scan">Scan</string>
-    <string name="menu_stop_serial">Stop Serial Scan</string>
+    <string name="menu_stop_refresh">Stop Refresh</string>
     <string name="menu_settings">Settings</string>
-    <string name="menu_config">Config</string>
-    <string name="menu_sort_dist">Sorting by Distance</string>
-    <string name="menu_sort_addr">Sorting by Address</string>
+    <string name="menu_config">Configure UriBeacon</string>
     <string name="version_text">Version:</string>
     <string name="uri">URI</string>
     <string name="uriBeacon_characteristics">UriBeacon Characteristics</string>
