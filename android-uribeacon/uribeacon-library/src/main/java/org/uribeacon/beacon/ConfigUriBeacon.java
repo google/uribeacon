@@ -21,9 +21,9 @@ import android.net.Uri;
 import java.net.URISyntaxException;
 
 public class ConfigUriBeacon extends UriBeacon {
-  private int mPowerMode = POWER_MODE_UNKNOWN;
+  private int mPowerMode = POWER_MODE_NONE;
 
-  public static final int POWER_MODE_UNKNOWN = -1;
+  public static final int POWER_MODE_NONE = -1;
   public static final int POWER_MODE_ULTRA_LOW = 0;
   public static final int POWER_MODE_LOW = 1;
   public static final int POWER_MODE_MEDIUM = 2;
@@ -36,11 +36,11 @@ public class ConfigUriBeacon extends UriBeacon {
 
   public static ConfigUriBeacon parseFromBytes(byte[] scanRecordBytes) {
     UriBeacon uriBeacon = UriBeacon.parseFromBytes(scanRecordBytes);
-    return new ConfigUriBeacon(uriBeacon, POWER_MODE_UNKNOWN);
+    return new ConfigUriBeacon(uriBeacon, POWER_MODE_NONE);
   }
 
   public static final class Builder extends UriBeacon.Builder {
-    int mPowerMode = POWER_MODE_UNKNOWN;
+    int mPowerMode = POWER_MODE_NONE;
 
     /**
      * Add a Uri to the UriBeacon advertised data.
@@ -88,7 +88,7 @@ public class ConfigUriBeacon extends UriBeacon {
      */
     public ConfigUriBeacon build() throws URISyntaxException {
       UriBeacon uriBeacon = super.build();
-      if (mPowerMode < POWER_MODE_UNKNOWN || mPowerMode > POWER_MODE_HIGH) {
+      if (mPowerMode < POWER_MODE_NONE || mPowerMode > POWER_MODE_HIGH) {
         throw new URISyntaxException(Integer.toString(mPowerMode), "Unknown power mode");
       }
       return new ConfigUriBeacon(uriBeacon, mPowerMode);
