@@ -91,7 +91,7 @@ public class UriBeacon {
   private static final int MAX_ADVERTISING_DATA_BYTES = 31;
   private static final int MAX_URI_LENGTH = 18;
 
-  public static final class Builder {
+  public static class Builder {
 
     private byte mFlags;
     private byte mTxPowerLevel;
@@ -234,6 +234,13 @@ public class UriBeacon {
     UUID uuid = new UUID(mostSignificantBytes, leastSignificantBytes);
     urnBuilder.append(uuid.toString());
     return urnBuilder.toString();
+  }
+
+  // Copy constructor
+  UriBeacon(UriBeacon uriBeacon) {
+    mUriString = uriBeacon.getUriString();
+    mFlags = uriBeacon.getFlags();
+    mTxPowerLevel = uriBeacon.getTxPowerLevel();
   }
 
   private UriBeacon(byte flags, byte txPowerLevel, String uriString) {
