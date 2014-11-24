@@ -1,54 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <style name="inputWithLabel">
-        <item name="android:layout_height">72dp</item>
-        <item name="android:orientation">vertical</item>
-        <item name="android:paddingTop">16sp</item>
-        <item name="android:paddingBottom">8sp</item>
-    </style>
-    <style name="inputBlock" parent="inputWithLabel">
+    <style name="row">
         <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:layout_marginBottom">16dp</item>
     </style>
-    <style name="inputInline" parent="inputWithLabel">
+    <style name="label">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:longClickable">false</item>
+        <item name="android:clickable">false</item>
+    </style>
+    <style name="inlineBox">
+        <item name="android:layout_height">fill_parent</item>
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_weight">1</item>
+        <item name="android:orientation">vertical</item>
     </style>
-    <style name="floatingLabel">
-        <item name="android:textSize">12sp</item>
+    <style name="spinnerBox">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">fill_parent</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+    <style name="spinner">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:paddingTop">0dp</item>
-        <item name="android:paddingBottom">0dp</item>
-        <item name="android:paddingStart">10dp</item>
     </style>
-    <style name="editTextWithLabel">
-        <item name="android:paddingStart">10dp</item>
-        <item name="android:paddingBottom">8dp</item>
+    <style name="editText">
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">16sp</item>
-    </style>
-    <style name="spinnerWithLabel">
-        <item name="android:paddingBottom">0dp</item>
-        <item name="android:paddingTop">0dp</item>
         <item name="android:layout_width">fill_parent</item>
-        <item name="android:layout_height">32dp</item>
-        <item name="android:textSize">16sp</item>
     </style>
-    <style name="noLabel">
-        <item name="android:paddingStart">10dp</item>
+    <style name="unit">
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:paddingTop">0dp</item>
-        <item name="android:paddingBottom">8dp</item>
-        <item name="android:textSize">16sp</item>
-    </style>
-    <style name="units">
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:paddingRight">8dp</item>
-        <item name="android:paddingBottom">0dp</item>
-        <item name="android:textSize">14sp</item>
-        <item name="android:layout_centerVertical">true</item>
+        <item name="android:layout_marginRight">10dp</item>
         <item name="android:layout_alignParentEnd">true</item>
+    </style>
+    <style name="unitBox">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_weight">1</item>
     </style>
 </resources>

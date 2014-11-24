@@ -23,18 +23,15 @@ import android.bluetooth.BluetoothGatt;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.ParcelUuid;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Switch;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.uribeacon.beacon.ConfigUriBeacon;
@@ -48,6 +45,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 public class ConfigActivity extends Activity{
+  private Spinner mSchema;
   private EditText mUriValue;
   private EditText mFlagsValue;
   private EditText mTxCal1;
@@ -120,8 +118,7 @@ public class ConfigActivity extends Activity{
     Intent intent = getIntent();
     if (intent.getExtras() != null) {
       ScanResult scanResult = intent.getExtras().getParcelable(ScanResult.class.getCanonicalName());
-      BluetoothDevice device = scanResult.getDevice();
-      if (device != null) {
+      BluetoothDevice device = scanResult.getDevice();      if (device != null) {
         // start connection progress
         mConnectionDialog = new ProgressDialog(this);
         mConnectionDialog.setIndeterminate(true);
@@ -142,6 +139,7 @@ public class ConfigActivity extends Activity{
   }
 
   private void initializeTextFields() {
+    mSchema = (Spinner) findViewById(R.id.spinner_uriProtocols);
     mUriValue = (EditText) findViewById(R.id.editText_uri);
     mFlagsValue = (EditText) findViewById(R.id.editText_flags);
     mPeriod = (EditText) findViewById(R.id.editText_beaconPeriod);
@@ -151,32 +149,6 @@ public class ConfigActivity extends Activity{
     mTxCal1 = (EditText) findViewById(R.id.editText_txCal3);
     mTxCal1 = (EditText) findViewById(R.id.editText_txCal4);
     mLock = (Switch) findViewById(R.id.switch_lock);
-  }
-
-
-  public TextWatcher textWatcherFactory(final int labelId, final EditText editText) {
-   return new TextWatcher() {
-     @Override
-     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-     }
-
-     @Override
-     public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-     }
-
-     @Override
-     public void afterTextChanged(Editable s) {
-       TextView label = (TextView) findViewById(labelId);
-       if (editText.getText().toString().isEmpty()) {
-         label.setTextColor(Color.WHITE);
-       }
-       else {
-         label.setTextColor(Color.BLACK);
-       }
-     }
-   };
   }
 
   public boolean onCreateOptionsMenu(Menu menu) {
@@ -194,7 +166,7 @@ public class ConfigActivity extends Activity{
     if (mUriValue != null && configUriBeacon != null) {
       mUriValue.setText(configUriBeacon.getUriString());
       if (mUriBeaconConfig.getVersion().equals(ProtocolV2.CONFIG_SERVICE_UUID)) {
-        mFlagsValue.setText(byteToHexString(configUriBeacon.getFlags()));
+        //TODO(g-ortuno): set V2 characteristics
       }
       else if (mUriBeaconConfig.getVersion().equals(ProtocolV1.CONFIG_SERVICE_UUID)) {
         hideV2Fields();
@@ -205,9 +177,9 @@ public class ConfigActivity extends Activity{
     }
   }
   private void hideV2Fields(){
-  }
-  private String byteToHexString(byte theByte) {
-    return String.format("%02X", theByte);
+    findViewById(R.id.secondRow).setVisibility(View.GONE);
+    findViewById(R.id.txCalRow).setVisibility(View.GONE);
+    findViewById(R.id.lastRow).setVisibility(View.GONE);
   }
   @Override
   public void onDestroy() {

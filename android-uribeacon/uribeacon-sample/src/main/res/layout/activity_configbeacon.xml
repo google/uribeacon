@@ -9,159 +9,118 @@
               android:gravity="center_vertical"
               tools:context=".MainActivity">
 
-    <LinearLayout android:layout_width="fill_parent"
-                  android:layout_height="wrap_content"
-                  android:orientation="horizontal">
-        <LinearLayout style="@style/inputInline"
-                      android:layout_width="wrap_content"
-                      android:layout_weight="0"
-                      android:paddingBottom="16dp">
-            <TextView style="@style/floatingLabel"
-                      android:text="@string/uri"
-                      android:id="@+id/uriLabel"/>
-            <Spinner style="@style/spinnerWithLabel"
-                     android:layout_width="wrap_content"
-                     android:entries="@array/uriProtocols"/>
-        </LinearLayout>
-        <LinearLayout style="@style/inputInline">
-            <TextView style="@style/floatingLabel"
-                      android:text="@string/uri"
-                    android:textColor="#fff"/>
-            <EditText style="@style/editTextWithLabel"
-                      android:layout_width="fill_parent"
-                      android:inputType="textUri"
-                      android:hint="@string/exampleCom"
-                      android:id="@+id/editText_uri"/>
-        </LinearLayout>
+    <TextView style="@style/label"
+              android:text="@string/uri"
+              android:id="@+id/uriLabel"/>
+    <LinearLayout style="@style/row">
+        <Spinner android:layout_height="wrap_content"
+                 android:layout_width="wrap_content"
+                 android:entries="@array/uriProtocols"
+                android:id="@+id/spinner_uriProtocols"/>
+        <EditText style="@style/editText"
+                  android:inputType="textUri"
+                  android:hint="@string/exampleCom"
+                  android:id="@+id/editText_uri"/>
     </LinearLayout>
-    <LinearLayout android:layout_width="fill_parent"
-                  android:layout_height="wrap_content"
-                  android:orientation="horizontal"
+    <LinearLayout style="@style/row"
                   android:id="@+id/secondRow">
-        <LinearLayout style="@style/inputInline">
-            <TextView style="@style/floatingLabel"
+        <LinearLayout style="@style/inlineBox">
+            <TextView style="@style/label"
                       android:text="@string/flags"
-                      android:longClickable="false"
-                      android:clickable="false"
                       android:id="@+id/flagsLabel"/>
-            <EditText style="@style/editTextWithLabel"
-                      android:layout_width="fill_parent"
+            <EditText style="@style/editText"
                       android:inputType="textCapWords"
                       android:id="@+id/editText_flags"/>
         </LinearLayout>
-        <LinearLayout style="@style/inputInline">
-            <TextView style="@style/floatingLabel"
+        <LinearLayout style="@style/inlineBox">
+            <TextView style="@style/label"
                       android:text="@string/period"
                       android:id="@+id/periodLabel"/>
-            <RelativeLayout android:layout_width="fill_parent"
-                            android:layout_height="fill_parent">
-                <EditText style="@style/editTextWithLabel"
-                          android:layout_width="fill_parent"
-                          android:inputType="textUri"
+            <RelativeLayout style="@style/unitBox">
+                <EditText style="@style/editText"
                           android:id="@+id/editText_beaconPeriod"/>
-                <TextView style="@style/units"
-                        android:text="@string/ms"/>
+                <TextView style="@style/unit"
+                          android:text="@string/ms"
+                          android:layout_alignBaseline="@id/editText_beaconPeriod"/>
             </RelativeLayout>
         </LinearLayout>
-        <LinearLayout style="@style/inputInline"
-                android:paddingBottom="16dp">
-            <TextView style="@style/floatingLabel"
+        <LinearLayout style="@style/inlineBox">
+            <TextView style="@style/label"
                       android:text="@string/powerMode"
                       android:id="@+id/powerModeLabel"/>
-            <Spinner style="@style/spinnerWithLabel"
-                     android:id="@+id/spinner_powerMode"
-                     android:entries="@array/powerModes"/>
+            <Spinner android:layout_width="fill_parent"
+                     android:layout_height="fill_parent"
+                     android:entries="@array/powerModes"
+                    android:id="@+id/spinner_powerMode"/>
         </LinearLayout>
     </LinearLayout>
     <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="72dp"
-            android:paddingTop="0dp"
-            android:paddingBottom="0dp"
-            android:orientation="horizontal"
+            style="@style/row"
             android:id="@+id/txCalRow">
-        <LinearLayout style="@style/inputWithLabel"
-                      android:layout_width="0dp"
-                      android:layout_weight="1">
-            <TextView style="@style/floatingLabel"
+        <LinearLayout style="@style/inlineBox">
+            <TextView style="@style/label"
                       android:text="@string/tx_power_high"
                       android:id="@+id/labelHigh"/>
-            <RelativeLayout android:layout_width="fill_parent"
-                            android:layout_height="fill_parent">
-                <TextView style="@style/units"
-                          android:text="@string/dbm"/>
-                <EditText style="@style/editTextWithLabel"
-                          android:layout_width="fill_parent"
+            <RelativeLayout style="@style/unitBox">
+                <EditText style="@style/editText"
                           android:inputType="numberSigned"
                           android:id="@+id/editText_txCal1"/>
+                <TextView style="@style/unit"
+                          android:layout_alignBaseline="@id/editText_txCal1"
+                          android:text="@string/dbm"/>
             </RelativeLayout>
         </LinearLayout>
-        <LinearLayout style="@style/inputWithLabel"
-                      android:layout_width="0dp"
-                      android:layout_weight="1">
-            <TextView style="@style/floatingLabel"
+        <LinearLayout style="@style/inlineBox">
+            <TextView style="@style/label"
                       android:text="@string/tx_power_medium"
                       android:id="@+id/labelMedium"/>
-            <RelativeLayout android:layout_width="fill_parent"
-                            android:layout_height="fill_parent">
-                <TextView style="@style/units"
-                          android:text="@string/dbm"/>
-                <EditText style="@style/editTextWithLabel"
-                          android:layout_width="fill_parent"
+            <RelativeLayout style="@style/unitBox">
+                <EditText style="@style/editText"
                           android:inputType="numberSigned"
                           android:id="@+id/editText_txCal2"/>
+                <TextView style="@style/unit"
+                          android:layout_alignBaseline="@id/editText_txCal2"
+                          android:text="@string/dbm"/>
             </RelativeLayout>
         </LinearLayout>
-        <LinearLayout style="@style/inputWithLabel"
-                      android:layout_width="0dp"
-                      android:layout_weight="1">
-            <TextView style="@style/floatingLabel"
+        <LinearLayout style="@style/inlineBox">
+            <TextView style="@style/label"
                       android:text="@string/tx_power_low"
                       android:id="@+id/labelLow"/>
-            <RelativeLayout android:layout_width="fill_parent"
-                            android:layout_height="fill_parent">
-                <TextView style="@style/units"
-                          android:text="@string/dbm"/>
-                <EditText style="@style/editTextWithLabel"
-                          android:layout_width="fill_parent"
+            <RelativeLayout style="@style/unitBox">
+                <EditText style="@style/editText"
                           android:inputType="numberSigned"
                           android:id="@+id/editText_txCal3"/>
+                <TextView style="@style/unit"
+                          android:layout_alignBaseline="@id/editText_txCal3"
+                          android:text="@string/dbm"/>
             </RelativeLayout>
         </LinearLayout>
-        <LinearLayout style="@style/inputWithLabel"
-                      android:layout_width="0dp"
-                      android:layout_weight="1">
-            <TextView style="@style/floatingLabel"
+        <LinearLayout style="@style/inlineBox">
+            <TextView style="@style/label"
                       android:text="@string/tx_power_lowest"
                       android:id="@+id/labelLowest"/>
-            <RelativeLayout android:layout_width="fill_parent"
-                            android:layout_height="fill_parent">
-                <TextView style="@style/units"
-                          android:text="@string/dbm"/>
-                <EditText style="@style/editTextWithLabel"
-                          android:layout_width="fill_parent"
+            <RelativeLayout style="@style/unitBox">
+                <EditText style="@style/editText"
                           android:inputType="numberSigned"
                           android:id="@+id/editText_txCal4"/>
+                <TextView style="@style/unit"
+                          android:layout_alignBaseline="@id/editText_txCal4"
+                          android:text="@string/dbm"/>
             </RelativeLayout>
         </LinearLayout>
     </LinearLayout>
-    <RelativeLayout android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
+    <LinearLayout android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_gravity="end"
+            android:orientation="vertical"
             android:id="@+id/lastRow">
-        <LinearLayout style="@style/inputBlock"
-                      android:layout_width="wrap_content"
-                      android:layout_alignParentTop="true"
-                      android:layout_alignParentEnd="true"
-                      android:id="@+id/linearLayout">
-            <TextView style="@style/floatingLabel"
-                      android:paddingLeft="0dp"
-                      android:text="@string/lock"
-                      android:id="@+id/lockLabel"/>
-            <Switch
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignBottom="@+id/button_resetBeacon"
-                    android:id="@+id/switch_lock"/>
-        </LinearLayout>
-    </RelativeLayout>
+        <TextView style="@style/label"
+                  android:text="@string/lock"
+                  android:id="@+id/lockLabel"/>
+        <Switch
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/switch_lock"/>
+    </LinearLayout>
 </LinearLayout>
