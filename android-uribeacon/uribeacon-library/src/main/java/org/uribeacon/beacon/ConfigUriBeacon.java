@@ -16,96 +16,54 @@
 
 package org.uribeacon.beacon;
 
+import android.net.Uri;
 
 import java.net.URISyntaxException;
 
+public class ConfigUriBeacon extends UriBeacon {
+  private int mPowerMode = POWER_MODE_UNKNOWN;
 
-public class ConfigUriBeacon {
+  public static final int POWER_MODE_UNKNOWN = -1;
+  public static final int POWER_MODE_ULTRA_LOW = 0;
+  public static final int POWER_MODE_LOW = 1;
+  public static final int POWER_MODE_MEDIUM = 2;
+  public static final int POWER_MODE_HIGH = 3;
 
-  private final UriBeacon mUriBeacon;
-  //TODO(g-ortuno): Add V2 variables
-  private ConfigUriBeacon(UriBeacon uriBeacon) {
-    mUriBeacon = uriBeacon;
+  private ConfigUriBeacon(UriBeacon uriBeacon, int powerMode) {
+    super(uriBeacon);
+    mPowerMode = powerMode;
   }
 
   public static ConfigUriBeacon parseFromBytes(byte[] scanRecordBytes) {
     UriBeacon uriBeacon = UriBeacon.parseFromBytes(scanRecordBytes);
-    return new ConfigUriBeacon(uriBeacon);
+    return new ConfigUriBeacon(uriBeacon, POWER_MODE_UNKNOWN);
   }
 
-  public byte[] toByteArray() throws URISyntaxException {
-    return mUriBeacon.toByteArray();
-  }
-
-  public String getUriString() {
-    return mUriBeacon.getUriString();
-  }
-
-  public byte getTxPowerLevel() {
-    return mUriBeacon.getTxPowerLevel();
-  }
-
-  public byte getFlags() {
-    return mUriBeacon.getFlags();
-  }
-
-  public byte[] getUriBytes() throws URISyntaxException {
-    return mUriBeacon.getUriBytes();
-  }
-
-  public static final class Builder {
-
-    private UriBeacon.Builder mBuilder = new UriBeacon.Builder();
-    //TODO(g-ortuno): Add the rest of the V2 characteristics
+  public static final class Builder extends UriBeacon.Builder {
+    int mPowerMode = POWER_MODE_UNKNOWN;
 
     /**
-     * Add flags to the ConfigUriBeacon advertised data.
+     * Add a Uri to the UriBeacon advertised data.
      *
-     * @param flags The flags to be advertised.
+     * @param powerMode The power mode to be advertised.
      * @return The ConfigUriBeacon Builder.
      */
-    public Builder flags(byte flags) {
-      mBuilder.flags(flags);
-      return this;
-    }
-
-    /**
-     * Add a Uri to the ConfigUriBeacon advertised data.
-     * @param uriString The Uri to be advertised.
-     * @return The ConfigUriBeacon Builder.
-     */
-    public Builder uriString(String uriString) {
-      mBuilder.uriString(uriString);
-      return this;
-    }
-
-    /**
-     * Add the bytes of a URI to the ConfigUriBeacon.
-     * @param uriString The Uri to be advertised
-     * @return The ConfigUriBeacon Builder
-     */
-    public Builder uriString(byte[] uriString) {
-      mBuilder.uriString(uriString);
-      return this;
-    }
-
-    /**
-     * Add a Tx Power Level to the UriBeacon advertised data.
-     * @param txPowerLevel The TX Power Level to be advertised.
-     * @return The ConfigUriBeacon Builder.
-     */
-    public Builder txPowerLevel(byte txPowerLevel) {
-      mBuilder.txPowerLevel(txPowerLevel);
+    public Builder powerMode(byte powerMode) {
+      mPowerMode = powerMode;
       return this;
     }
 
     /**
      * Build ConfigUriBeacon.
+     *
      * @return The ConfigUriBeacon
      */
     public ConfigUriBeacon build() throws URISyntaxException {
-      UriBeacon uriBeacon = mBuilder.build();
-      return new ConfigUriBeacon(uriBeacon);
+      UriBeacon uriBeacon = super.build();
+      if (mPowerMode < POWER_MODE_UNKNOWN || mPowerMode > POWER_MODE_HIGH) {
+        throw new URISyntaxException(Integer.toString(mPowerMode), "Unknown power mode");
+      }
+      return new ConfigUriBeacon(uriBeacon, mPowerMode);
     }
 
   }
