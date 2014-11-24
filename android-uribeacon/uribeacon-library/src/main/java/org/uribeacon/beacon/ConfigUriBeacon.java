@@ -53,6 +53,34 @@ public class ConfigUriBeacon extends UriBeacon {
       return this;
     }
 
+    /** {@inheritDoc} */
+    public Builder uriString(String uriString){
+      super.uriString(uriString);
+      // Allow chaining on ConfigUriBeacon by returning this
+      return this;
+    }
+
+    /** {@inheritDoc} */
+    public Builder uriString(byte[] uriBytes){
+      super.uriString(uriBytes);
+      // Allow chaining on ConfigUriBeacon by returning this
+      return this;
+    }
+
+    /** {@inheritDoc} */
+    public Builder txPowerLevel(byte txPowerLevel) {
+      super.txPowerLevel(txPowerLevel);
+      // Allow chaining on ConfigUriBeacon by returning this
+      return this;
+    }
+
+    /** {@inheritDoc} */
+    public Builder flags(byte flags) {
+      super.flags(flags);
+      // Allow chaining on ConfigUriBeacon by returning this
+      return this;
+    }
+
     /**
      * Build ConfigUriBeacon.
      *
