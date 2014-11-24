@@ -34,8 +34,6 @@ public class SettingsActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
       addPreferencesFromResource(R.xml.pref_general);
-      // Establish listeners for scan mode list preference change
-      setSummaryChangeListener(R.string.pref_key_serial_scan_mode);
     }
 
     // Change the summary of the preference. Allow null new value for initialization.
