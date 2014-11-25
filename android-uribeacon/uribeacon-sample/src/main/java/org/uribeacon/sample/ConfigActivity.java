@@ -146,9 +146,9 @@ public class ConfigActivity extends Activity{
     mPeriod = (EditText) findViewById(R.id.editText_beaconPeriod);
     mTxPowerMode = (Spinner) findViewById(R.id.spinner_powerMode);
     mTxCal1 = (EditText) findViewById(R.id.editText_txCal1);
-    mTxCal1 = (EditText) findViewById(R.id.editText_txCal2);
-    mTxCal1 = (EditText) findViewById(R.id.editText_txCal3);
-    mTxCal1 = (EditText) findViewById(R.id.editText_txCal4);
+    mTxCal2 = (EditText) findViewById(R.id.editText_txCal2);
+    mTxCal3 = (EditText) findViewById(R.id.editText_txCal3);
+    mTxCal4 = (EditText) findViewById(R.id.editText_txCal4);
     mLock = (Switch) findViewById(R.id.switch_lock);
   }
 
@@ -167,7 +167,16 @@ public class ConfigActivity extends Activity{
     if (mUriValue != null && configUriBeacon != null) {
       mUriValue.setText(configUriBeacon.getUriString());
       if (mUriBeaconConfig.getVersion().equals(ProtocolV2.CONFIG_SERVICE_UUID)) {
-        //TODO(g-ortuno): set V2 characteristics
+        mFlagsValue.setText(byteToHexString(configUriBeacon.getFlags()));
+        mPeriod.setText(Integer.toString(configUriBeacon.getPeriod()));
+        mTxPowerMode.setSelection(configUriBeacon.getPowerMode());
+
+        EditText[] txCalTable = {mTxCal1, mTxCal2, mTxCal3, mTxCal4};
+        for (int i = 0; i < txCalTable.length; i++) {
+          txCalTable[i].setText(Integer.toString(configUriBeacon.getPowerLevels()[i]));
+        }
+
+        mLock.setChecked(configUriBeacon.getLocked());
       }
       else if (mUriBeaconConfig.getVersion().equals(ProtocolV1.CONFIG_SERVICE_UUID)) {
         hideV2Fields();
@@ -177,6 +186,11 @@ public class ConfigActivity extends Activity{
       Toast.makeText(this, "Beacon Contains Invalid Data", Toast.LENGTH_SHORT).show();
     }
   }
+
+  private String byteToHexString(byte theByte) {
+    return String.format("%02X", theByte);
+  }
+
   private void hideV2Fields(){
     findViewById(R.id.secondRow).setVisibility(View.GONE);
     findViewById(R.id.txCalRow).setVisibility(View.GONE);
