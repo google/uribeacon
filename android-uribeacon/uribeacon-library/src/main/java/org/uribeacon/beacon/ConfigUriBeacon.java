@@ -99,7 +99,7 @@ public class ConfigUriBeacon extends UriBeacon {
       return this;
     }
 
-    /**  {@inheritDoc} */
+    /** {@inheritDoc} */
     public Builder uriString(String uriString) {
       super.uriString(uriString);
       // Allow chaining on ConfigUriBeacon by returning this
@@ -122,11 +122,11 @@ public class ConfigUriBeacon extends UriBeacon {
 
     /**
      * Set the tx power for High, Medium, Low, Lowest
-     * @param levels The array containing the tx powers for the levels
+     * @param advertisedTxPowerLevels The array containing the tx powers for the levels
      * @return The ConfigUriBeacon Builder.
      */
-    public Builder advertisedTxPowerLevels(byte[] levels) {
-      mAdvertisedTxPowerLevels = levels;
+    public Builder advertisedTxPowerLevels(byte[] advertisedTxPowerLevels) {
+      mAdvertisedTxPowerLevels = advertisedTxPowerLevels;
       return this;
     }
 
@@ -142,7 +142,6 @@ public class ConfigUriBeacon extends UriBeacon {
 
     /**
      * Set the broadcasting period for the beacon.
-     *
      * @param beaconPeriod The broadcasting period
      * @return The ConfigUriBeacon Builder.
      */
@@ -152,8 +151,8 @@ public class ConfigUriBeacon extends UriBeacon {
     }
 
     /**
-     * Only used in
-     * V1 {@inheritDoc}
+     * Only used in V1
+     * {@inheritDoc}
      */
     public Builder txPowerLevel(byte txPowerLevel) {
       super.txPowerLevel(txPowerLevel);
