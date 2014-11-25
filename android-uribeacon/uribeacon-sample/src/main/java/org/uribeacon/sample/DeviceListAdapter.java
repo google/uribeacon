@@ -26,6 +26,7 @@ import org.uribeacon.scan.compat.ScanResult;
 import org.uribeacon.scan.util.RangingUtils;
 import org.uribeacon.widget.ScanResultAdapter;
 
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -68,13 +69,18 @@ class DeviceListAdapter extends ScanResultAdapter {
     ScanResult scanResult = deviceSighting.scanResult;
     UriBeacon beacon;
     byte txPowerLevel = 0;
-    beacon = UriBeacon.parseFromBytes(scanResult.getScanRecord().getBytes());
-
     String displayName = null;
-    if (beacon != null) {
-      displayName = beacon.getUriString();
-      txPowerLevel = beacon.getTxPowerLevel();
+
+    try {
+      beacon = UriBeacon.parseFromBytes(scanResult.getScanRecord().getBytes());
+      if (beacon != null) {
+        displayName = beacon.getUriString();
+        txPowerLevel = beacon.getTxPowerLevel();
+      }
+    } catch (URISyntaxException | IllegalArgumentException e) {
+      // Beacon has invalid data so just ignore
     }
+
     if (displayName == null) {
       displayName = scanResult.getDevice().getName();
     }
