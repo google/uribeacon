@@ -50,7 +50,7 @@ public class ConfigUriBeacon extends UriBeacon {
    *
    * @param scanRecordBytes The scan record of Bluetooth LE advertisement and/or scan response.
    */
-  public static ConfigUriBeacon parseFromBytes(byte[] scanRecordBytes) {
+  public static ConfigUriBeacon parseFromBytes(byte[] scanRecordBytes) throws URISyntaxException {
     UriBeacon uriBeacon = UriBeacon.parseFromBytes(scanRecordBytes);
     return new ConfigUriBeacon(uriBeacon, false, null, POWER_MODE_NONE, PERIOD_NONE);
   }
