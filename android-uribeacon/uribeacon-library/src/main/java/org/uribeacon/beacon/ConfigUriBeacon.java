@@ -25,12 +25,12 @@ public class ConfigUriBeacon extends UriBeacon {
   public static final byte POWER_MODE_LOW = 1;
   public static final byte POWER_MODE_MEDIUM = 2;
   public static final byte POWER_MODE_HIGH = 3;
-  private static final int MIN_UINT = 0;
-  private static final int MAX_UINT16 = 65535;
+  private static final int UINT16_MIN_VALUE = 0;
+  private static final int UINT16_MAX_VALUE = 65535;
 
 
-  private static final byte MAX_TX_POWER_LEVEL = 20;
-  private static final byte MIN_TX_POWER_LEVEL = -100;
+  private static final byte TX_POWER_LEVEL_MAX_VALUE = 20;
+  private static final byte TX_POWER_LEVEL_MIN_VALUE = -100;
 
   private boolean mLockState;
   private byte[] mAdvertisedTxPowerLevels;
@@ -178,9 +178,16 @@ public class ConfigUriBeacon extends UriBeacon {
     }
 
     private void checkTxAdvertisedPowerLevels() throws URISyntaxException {
+      if (mAdvertisedTxPowerLevels == null) {
+        throw new IllegalArgumentException("Must include Tx AdvertisedPowerLevels");
+      }
+      if (mAdvertisedTxPowerLevels.length != 4) {
+        throw new URISyntaxException("Invalid length for Tx Advertised Power Levels",
+            Integer.toString(mAdvertisedTxPowerLevels.length));
+      }
       for (int i = 0; i < mAdvertisedTxPowerLevels.length; i++) {
-        if (mAdvertisedTxPowerLevels[i] < MIN_TX_POWER_LEVEL
-            || mAdvertisedTxPowerLevels[i] > MAX_TX_POWER_LEVEL) {
+        if (mAdvertisedTxPowerLevels[i] < TX_POWER_LEVEL_MIN_VALUE
+            || mAdvertisedTxPowerLevels[i] > TX_POWER_LEVEL_MAX_VALUE) {
           throw new URISyntaxException("Invalid TxPower Level",
               Byte.toString(mAdvertisedTxPowerLevels[i]), i);
         }
@@ -188,7 +195,7 @@ public class ConfigUriBeacon extends UriBeacon {
     }
 
     private void checkBeaconPeriod() throws URISyntaxException {
-      if (mBeaconPeriod < MIN_UINT || mBeaconPeriod > MAX_UINT16) {
+      if (mBeaconPeriod < UINT16_MIN_VALUE || mBeaconPeriod > UINT16_MAX_VALUE) {
         throw new URISyntaxException("Invalid broadcasting period", Integer.toString(mBeaconPeriod));
       }
     }
