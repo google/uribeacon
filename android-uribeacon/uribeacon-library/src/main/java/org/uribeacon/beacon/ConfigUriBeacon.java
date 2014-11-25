@@ -21,28 +21,29 @@ import java.net.URISyntaxException;
 public class ConfigUriBeacon extends UriBeacon {
   private static final String TAG = ConfigUriBeacon.class.getCanonicalName();
   public static final int PERIOD_NONE = -1;
-  public static final int POWER_MODE_NONE = -1;
-  public static final int POWER_MODE_ULTRA_LOW = 0;
-  public static final int POWER_MODE_LOW = 1;
-  public static final int POWER_MODE_MEDIUM = 2;
-  public static final int POWER_MODE_HIGH = 3;
-  private static final int MIN_UINT = 0;
-  private static final int MAX_UINT8 = 255;
-  private static final int MAX_UINT16 = 65535;
-  private static final int MIN_INT8 = -128;
-  private static final int MAX_INT8 = 127;
+  public static final byte POWER_MODE_NONE = -1;
+  public static final byte POWER_MODE_ULTRA_LOW = 0;
+  public static final byte POWER_MODE_LOW = 1;
+  public static final byte POWER_MODE_MEDIUM = 2;
+  public static final byte POWER_MODE_HIGH = 3;
+  private static final int UINT16_MIN_VALUE = 0;
+  private static final int UINT16_MAX_VALUE = 65535;
 
-  boolean mLocked;
-  int[] mPowerLevels;
-  private int mPowerMode = POWER_MODE_NONE;
-  int mPeriod;
 
-  private ConfigUriBeacon(UriBeacon uriBeacon, boolean locked, int[] powerLevels, int powerMode, int period) {
+  private static final byte TX_POWER_LEVEL_MAX_VALUE = 20;
+  private static final byte TX_POWER_LEVEL_MIN_VALUE = -100;
+
+  private boolean mLockState;
+  private byte[] mAdvertisedTxPowerLevels;
+  private byte mTxPowerMode = POWER_MODE_NONE;
+  private int mBeaconPeriod;
+
+  private ConfigUriBeacon(UriBeacon uriBeacon, boolean lockState, byte[] advertisedTxPowerLevels, byte txPowerMode, int beaconPeriod) {
     super(uriBeacon);
-    mLocked = locked;
-    mPowerLevels = powerLevels;
-    mPowerMode = powerMode;
-    mPeriod = period;
+    mLockState = lockState;
+    mAdvertisedTxPowerLevels = advertisedTxPowerLevels;
+    mTxPowerMode = txPowerMode;
+    mBeaconPeriod = beaconPeriod;
   }
   /**
    * Parse scan record bytes to {@link ConfigUriBeacon}. <p/> The format is defined in UriBeacon
@@ -52,67 +53,75 @@ public class ConfigUriBeacon extends UriBeacon {
    */
   public static ConfigUriBeacon parseFromBytes(byte[] scanRecordBytes) {
     UriBeacon uriBeacon = UriBeacon.parseFromBytes(scanRecordBytes);
-    return new ConfigUriBeacon(uriBeacon, false, null, POWER_MODE_NONE, -1);
+    return new ConfigUriBeacon(uriBeacon, false, null, POWER_MODE_NONE, PERIOD_NONE);
   }
 
   /**
    * @return Whether or not the beacon is locked
    */
-  public boolean getLocked() {
-    return mLocked;
+  public boolean getLockState() {
+    return mLockState;
   }
 
   /**
    * @return An array containing the Tx Power for each HIGH, MEDIUM, LOW and LOWEST
    */
-  public int[] getPowerLevels() {
-    return mPowerLevels;
+  public byte[] getAdvertisedTxPowerLevels() {
+    return mAdvertisedTxPowerLevels;
   }
 
   /**
    * @return The power mode the beacon is on. HIGH, MEDIUM, LOW, LOWEST (3, 2, 1, 0 respectively)
    */
-  public int getPowerMode() {
-    return mPowerMode;
+  public byte getTxPowerMode() {
+    return mTxPowerMode;
   }
 
   /**
    * @return The period in milliseconds.
    */
-  public int getPeriod() {
-    return mPeriod;
+  public int getBeaconPeriod() {
+    return mBeaconPeriod;
   }
   public static final class Builder extends UriBeacon.Builder {
-    boolean mLocked;
-    int[] mPowerLevels;
-    int mPowerMode = POWER_MODE_NONE;
-    int mPeriod = PERIOD_NONE;
+
+    boolean mLockState;
+    byte[] mAdvertisedTxPowerLevels;
+    byte mTxPowerMode = POWER_MODE_NONE;
+    int mBeaconPeriod = PERIOD_NONE;
 
     /**
      * Sets whether or not the beacon is locked.
-     * @param locked True if the beacon is locked false otherwise.
+     *
+     * @param lockState True if the beacon is lockState false otherwise.
      * @return The ConfigUriBeacon Builder.
      */
-    public Builder locked(boolean locked) {
-      mLocked = locked;
+    public Builder lockState(boolean lockState) {
+      mLockState = lockState;
       return this;
     }
 
-    /** {@inheritDoc} */
-    public Builder uriString(String uriString){
+    /**
+     * {@inheritDoc}
+     */
+    public Builder uriString(String uriString) {
       super.uriString(uriString);
       // Allow chaining on ConfigUriBeacon by returning this
       return this;
     }
 
-    /** {@inheritDoc} */
-    public Builder uriString(byte[] uriBytes){
+    /**
+     * {@inheritDoc}
+     */
+    public Builder uriString(byte[] uriBytes) {
       super.uriString(uriBytes);
       // Allow chaining on ConfigUriBeacon by returning this
       return this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public Builder flags(byte flags) {
       super.flags(flags);
       // Allow chaining on ConfigUriBeacon by returning this
@@ -121,36 +130,40 @@ public class ConfigUriBeacon extends UriBeacon {
 
     /**
      * Set the tx power for High, Medium, Low, Lowest
+     *
      * @param levels The array containing the tx powers for the levels
      * @return The ConfigUriBeacon Builder.
      */
-    public Builder powerLevels(int[] levels) {
-      mPowerLevels = levels;
+    public Builder advertisedTxPowerLevels(byte[] levels) {
+      mAdvertisedTxPowerLevels = levels;
       return this;
     }
 
     /**
      * Add a Uri to the UriBeacon advertised data.
      *
-     * @param powerMode The power mode to be advertised.
+     * @param txPowerMode The power mode to be advertised.
      * @return The ConfigUriBeacon Builder.
      */
-    public Builder powerMode(int powerMode) {
-      mPowerMode = powerMode;
+    public Builder txPowerMode(byte txPowerMode) {
+      mTxPowerMode = txPowerMode;
       return this;
     }
 
     /**
      * Set the broadcasting period for the beacon.
-     * @param period The broadcasting period
+     *
+     * @param beaconPeriod The broadcasting period
      * @return The ConfigUriBeacon Builder.
      */
-    public Builder period(int period) {
-      mPeriod = period;
+    public Builder beaconPeriod(int beaconPeriod) {
+      mBeaconPeriod = beaconPeriod;
       return this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Only used in V1 {@inheritDoc}
+     */
     public Builder txPowerLevel(byte txPowerLevel) {
       super.txPowerLevel(txPowerLevel);
       // Allow chaining on ConfigUriBeacon by returning this
@@ -165,44 +178,44 @@ public class ConfigUriBeacon extends UriBeacon {
      */
     public ConfigUriBeacon build() throws URISyntaxException {
       UriBeacon uriBeacon = super.build();
-      if (mPowerMode != POWER_MODE_NONE || mPeriod != PERIOD_NONE ||
-          mPowerLevels != null) {
-        checkPowerMode();
-        checkPowerLevels();
-        checkPeriod();
+      if (mTxPowerMode != POWER_MODE_NONE || mBeaconPeriod != PERIOD_NONE ||
+          mAdvertisedTxPowerLevels != null) {
+        checkTxPowerMode();
+        checkAdvertisedTxPowerLevels();
+        checkBeaconPeriod();
       }
-      return new ConfigUriBeacon(uriBeacon, mLocked, mPowerLevels, mPowerMode, mPeriod);
+      return new ConfigUriBeacon(uriBeacon, mLockState, mAdvertisedTxPowerLevels, mTxPowerMode,
+          mBeaconPeriod);
     }
 
-    private void checkPowerMode() throws URISyntaxException {
-      if (mPowerMode < POWER_MODE_NONE || mPowerMode > POWER_MODE_HIGH) {
-        throw new URISyntaxException(Integer.toString(mPowerMode), "Unknown power mode");
+    private void checkTxPowerMode() throws URISyntaxException {
+      if (mTxPowerMode < POWER_MODE_NONE || mTxPowerMode > POWER_MODE_HIGH) {
+        throw new URISyntaxException(Integer.toString(mTxPowerMode), "Unknown power mode");
       }
     }
 
-    private void checkPowerLevels() {
-      if (mPowerLevels == null) {
-        throw new IllegalArgumentException("Need Power Levels");
+    private void checkAdvertisedTxPowerLevels() throws URISyntaxException {
+      if (mAdvertisedTxPowerLevels == null) {
+        throw new IllegalArgumentException("Must include Tx AdvertisedPowerLevels");
       }
-      for (int i = 0; i < mPowerLevels.length; i++) {
-        if (mPowerLevels[i] < MIN_INT8) {
-          throw new IllegalArgumentException("Tx Power at position " + i + " less than " + MIN_INT8);
+      if (mAdvertisedTxPowerLevels.length != 4) {
+        throw new URISyntaxException("Invalid length for Tx Advertised Power Levels",
+            Integer.toString(mAdvertisedTxPowerLevels.length));
+      }
+      for (int i = 0; i < mAdvertisedTxPowerLevels.length; i++) {
+        if (mAdvertisedTxPowerLevels[i] < TX_POWER_LEVEL_MIN_VALUE
+            || mAdvertisedTxPowerLevels[i] > TX_POWER_LEVEL_MAX_VALUE) {
+          throw new URISyntaxException("Invalid TxPower Level",
+              Byte.toString(mAdvertisedTxPowerLevels[i]), i);
         }
-        else if (mPowerLevels[i] > MAX_INT8) {
-          throw new IllegalArgumentException("Tx Power at position " + i + " greater than " + MAX_INT8);
-        }
       }
     }
-
-    private void checkPeriod() {
-      if (mPeriod == PERIOD_NONE) {
+    private void checkBeaconPeriod() throws URISyntaxException {
+      if (mBeaconPeriod == PERIOD_NONE) {
         throw new IllegalArgumentException("Need Broadcasting Period");
       }
-      if (mPeriod < MIN_UINT) {
-        throw new IllegalArgumentException("Period must be greater or equal to 0. Currently: " + mPeriod );
-      }
-      else if (mPeriod > MAX_UINT16) {
-        throw new IllegalArgumentException("Period too long. Currently: " + mPeriod);
+      if (mBeaconPeriod < UINT16_MIN_VALUE || mBeaconPeriod > UINT16_MAX_VALUE) {
+        throw new URISyntaxException("Invalid broadcasting period", Integer.toString(mBeaconPeriod));
       }
     }
   }

@@ -94,13 +94,13 @@ public class ConfigActivity extends Activity{
       builder.uriString(uri);
       if (mUriBeaconConfig.getVersion().equals(ProtocolV2.CONFIG_SERVICE_UUID)) {
         builder.flags(hexStringToByte(mFlagsValue.getText().toString()))
-            .period(Integer.parseInt(mPeriod.getText().toString()))
-            .powerMode(mTxPowerMode.getSelectedItemPosition());
-        int[] tempTxCal = new int[4];
+            .beaconPeriod(Integer.parseInt(mPeriod.getText().toString()))
+            .txPowerMode((byte) mTxPowerMode.getSelectedItemPosition());
+        byte[] tempTxCal = new byte[4];
         for (int i = 0; i < mTxCalTable.length; i++) {
-          tempTxCal[i] = Integer.parseInt(mTxCalTable[i].getText().toString());
+          tempTxCal[i] = Byte.parseByte(mTxCalTable[i].getText().toString());
         }
-        builder.powerLevels(tempTxCal);
+        builder.advertisedTxPowerLevels(tempTxCal);
         configUriBeacon = builder.build();
       }
       else {
@@ -178,13 +178,13 @@ public class ConfigActivity extends Activity{
       mUriValue.setText(configUriBeacon.getUriString());
       if (mUriBeaconConfig.getVersion().equals(ProtocolV2.CONFIG_SERVICE_UUID)) {
         mFlagsValue.setText(byteToHexString(configUriBeacon.getFlags()));
-        mPeriod.setText(Integer.toString(configUriBeacon.getPeriod()));
-        mTxPowerMode.setSelection(configUriBeacon.getPowerMode());
-        for (int i = 0; i < mTxCalTable.length; i++) {
-          mTxCalTable[i].setText(Integer.toString(configUriBeacon.getPowerLevels()[i]));
-        }
+        mPeriod.setText(Integer.toString(configUriBeacon.getBeaconPeriod()));
+        mTxPowerMode.setSelection((int) configUriBeacon.getTxPowerMode());
 
-        mLock.setChecked(configUriBeacon.getLocked());
+        for (int i = 0; i < mTxCalTable.length; i++) {
+          mTxCalTable[i].setText(Integer.toString(configUriBeacon.getAdvertisedTxPowerLevels()[i]));
+        }
+        mLock.setChecked(configUriBeacon.getLockState());
       }
       else if (mUriBeaconConfig.getVersion().equals(ProtocolV1.CONFIG_SERVICE_UUID)) {
         hideV2Fields();

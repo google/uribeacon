@@ -89,13 +89,6 @@ public class GattService extends Service {
     mRequestQueue.add(mBluetoothGatt, RequestType.WRITE_CHARACTERISTIC, characteristic);
   }
 
-  public void writeCharacteristic(UUID uuid, int[] values, int formatType) {
-    BluetoothGattCharacteristic characteristic = initializeCharacteristic(uuid);
-    for (int i = 0; i < values.length; i++) {
-      characteristic.setValue(values[i], formatType, i);
-    }
-    mRequestQueue.add(mBluetoothGatt, RequestType.WRITE_CHARACTERISTIC, characteristic);
-  }
   public void readCharacteristic(UUID uuid) {
     BluetoothGattCharacteristic characteristic = mBluetoothGattService.getCharacteristic(uuid);
     mRequestQueue.add(mBluetoothGatt, RequestType.READ_CHARACTERISTIC, characteristic);

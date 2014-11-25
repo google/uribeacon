@@ -77,13 +77,14 @@ public class ProtocolV2 extends BaseProtocol {
       if (configUriBeacon.getFlags() != mConfigUriBeacon.getFlags()) {
         mLastUUID = FLAGS;
       }
-      if (configUriBeacon.getPeriod() != mConfigUriBeacon.getPeriod()) {
+      if (configUriBeacon.getBeaconPeriod() != mConfigUriBeacon.getBeaconPeriod()) {
         mLastUUID = PERIOD;
       }
-      if (configUriBeacon.getPowerMode() != mConfigUriBeacon.getPowerMode()) {
+      if (configUriBeacon.getTxPowerMode() != mConfigUriBeacon.getTxPowerMode()) {
         mLastUUID = POWER_MODE;
       }
-      if (!Arrays.equals(configUriBeacon.getPowerLevels(), mConfigUriBeacon.getPowerLevels())) {
+      if (!Arrays.equals(configUriBeacon.getAdvertisedTxPowerLevels(),
+          mConfigUriBeacon.getAdvertisedTxPowerLevels())) {
         mLastUUID = POWER_LEVELS;
       }
     }
@@ -91,9 +92,9 @@ public class ProtocolV2 extends BaseProtocol {
     if (mConfigUriBeacon == null) {
       mService.writeCharacteristic(DATA, configUriBeacon.getUriBytes());
       mService.writeCharacteristic(FLAGS, new byte[]{configUriBeacon.getFlags()});
-      mService.writeCharacteristic(PERIOD, configUriBeacon.getPeriod(), PERIOD_FORMAT, 0);
-      mService.writeCharacteristic(POWER_MODE, configUriBeacon.getPowerMode(), POWER_MODE_FORMAT, 0);
-      mService.writeCharacteristic(POWER_LEVELS, configUriBeacon.getPowerLevels(), POWER_LEVELS_FORMAT);
+      mService.writeCharacteristic(PERIOD, configUriBeacon.getBeaconPeriod(), PERIOD_FORMAT, 0);
+      mService.writeCharacteristic(POWER_MODE, new byte[]{configUriBeacon.getTxPowerMode()});
+      mService.writeCharacteristic(POWER_LEVELS, configUriBeacon.getAdvertisedTxPowerLevels());
     } else {
       if (!configUriBeacon.getUriString().equals(mConfigUriBeacon.getUriString())) {
         mService.writeCharacteristic(DATA, configUriBeacon.getUriBytes());
@@ -101,14 +102,15 @@ public class ProtocolV2 extends BaseProtocol {
       if (configUriBeacon.getFlags() != mConfigUriBeacon.getFlags()) {
         mService.writeCharacteristic(FLAGS, new byte[]{configUriBeacon.getFlags()});
       }
-      if (configUriBeacon.getPeriod() != mConfigUriBeacon.getPeriod()) {
-        mService.writeCharacteristic(PERIOD, configUriBeacon.getPeriod(), PERIOD_FORMAT, 0);
+      if (configUriBeacon.getBeaconPeriod() != mConfigUriBeacon.getBeaconPeriod()) {
+        mService.writeCharacteristic(PERIOD, configUriBeacon.getBeaconPeriod(), PERIOD_FORMAT, 0);
       }
-      if (configUriBeacon.getPowerMode() != mConfigUriBeacon.getPowerMode()) {
-        mService.writeCharacteristic(POWER_MODE, configUriBeacon.getPowerMode(), POWER_MODE_FORMAT, 0);
+      if (configUriBeacon.getTxPowerMode() != mConfigUriBeacon.getTxPowerMode()) {
+        mService.writeCharacteristic(POWER_MODE, new byte[]{configUriBeacon.getTxPowerMode()});
       }
-      if (!Arrays.equals(configUriBeacon.getPowerLevels(), mConfigUriBeacon.getPowerLevels())) {
-        mService.writeCharacteristic(POWER_LEVELS, configUriBeacon.getPowerLevels(), POWER_LEVELS_FORMAT);
+      if (!Arrays.equals(configUriBeacon.getAdvertisedTxPowerLevels(),
+          mConfigUriBeacon.getAdvertisedTxPowerLevels())) {
+        mService.writeCharacteristic(POWER_LEVELS, configUriBeacon.getAdvertisedTxPowerLevels());
       }
     }
   }
@@ -142,23 +144,17 @@ public class ProtocolV2 extends BaseProtocol {
       try {
         if (LOCK_STATE.equals(uuid)) {
           //0 unlocked; 1 locked
-          mBuilder.locked(characteristic.getIntValue
-              (LOCK_FORMAT, 0) != 0);
+          mBuilder.lockState(characteristic.getIntValue(LOCK_FORMAT, 0) != 0);
         } else if (DATA.equals(uuid)) {
           mBuilder.uriString(characteristic.getValue());
         } else if (FLAGS.equals(uuid)) {
           mBuilder.flags(characteristic.getValue()[0]);
         } else if (POWER_LEVELS.equals(uuid)) {
-          int[] tempValues = new int[4];
-          for (int i = 0; i < tempValues.length; i++) {
-            tempValues[i] = characteristic.getIntValue(POWER_LEVELS_FORMAT, i);
-          }
-          mBuilder.powerLevels(tempValues);
+          mBuilder.advertisedTxPowerLevels(characteristic.getValue());
         } else if (POWER_MODE.equals(uuid)) {
-          mBuilder
-              .powerMode(characteristic.getIntValue(POWER_MODE_FORMAT, 0));
+          mBuilder.txPowerMode(characteristic.getValue()[0]);
         } else if (PERIOD.equals(uuid)) {
-          mBuilder.period(characteristic.getIntValue(PERIOD_FORMAT, 0));
+          mBuilder.beaconPeriod(characteristic.getIntValue(PERIOD_FORMAT, 0));
           mConfigUriBeacon = mBuilder.build();
           mUriBeaconCallback.onUriBeaconRead(mConfigUriBeacon, status);
         }
