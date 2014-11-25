@@ -200,7 +200,7 @@ public class UriBeacon {
           return decodeUrnUuid(serviceData, offset, uriBuilder);
         }
       }
-      //Log.w(TAG, "decodeUri unknown Uri scheme code=" + b);
+      Log.w(TAG, "decodeUri unknown Uri scheme code=" + b);
     }
     return null;
   }

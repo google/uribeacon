@@ -195,6 +195,9 @@ public class ConfigUriBeacon extends UriBeacon {
     }
 
     private void checkPeriod() {
+      if (mPeriod == PERIOD_NONE) {
+        throw new IllegalArgumentException("Need Broadcasting Period");
+      }
       if (mPeriod < MIN_UINT) {
         throw new IllegalArgumentException("Period must be greater or equal to 0. Currently: " + mPeriod );
       }
