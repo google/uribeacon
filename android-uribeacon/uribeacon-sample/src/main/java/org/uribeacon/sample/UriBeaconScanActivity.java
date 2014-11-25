@@ -15,6 +15,8 @@
  */
 package org.uribeacon.sample;
 
+import static android.preference.PreferenceManager.getDefaultSharedPreferences;
+
 import android.app.Activity;
 import android.app.ListActivity;
 import android.bluetooth.BluetoothAdapter;
@@ -46,10 +48,9 @@ import org.uribeacon.scan.compat.ScanResult;
 import org.uribeacon.scan.util.RangingUtils;
 import org.uribeacon.widget.ScanResultAdapter;
 
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
-import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
 /**
  * Activity for scanning and displaying available Bluetooth LE devices.
@@ -250,12 +251,15 @@ public class UriBeaconScanActivity extends ListActivity implements SwipeRefreshL
 
   private int getTxPowerLevel(ScanResult scanResult) {
     byte[] scanRecord = scanResult.getScanRecord().getBytes();
-    UriBeacon uriBeacon =
-        UriBeacon.parseFromBytes(scanRecord);
+    try {
+      UriBeacon uriBeacon =
+          UriBeacon.parseFromBytes(scanRecord);
 
-    if (uriBeacon != null) {
-      int txPowerLevel = uriBeacon.getTxPowerLevel();
-      return uriBeacon.getTxPowerLevel();
+      if (uriBeacon != null) {
+        int txPowerLevel = uriBeacon.getTxPowerLevel();
+        return uriBeacon.getTxPowerLevel();
+      }
+    } catch (URISyntaxException | IllegalArgumentException e) {
     }
 
     return RangingUtils.DEFAULT_TX_POWER_LEVEL;
