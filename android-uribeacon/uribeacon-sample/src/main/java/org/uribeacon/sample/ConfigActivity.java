@@ -168,15 +168,15 @@ public class ConfigActivity extends Activity{
       mUriValue.setText(configUriBeacon.getUriString());
       if (mUriBeaconConfig.getVersion().equals(ProtocolV2.CONFIG_SERVICE_UUID)) {
         mFlagsValue.setText(byteToHexString(configUriBeacon.getFlags()));
-        mPeriod.setText(Integer.toString(configUriBeacon.getPeriod()));
-        mTxPowerMode.setSelection(configUriBeacon.getPowerMode());
+        mPeriod.setText(Integer.toString(configUriBeacon.getBeaconPeriod()));
+        mTxPowerMode.setSelection((int) configUriBeacon.getTxPowerMode());
 
         EditText[] txCalTable = {mTxCal1, mTxCal2, mTxCal3, mTxCal4};
         for (int i = 0; i < txCalTable.length; i++) {
-          txCalTable[i].setText(Integer.toString(configUriBeacon.getPowerLevels()[i]));
+          txCalTable[i].setText(Byte.toString(configUriBeacon.getAdvertisedTxPowerLevels()[i]));
         }
 
-        mLock.setChecked(configUriBeacon.getLocked());
+        mLock.setChecked(configUriBeacon.getLockState());
       }
       else if (mUriBeaconConfig.getVersion().equals(ProtocolV1.CONFIG_SERVICE_UUID)) {
         hideV2Fields();

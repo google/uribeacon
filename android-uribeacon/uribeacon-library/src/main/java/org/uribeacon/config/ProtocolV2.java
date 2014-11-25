@@ -103,23 +103,19 @@ public class ProtocolV2 extends BaseProtocol {
       try {
         if (LOCK_STATE.equals(uuid)) {
           //0 unlocked; 1 locked
-          mBuilder.locked(characteristic.getIntValue
-              (BluetoothGattCharacteristic.FORMAT_UINT8, 0) != 1);
+          mBuilder.lockState(characteristic.getIntValue
+              (BluetoothGattCharacteristic.FORMAT_UINT8, 0) != 0);
         } else if (DATA.equals(uuid)) {
           mBuilder.uriString(characteristic.getValue());
         } else if (FLAGS.equals(uuid)) {
           mBuilder.flags(characteristic.getValue()[0]);
         } else if (POWER_LEVELS.equals(uuid)) {
-          int[] tempValues = new int[4];
-          for (int i = 0; i < tempValues.length; i++) {
-            tempValues[i] = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_SINT8, i);
-          }
-          mBuilder.powerLevels(tempValues);
+          mBuilder.advertisedTxPowerLevels(characteristic.getValue());
         } else if (POWER_MODE.equals(uuid)) {
-          mBuilder
-              .powerMode(characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 0));
+          mBuilder.txPowerMode(characteristic.getValue()[0]);
         } else if (PERIOD.equals(uuid)) {
-          mBuilder.period(characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT16, 0));
+          mBuilder.beaconPeriod(characteristic
+              .getIntValue(BluetoothGattCharacteristic.FORMAT_UINT16, 0));
           mConfigUriBeacon = mBuilder.build();
           mUriBeaconCallback.onUriBeaconRead(mConfigUriBeacon, status);
         }
