@@ -16,8 +16,6 @@
 
 package org.uribeacon.beacon;
 
-import android.net.Uri;
-
 import java.net.URISyntaxException;
 
 public class ConfigUriBeacon extends UriBeacon {
@@ -93,6 +91,5 @@ public class ConfigUriBeacon extends UriBeacon {
       }
       return new ConfigUriBeacon(uriBeacon, mPowerMode);
     }
-
   }
 }

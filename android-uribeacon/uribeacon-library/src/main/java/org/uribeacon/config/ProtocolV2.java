@@ -23,6 +23,7 @@ import android.os.ParcelUuid;
 import android.util.Log;
 
 import org.uribeacon.beacon.ConfigUriBeacon;
+import org.uribeacon.beacon.ConfigUriBeacon.Builder;
 import org.uribeacon.config.UriBeaconConfig.UriBeaconCallback;
 
 import java.net.URISyntaxException;
@@ -32,15 +33,14 @@ public class ProtocolV2 extends BaseProtocol {
 
   private static final String TAG = ProtocolV2.class.getCanonicalName();
 
-  public static final ParcelUuid CONFIG_SERVICE_UUID = ParcelUuid
-      .fromString("ee0c2087-8786-40ba-ab96-99b91ac981d8");
-  //TODO(g-ortuno): Add the rest of the V2 characteristics
-  private static final UUID DATA = UUID.fromString("ee0c208a-8786-40ba-ab96-99b91ac981d8");
+  public static final ParcelUuid CONFIG_SERVICE_UUID = ParcelUuid.fromString("ee0c2080-8786-40ba-ab96-99b91ac981d8");
+  private static final UUID DATA                           = UUID.fromString("ee0c2084-8786-40ba-ab96-99b91ac981d8");
 
   private final GattService mService;
   private final UriBeaconCallback mUriBeaconCallback;
   private UUID mLastUUID;
   private ConfigUriBeacon mConfigUriBeacon;
+  private ConfigUriBeacon.Builder mBuilder;
 
   public ProtocolV2(GattService serviceConnection,
       UriBeaconCallback beaconCallback) {
@@ -78,6 +78,7 @@ public class ProtocolV2 extends BaseProtocol {
   @Override
   public void onServicesDiscovered(BluetoothGatt gatt, int status) {
     Log.d(TAG, "onServicesDiscovered request queue");
+    mBuilder = new Builder();
     mService.setService(CONFIG_SERVICE_UUID.getUuid());
     mService.readCharacteristic(DATA);
   }
@@ -89,16 +90,14 @@ public class ProtocolV2 extends BaseProtocol {
     if (status == BluetoothGatt.GATT_SUCCESS) {
       UUID uuid = characteristic.getUuid();
       try {
-        //TODO(g-ortuno): Add the rest of V2 characteristics
         if (DATA.equals(uuid)) {
-          mConfigUriBeacon = new ConfigUriBeacon.Builder()
-              .uriString(characteristic.getValue())
-              .build();
+          mBuilder.uriString(characteristic.getValue());
+          mConfigUriBeacon = mBuilder.build();
+          mUriBeaconCallback.onUriBeaconRead(mConfigUriBeacon, status);
         }
-      } catch (URISyntaxException e) {
+      } catch (URISyntaxException | IllegalArgumentException e) {
         mUriBeaconCallback.onUriBeaconRead(null, status);
       }
-      mUriBeaconCallback.onUriBeaconRead(mConfigUriBeacon, status);
     } else {
       mUriBeaconCallback.onUriBeaconRead(null, status);
     }

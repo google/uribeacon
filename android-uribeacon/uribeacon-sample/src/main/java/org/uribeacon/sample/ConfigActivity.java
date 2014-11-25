@@ -25,10 +25,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.ParcelUuid;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.TextView;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import org.uribeacon.beacon.ConfigUriBeacon;
@@ -41,10 +44,18 @@ import org.uribeacon.scan.compat.ScanResult;
 import java.net.URISyntaxException;
 import java.util.List;
 
-public class ConfigActivity extends Activity implements OnClickListener{
-  private TextView mBeaconValue = null;
-  private TextView mBeaconNewValue = null;
-  private Button mBeaconUpdateValue = null;
+public class ConfigActivity extends Activity{
+  private Spinner mSchema;
+  private EditText mUriValue;
+  private EditText mFlagsValue;
+  private EditText mTxCal1;
+  private EditText mTxCal2;
+  private EditText mTxCal3;
+  private EditText mTxCal4;
+  private Spinner mTxPowerMode;
+  private EditText mPeriod;
+  private Switch mLock;
+
   private ProgressDialog mConnectionDialog = null;
   private static final byte DEFAULT_TX_POWER = -63;
   private final String TAG = "ConfigActivity";
@@ -54,14 +65,16 @@ public class ConfigActivity extends Activity implements OnClickListener{
     @Override
     public void onUriBeaconRead(ConfigUriBeacon configUriBeacon, int status) {
       checkRequest(status);
-      setBeaconValue(configUriBeacon);
+      updateInputFields(configUriBeacon);
     }
 
     @Override
     public void onUriBeaconWrite(int status) {
       checkRequest(status);
-      mUriBeaconConfig.closeUriBeacon();
-      finish();
+      if (status == BluetoothGatt.GATT_SUCCESS) {
+        mUriBeaconConfig.closeUriBeacon();
+        finish();
+      }
     }
 
     private void checkRequest(int status) {
@@ -74,12 +87,11 @@ public class ConfigActivity extends Activity implements OnClickListener{
   };
 
 
-  @Override
-  public void onClick(View v) {
+
+  public void saveConfigBeacon(MenuItem menu) {
     // block UI
-    mBeaconNewValue.setEnabled(false);
-    mBeaconUpdateValue.setEnabled(false);
-    String uri = mBeaconNewValue.getText().toString();
+    mUriValue.setEnabled(false);
+    String uri = mUriValue.getText().toString();
     try {
       ConfigUriBeacon configUriBeacon = new ConfigUriBeacon.Builder()
           .uriString(uri)
@@ -92,7 +104,6 @@ public class ConfigActivity extends Activity implements OnClickListener{
       finish();
     }
   }
-
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -100,12 +111,7 @@ public class ConfigActivity extends Activity implements OnClickListener{
     // set content view
     setContentView(R.layout.activity_configbeacon);
 
-    // find the TextView to hold the current value
-    mBeaconValue = (TextView) findViewById(R.id.beaconCurValue);
-    mBeaconValue.setText(R.string.beacon_not_available);
-    mBeaconNewValue = (TextView) findViewById(R.id.beaconNewValue);
-    mBeaconUpdateValue = (Button) findViewById(R.id.writeNewValue);
-    mBeaconUpdateValue.setOnClickListener(this);
+    initializeTextFields();
 
     // Get the device to connect to that was passed to us by the scan
     // results Activity.
@@ -133,26 +139,49 @@ public class ConfigActivity extends Activity implements OnClickListener{
     }
   }
 
+  private void initializeTextFields() {
+    mSchema = (Spinner) findViewById(R.id.spinner_uriProtocols);
+    mUriValue = (EditText) findViewById(R.id.editText_uri);
+    mFlagsValue = (EditText) findViewById(R.id.editText_flags);
+    mPeriod = (EditText) findViewById(R.id.editText_beaconPeriod);
+    mTxPowerMode = (Spinner) findViewById(R.id.spinner_powerMode);
+    mTxCal1 = (EditText) findViewById(R.id.editText_txCal1);
+    mTxCal1 = (EditText) findViewById(R.id.editText_txCal2);
+    mTxCal1 = (EditText) findViewById(R.id.editText_txCal3);
+    mTxCal1 = (EditText) findViewById(R.id.editText_txCal4);
+    mLock = (Switch) findViewById(R.id.switch_lock);
+  }
+
+  public boolean onCreateOptionsMenu(Menu menu) {
+    MenuInflater inflater = getMenuInflater();
+    inflater.inflate(R.menu.config_menu, menu);
+    return true;
+  }
   public static void startConfigureActivity(Context context, ScanResult scanResult) {
     Intent intent = new Intent(context, ConfigActivity.class);
     intent.putExtra(ScanResult.class.getCanonicalName(), scanResult);
     context.startActivity(intent);
   }
 
-  private void setBeaconValue(ConfigUriBeacon  configUriBeacon) {
-    if (mBeaconValue != null && configUriBeacon != null) {
-      mBeaconValue.setText(configUriBeacon.getUriString());
-      TextView version = (TextView) findViewById(R.id.textViewVersion);
+  private void updateInputFields(ConfigUriBeacon configUriBeacon) {
+    if (mUriValue != null && configUriBeacon != null) {
+      mUriValue.setText(configUriBeacon.getUriString());
       if (mUriBeaconConfig.getVersion().equals(ProtocolV2.CONFIG_SERVICE_UUID)) {
-        version.setText(getString(R.string.version_text) + "2");
-        //TODO(g-ortuno): Set the rest of the characteristics for V2
+        //TODO(g-ortuno): set V2 characteristics
       }
       else if (mUriBeaconConfig.getVersion().equals(ProtocolV1.CONFIG_SERVICE_UUID)) {
-        version.setText(getString(R.string.version_text) + "1");
+        hideV2Fields();
       }
     }
+    else {
+      Toast.makeText(this, "Beacon Contains Invalid Data", Toast.LENGTH_SHORT).show();
+    }
   }
-
+  private void hideV2Fields(){
+    findViewById(R.id.secondRow).setVisibility(View.GONE);
+    findViewById(R.id.txCalRow).setVisibility(View.GONE);
+    findViewById(R.id.lastRow).setVisibility(View.GONE);
+  }
   @Override
   public void onDestroy() {
     // Close and release Bluetooth connection.
