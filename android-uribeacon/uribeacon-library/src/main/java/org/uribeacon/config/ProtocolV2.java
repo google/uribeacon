@@ -34,7 +34,13 @@ public class ProtocolV2 extends BaseProtocol {
   private static final String TAG = ProtocolV2.class.getCanonicalName();
 
   public static final ParcelUuid CONFIG_SERVICE_UUID = ParcelUuid.fromString("ee0c2080-8786-40ba-ab96-99b91ac981d8");
+  private static final UUID LOCK_STATE                     = UUID.fromString("ee0c2081-8786-40ba-ab96-99b91ac981d8");
   private static final UUID DATA                           = UUID.fromString("ee0c2084-8786-40ba-ab96-99b91ac981d8");
+  private static final UUID FLAGS                          = UUID.fromString("ee0c2085-8786-40ba-ab96-99b91ac981d8");
+  private static final UUID POWER_LEVELS                   = UUID.fromString("ee0c2086-8786-40ba-ab96-99b91ac981d8");
+  private static final UUID POWER_MODE                     = UUID.fromString("ee0c2087-8786-40ba-ab96-99b91ac981d8");
+  private static final UUID PERIOD                         = UUID.fromString("ee0c2088-8786-40ba-ab96-99b91ac981d8");
+
 
   private final GattService mService;
   private final UriBeaconCallback mUriBeaconCallback;
@@ -80,7 +86,12 @@ public class ProtocolV2 extends BaseProtocol {
     Log.d(TAG, "onServicesDiscovered request queue");
     mBuilder = new Builder();
     mService.setService(CONFIG_SERVICE_UUID.getUuid());
+    mService.readCharacteristic(LOCK_STATE);
     mService.readCharacteristic(DATA);
+    mService.readCharacteristic(FLAGS);
+    mService.readCharacteristic(POWER_LEVELS);
+    mService.readCharacteristic(POWER_MODE);
+    mService.readCharacteristic(PERIOD);
   }
 
   @Override
@@ -90,8 +101,21 @@ public class ProtocolV2 extends BaseProtocol {
     if (status == BluetoothGatt.GATT_SUCCESS) {
       UUID uuid = characteristic.getUuid();
       try {
-        if (DATA.equals(uuid)) {
+        if (LOCK_STATE.equals(uuid)) {
+          //0 unlocked; 1 locked
+          mBuilder.lockState(characteristic.getIntValue
+              (BluetoothGattCharacteristic.FORMAT_UINT8, 0) != 0);
+        } else if (DATA.equals(uuid)) {
           mBuilder.uriString(characteristic.getValue());
+        } else if (FLAGS.equals(uuid)) {
+          mBuilder.flags(characteristic.getValue()[0]);
+        } else if (POWER_LEVELS.equals(uuid)) {
+          mBuilder.advertisedTxPowerLevels(characteristic.getValue());
+        } else if (POWER_MODE.equals(uuid)) {
+          mBuilder.txPowerMode(characteristic.getValue()[0]);
+        } else if (PERIOD.equals(uuid)) {
+          mBuilder.beaconPeriod(characteristic
+              .getIntValue(BluetoothGattCharacteristic.FORMAT_UINT16, 0));
           mConfigUriBeacon = mBuilder.build();
           mUriBeaconCallback.onUriBeaconRead(mConfigUriBeacon, status);
         }
