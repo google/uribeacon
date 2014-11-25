@@ -49,10 +49,10 @@ public class ConfigActivity extends Activity{
   private Spinner mSchema;
   private EditText mUriValue;
   private EditText mFlagsValue;
-  private EditText[] mTxCalTable = new EditText[4];
+  private EditText[] mAdvertisedTxPowerLevels = new EditText[4];
   private Spinner mTxPowerMode;
-  private EditText mPeriod;
-  private Switch mLock;
+  private EditText mBeaconPeriod;
+  private Switch mLockState;
 
   private ProgressDialog mConnectionDialog = null;
   private static final byte DEFAULT_TX_POWER = -63;
@@ -94,11 +94,11 @@ public class ConfigActivity extends Activity{
       builder.uriString(uri);
       if (mUriBeaconConfig.getVersion().equals(ProtocolV2.CONFIG_SERVICE_UUID)) {
         builder.flags(hexStringToByte(mFlagsValue.getText().toString()))
-            .beaconPeriod(Integer.parseInt(mPeriod.getText().toString()))
+            .beaconPeriod(Integer.parseInt(mBeaconPeriod.getText().toString()))
             .txPowerMode((byte) mTxPowerMode.getSelectedItemPosition());
         byte[] tempTxCal = new byte[4];
-        for (int i = 0; i < mTxCalTable.length; i++) {
-          tempTxCal[i] = Byte.parseByte(mTxCalTable[i].getText().toString());
+        for (int i = 0; i < mAdvertisedTxPowerLevels.length; i++) {
+          tempTxCal[i] = Byte.parseByte(mAdvertisedTxPowerLevels[i].getText().toString());
         }
         builder.advertisedTxPowerLevels(tempTxCal);
         configUriBeacon = builder.build();
@@ -153,13 +153,13 @@ public class ConfigActivity extends Activity{
     mSchema = (Spinner) findViewById(R.id.spinner_uriProtocols);
     mUriValue = (EditText) findViewById(R.id.editText_uri);
     mFlagsValue = (EditText) findViewById(R.id.editText_flags);
-    mPeriod = (EditText) findViewById(R.id.editText_beaconPeriod);
+    mBeaconPeriod = (EditText) findViewById(R.id.editText_beaconPeriod);
     mTxPowerMode = (Spinner) findViewById(R.id.spinner_powerMode);
-    mTxCalTable[0] = (EditText) findViewById(R.id.editText_txCal1);
-    mTxCalTable[1] = (EditText) findViewById(R.id.editText_txCal2);
-    mTxCalTable[2] = (EditText) findViewById(R.id.editText_txCal3);
-    mTxCalTable[3] = (EditText) findViewById(R.id.editText_txCal4);
-    mLock = (Switch) findViewById(R.id.switch_lock);
+    mAdvertisedTxPowerLevels[0] = (EditText) findViewById(R.id.editText_txCal1);
+    mAdvertisedTxPowerLevels[1] = (EditText) findViewById(R.id.editText_txCal2);
+    mAdvertisedTxPowerLevels[2] = (EditText) findViewById(R.id.editText_txCal3);
+    mAdvertisedTxPowerLevels[3] = (EditText) findViewById(R.id.editText_txCal4);
+    mLockState = (Switch) findViewById(R.id.switch_lock);
   }
 
   public boolean onCreateOptionsMenu(Menu menu) {
@@ -178,13 +178,13 @@ public class ConfigActivity extends Activity{
       mUriValue.setText(configUriBeacon.getUriString());
       if (mUriBeaconConfig.getVersion().equals(ProtocolV2.CONFIG_SERVICE_UUID)) {
         mFlagsValue.setText(byteToHexString(configUriBeacon.getFlags()));
-        mPeriod.setText(Integer.toString(configUriBeacon.getBeaconPeriod()));
+        mBeaconPeriod.setText(Integer.toString(configUriBeacon.getBeaconPeriod()));
         mTxPowerMode.setSelection((int) configUriBeacon.getTxPowerMode());
 
-        for (int i = 0; i < mTxCalTable.length; i++) {
-          mTxCalTable[i].setText(Integer.toString(configUriBeacon.getAdvertisedTxPowerLevels()[i]));
+        for (int i = 0; i < mAdvertisedTxPowerLevels.length; i++) {
+          mAdvertisedTxPowerLevels[i].setText(Integer.toString(configUriBeacon.getAdvertisedTxPowerLevels()[i]));
         }
-        mLock.setChecked(configUriBeacon.getLockState());
+        mLockState.setChecked(configUriBeacon.getLockState());
       }
       else if (mUriBeaconConfig.getVersion().equals(ProtocolV1.CONFIG_SERVICE_UUID)) {
         hideV2Fields();

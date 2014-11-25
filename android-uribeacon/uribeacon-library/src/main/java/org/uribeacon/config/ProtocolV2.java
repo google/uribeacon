@@ -63,52 +63,50 @@ public class ProtocolV2 extends BaseProtocol {
 
 
   public void writeUriBeacon(ConfigUriBeacon configUriBeacon) throws URISyntaxException{
-    // If the characteristic is different write it to the beacon.
-    // Before starting the calls define last call
+    //TODO: If beacon has invalid data initialize a beacon with RESET values
     if (mConfigUriBeacon == null) {
       mLastUUID = POWER_LEVELS;
-    } else {
-      if (!configUriBeacon.getUriString().equals(mConfigUriBeacon.getUriString())) {
-        mLastUUID = DATA;
-      }
-      if (configUriBeacon.getFlags() != mConfigUriBeacon.getFlags()) {
-        mLastUUID = FLAGS;
-      }
-      if (configUriBeacon.getBeaconPeriod() != mConfigUriBeacon.getBeaconPeriod()) {
-        mLastUUID = PERIOD;
-      }
-      if (configUriBeacon.getTxPowerMode() != mConfigUriBeacon.getTxPowerMode()) {
-        mLastUUID = POWER_MODE;
-      }
-      if (!Arrays.equals(configUriBeacon.getAdvertisedTxPowerLevels(),
-          mConfigUriBeacon.getAdvertisedTxPowerLevels())) {
-        mLastUUID = POWER_LEVELS;
-      }
-    }
-    // Once the last call has been defined start enqueuing the writes
-    if (mConfigUriBeacon == null) {
       mService.writeCharacteristic(DATA, configUriBeacon.getUriBytes());
       mService.writeCharacteristic(FLAGS, new byte[]{configUriBeacon.getFlags()});
       mService.writeCharacteristic(PERIOD, configUriBeacon.getBeaconPeriod(), PERIOD_FORMAT, 0);
       mService.writeCharacteristic(POWER_MODE, new byte[]{configUriBeacon.getTxPowerMode()});
       mService.writeCharacteristic(POWER_LEVELS, configUriBeacon.getAdvertisedTxPowerLevels());
     } else {
+      // Define last call
+      if (!configUriBeacon.getUriString().equals(mConfigUriBeacon.getUriString())) {
+        mLastUUID = DATA;
+      }
+      if (configUriBeacon.getFlags() != mConfigUriBeacon.getFlags()) {
+        mLastUUID = FLAGS;
+      }
+      if (!Arrays.equals(configUriBeacon.getAdvertisedTxPowerLevels(),
+          mConfigUriBeacon.getAdvertisedTxPowerLevels())) {
+        mLastUUID = POWER_LEVELS;
+      }
+      if (configUriBeacon.getTxPowerMode() != mConfigUriBeacon.getTxPowerMode()) {
+        mLastUUID = POWER_MODE;
+      }
+      if (configUriBeacon.getBeaconPeriod() != mConfigUriBeacon.getBeaconPeriod()) {
+        mLastUUID = PERIOD;
+      }
+      // Start enqueing writes
       if (!configUriBeacon.getUriString().equals(mConfigUriBeacon.getUriString())) {
         mService.writeCharacteristic(DATA, configUriBeacon.getUriBytes());
       }
       if (configUriBeacon.getFlags() != mConfigUriBeacon.getFlags()) {
         mService.writeCharacteristic(FLAGS, new byte[]{configUriBeacon.getFlags()});
       }
-      if (configUriBeacon.getBeaconPeriod() != mConfigUriBeacon.getBeaconPeriod()) {
-        mService.writeCharacteristic(PERIOD, configUriBeacon.getBeaconPeriod(), PERIOD_FORMAT, 0);
-      }
-      if (configUriBeacon.getTxPowerMode() != mConfigUriBeacon.getTxPowerMode()) {
-        mService.writeCharacteristic(POWER_MODE, new byte[]{configUriBeacon.getTxPowerMode()});
-      }
       if (!Arrays.equals(configUriBeacon.getAdvertisedTxPowerLevels(),
           mConfigUriBeacon.getAdvertisedTxPowerLevels())) {
         mService.writeCharacteristic(POWER_LEVELS, configUriBeacon.getAdvertisedTxPowerLevels());
       }
+      if (configUriBeacon.getTxPowerMode() != mConfigUriBeacon.getTxPowerMode()) {
+        mService.writeCharacteristic(POWER_MODE, new byte[]{configUriBeacon.getTxPowerMode()});
+      }
+      if (configUriBeacon.getBeaconPeriod() != mConfigUriBeacon.getBeaconPeriod()) {
+        mService.writeCharacteristic(PERIOD, configUriBeacon.getBeaconPeriod(), PERIOD_FORMAT, 0);
+      }
+
     }
   }
 
