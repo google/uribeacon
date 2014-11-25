@@ -19,6 +19,7 @@ package org.uribeacon.beacon;
 import java.net.URISyntaxException;
 
 public class ConfigUriBeacon extends UriBeacon {
+  private static final String TAG = ConfigUriBeacon.class.getCanonicalName();
   public static final int PERIOD_NONE = -1;
   public static final int POWER_MODE_NONE = -1;
   public static final int POWER_MODE_ULTRA_LOW = 0;
@@ -85,7 +86,7 @@ public class ConfigUriBeacon extends UriBeacon {
     boolean mLocked;
     int[] mPowerLevels;
     int mPowerMode = POWER_MODE_NONE;
-    int mPeriod;
+    int mPeriod = PERIOD_NONE;
 
     /**
      * Sets whether or not the beacon is locked.
@@ -164,9 +165,12 @@ public class ConfigUriBeacon extends UriBeacon {
      */
     public ConfigUriBeacon build() throws URISyntaxException {
       UriBeacon uriBeacon = super.build();
-      checkPowerMode();
-      checkPowerLevels();
-      checkPeriod();
+      if (mPowerMode != POWER_MODE_NONE || mPeriod != PERIOD_NONE ||
+          mPowerLevels != null) {
+        checkPowerMode();
+        checkPowerLevels();
+        checkPeriod();
+      }
       return new ConfigUriBeacon(uriBeacon, mLocked, mPowerLevels, mPowerMode, mPeriod);
     }
 
@@ -177,6 +181,9 @@ public class ConfigUriBeacon extends UriBeacon {
     }
 
     private void checkPowerLevels() {
+      if (mPowerLevels == null) {
+        throw new IllegalArgumentException("Need Power Levels");
+      }
       for (int i = 0; i < mPowerLevels.length; i++) {
         if (mPowerLevels[i] < MIN_INT8) {
           throw new IllegalArgumentException("Tx Power at position " + i + " less than " + MIN_INT8);

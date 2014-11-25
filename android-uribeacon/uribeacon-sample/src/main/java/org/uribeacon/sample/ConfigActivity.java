@@ -35,6 +35,7 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import org.uribeacon.beacon.ConfigUriBeacon;
+import org.uribeacon.beacon.ConfigUriBeacon.Builder;
 import org.uribeacon.config.ProtocolV1;
 import org.uribeacon.config.ProtocolV2;
 import org.uribeacon.config.UriBeaconConfig;
@@ -48,10 +49,7 @@ public class ConfigActivity extends Activity{
   private Spinner mSchema;
   private EditText mUriValue;
   private EditText mFlagsValue;
-  private EditText mTxCal1;
-  private EditText mTxCal2;
-  private EditText mTxCal3;
-  private EditText mTxCal4;
+  private EditText[] mTxCalTable = new EditText[4];
   private Spinner mTxPowerMode;
   private EditText mPeriod;
   private Switch mLock;
@@ -71,10 +69,8 @@ public class ConfigActivity extends Activity{
     @Override
     public void onUriBeaconWrite(int status) {
       checkRequest(status);
-      if (status == BluetoothGatt.GATT_SUCCESS) {
-        mUriBeaconConfig.closeUriBeacon();
-        finish();
-      }
+      mUriBeaconConfig.closeUriBeacon();
+      finish();
     }
 
     private void checkRequest(int status) {
@@ -93,10 +89,24 @@ public class ConfigActivity extends Activity{
     mUriValue.setEnabled(false);
     String uri = mUriValue.getText().toString();
     try {
-      ConfigUriBeacon configUriBeacon = new ConfigUriBeacon.Builder()
-          .uriString(uri)
-          .txPowerLevel(DEFAULT_TX_POWER)
-          .build();
+      ConfigUriBeacon configUriBeacon;
+      Builder builder = new ConfigUriBeacon.Builder();
+      builder.uriString(uri);
+      if (mUriBeaconConfig.getVersion().equals(ProtocolV2.CONFIG_SERVICE_UUID)) {
+        builder.flags(hexStringToByte(mFlagsValue.getText().toString()))
+            .period(Integer.parseInt(mPeriod.getText().toString()))
+            .powerMode(mTxPowerMode.getSelectedItemPosition());
+        int[] tempTxCal = new int[4];
+        for (int i = 0; i < mTxCalTable.length; i++) {
+          tempTxCal[i] = Integer.parseInt(mTxCalTable[i].getText().toString());
+        }
+        builder.powerLevels(tempTxCal);
+        configUriBeacon = builder.build();
+      }
+      else {
+        configUriBeacon = builder.txPowerLevel(DEFAULT_TX_POWER)
+            .build();
+      }
       mUriBeaconConfig.writeUriBeacon(configUriBeacon);
     } catch (URISyntaxException e) {
       Toast.makeText(ConfigActivity.this, "Invalid Uri", Toast.LENGTH_LONG).show();
@@ -145,10 +155,10 @@ public class ConfigActivity extends Activity{
     mFlagsValue = (EditText) findViewById(R.id.editText_flags);
     mPeriod = (EditText) findViewById(R.id.editText_beaconPeriod);
     mTxPowerMode = (Spinner) findViewById(R.id.spinner_powerMode);
-    mTxCal1 = (EditText) findViewById(R.id.editText_txCal1);
-    mTxCal2 = (EditText) findViewById(R.id.editText_txCal2);
-    mTxCal3 = (EditText) findViewById(R.id.editText_txCal3);
-    mTxCal4 = (EditText) findViewById(R.id.editText_txCal4);
+    mTxCalTable[0] = (EditText) findViewById(R.id.editText_txCal1);
+    mTxCalTable[1] = (EditText) findViewById(R.id.editText_txCal2);
+    mTxCalTable[2] = (EditText) findViewById(R.id.editText_txCal3);
+    mTxCalTable[3] = (EditText) findViewById(R.id.editText_txCal4);
     mLock = (Switch) findViewById(R.id.switch_lock);
   }
 
@@ -170,10 +180,8 @@ public class ConfigActivity extends Activity{
         mFlagsValue.setText(byteToHexString(configUriBeacon.getFlags()));
         mPeriod.setText(Integer.toString(configUriBeacon.getPeriod()));
         mTxPowerMode.setSelection(configUriBeacon.getPowerMode());
-
-        EditText[] txCalTable = {mTxCal1, mTxCal2, mTxCal3, mTxCal4};
-        for (int i = 0; i < txCalTable.length; i++) {
-          txCalTable[i].setText(Integer.toString(configUriBeacon.getPowerLevels()[i]));
+        for (int i = 0; i < mTxCalTable.length; i++) {
+          mTxCalTable[i].setText(Integer.toString(configUriBeacon.getPowerLevels()[i]));
         }
 
         mLock.setChecked(configUriBeacon.getLocked());
@@ -191,6 +199,9 @@ public class ConfigActivity extends Activity{
     return String.format("%02X", theByte);
   }
 
+  private byte hexStringToByte(String hexString) {
+    return Integer.decode("0x" + hexString).byteValue();
+  }
   private void hideV2Fields(){
     findViewById(R.id.secondRow).setVisibility(View.GONE);
     findViewById(R.id.txCalRow).setVisibility(View.GONE);
