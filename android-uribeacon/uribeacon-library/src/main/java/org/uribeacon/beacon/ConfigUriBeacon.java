@@ -150,7 +150,10 @@ public class ConfigUriBeacon extends UriBeacon {
       return this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Only used in V1
+     * {@inheritDoc}
+     */
     public Builder txPowerLevel(byte txPowerLevel) {
       super.txPowerLevel(txPowerLevel);
       // Allow chaining on ConfigUriBeacon by returning this
@@ -165,19 +168,19 @@ public class ConfigUriBeacon extends UriBeacon {
      */
     public ConfigUriBeacon build() throws URISyntaxException {
       UriBeacon uriBeacon = super.build();
-      checkPowerMode();
-      checkTxAdvertisedPowerLevels();
+      checkTxPowerMode();
+      checkAdvertisedTxPowerLevels();
       checkBeaconPeriod();
       return new ConfigUriBeacon(uriBeacon, mLockState, mAdvertisedTxPowerLevels, mTxPowerMode, mBeaconPeriod);
     }
 
-    private void checkPowerMode() throws URISyntaxException {
+    private void checkTxPowerMode() throws URISyntaxException {
       if (mTxPowerMode < POWER_MODE_NONE || mTxPowerMode > POWER_MODE_HIGH) {
         throw new URISyntaxException(Integer.toString(mTxPowerMode), "Unknown power mode");
       }
     }
 
-    private void checkTxAdvertisedPowerLevels() throws URISyntaxException {
+    private void checkAdvertisedTxPowerLevels() throws URISyntaxException {
       if (mAdvertisedTxPowerLevels == null) {
         throw new IllegalArgumentException("Must include Tx AdvertisedPowerLevels");
       }
