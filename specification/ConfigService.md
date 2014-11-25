@@ -53,7 +53,7 @@ The assigned number for `<<UriBeacon Config Service>>` is
 | Unlock                     | [3.3](#33-unlock) | Optional|
 | Uri Data                   | [3.4](#34-uri-data) | Mandatory|
 | Uri Flags                  | [3.5](#35-flags)  | Mandatory|
-| Advertised Tx Power Levels | [3.6](#36-advertised-tx-power-level)  | Mandatory|
+| Advertised Tx Power Levels | [3.6](#36-advertised-tx-power-levels)  | Mandatory|
 | Tx Power Mode              | [3.7](#37-tx-power-mode) | Mandatory |
 | Beacon Period              | [3.8](#38-beacon-period)| Mandatory|
 | Reset                      | [3.9](#39-reset) | Mandatory|
@@ -138,7 +138,7 @@ The Flags characteristic is a sinlge unsigned byte value containing the
 |  Lock State | For write, must be unlocked.|
 
 This characteristic is a fixed length array of values, in dBm, to be included in the 
-[UriBeacon TX Power Level](https://github.com/google/uribeacon/tree/master/specification#uribeacon-tx-power-level) field of the advertisement when that mode is active. The index into the array is [TX Power Mode](#36-tx-power-mode). 
+[UriBeacon TX Power Level](https://github.com/google/uribeacon/tree/master/specification#uribeacon-tx-power-level) field of the advertisement when that mode is active. The index into the array is [TX Power Mode](#37-tx-power-mode). 
 
 ### 3.7 TX Power Mode
 
