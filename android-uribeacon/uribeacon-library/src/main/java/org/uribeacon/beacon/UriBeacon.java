@@ -173,7 +173,7 @@ public class UriBeacon {
    *
    * @param scanRecordBytes The scan record of Bluetooth LE advertisement and/or scan response.
    */
-  public static UriBeacon parseFromBytes(byte[] scanRecordBytes) throws URISyntaxException {
+  public static UriBeacon parseFromBytes(byte[] scanRecordBytes) {
     byte[] serviceData = parseServiceDataFromBytes(scanRecordBytes);
     // Minimum UriBeacon consists of flags, TxPower
     if (serviceData == null || serviceData.length < 3) {
@@ -184,11 +184,7 @@ public class UriBeacon {
     byte txPowerLevel = serviceData[currentPos++];
     String uri = decodeUri(serviceData, currentPos);
     //TODO: Use builder instead since builder checks for errors
-    return new UriBeacon.Builder()
-        .uriString(uri)
-        .flags(flags)
-        .txPowerLevel(txPowerLevel)
-        .build();
+    return new UriBeacon(flags, txPowerLevel, uri);
   }
 
   private static String decodeUri(byte[] serviceData, int offset) {
