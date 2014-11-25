@@ -67,6 +67,7 @@ public class GattService extends Service {
     disconnect();
     super.onDestroy();
   }
+
   private BluetoothGattCharacteristic initializeCharacteristic(UUID uuid) {
     BluetoothGattCharacteristic characteristic = mBluetoothGattService.getCharacteristic(uuid);
     // WriteType is WRITE_TYPE_NO_RESPONSE even though the one that requests a response
@@ -77,6 +78,7 @@ public class GattService extends Service {
     }
     return characteristic;
   }
+
   public void writeCharacteristic(UUID uuid, byte[] value) {
     BluetoothGattCharacteristic characteristic = initializeCharacteristic(uuid);
     characteristic.setValue(value);

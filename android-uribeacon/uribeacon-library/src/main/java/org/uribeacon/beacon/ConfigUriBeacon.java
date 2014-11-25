@@ -84,7 +84,6 @@ public class ConfigUriBeacon extends UriBeacon {
     return mBeaconPeriod;
   }
   public static final class Builder extends UriBeacon.Builder {
-
     boolean mLockState;
     byte[] mAdvertisedTxPowerLevels;
     byte mTxPowerMode = POWER_MODE_NONE;
@@ -92,8 +91,7 @@ public class ConfigUriBeacon extends UriBeacon {
 
     /**
      * Sets whether or not the beacon is locked.
-     *
-     * @param lockState True if the beacon is lockState false otherwise.
+     * @param lockState True if the beacon is locked false otherwise.
      * @return The ConfigUriBeacon Builder.
      */
     public Builder lockState(boolean lockState) {
@@ -101,27 +99,21 @@ public class ConfigUriBeacon extends UriBeacon {
       return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /**  {@inheritDoc} */
     public Builder uriString(String uriString) {
       super.uriString(uriString);
       // Allow chaining on ConfigUriBeacon by returning this
       return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public Builder uriString(byte[] uriBytes) {
       super.uriString(uriBytes);
       // Allow chaining on ConfigUriBeacon by returning this
       return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public Builder flags(byte flags) {
       super.flags(flags);
       // Allow chaining on ConfigUriBeacon by returning this
@@ -130,7 +122,6 @@ public class ConfigUriBeacon extends UriBeacon {
 
     /**
      * Set the tx power for High, Medium, Low, Lowest
-     *
      * @param levels The array containing the tx powers for the levels
      * @return The ConfigUriBeacon Builder.
      */
@@ -141,7 +132,6 @@ public class ConfigUriBeacon extends UriBeacon {
 
     /**
      * Add a Uri to the UriBeacon advertised data.
-     *
      * @param txPowerMode The power mode to be advertised.
      * @return The ConfigUriBeacon Builder.
      */
@@ -162,7 +152,8 @@ public class ConfigUriBeacon extends UriBeacon {
     }
 
     /**
-     * Only used in V1 {@inheritDoc}
+     * Only used in
+     * V1 {@inheritDoc}
      */
     public Builder txPowerLevel(byte txPowerLevel) {
       super.txPowerLevel(txPowerLevel);

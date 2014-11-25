@@ -43,8 +43,6 @@ public class ProtocolV2 extends BaseProtocol {
   private static final UUID PERIOD                         = UUID.fromString("ee0c2088-8786-40ba-ab96-99b91ac981d8");
 
   private static final int LOCK_FORMAT = BluetoothGattCharacteristic.FORMAT_UINT8;
-  private static final int POWER_LEVELS_FORMAT = BluetoothGattCharacteristic.FORMAT_SINT8;
-  private static final int POWER_MODE_FORMAT = BluetoothGattCharacteristic.FORMAT_UINT8;
   private static final int PERIOD_FORMAT = BluetoothGattCharacteristic.FORMAT_UINT16;
 
   private final GattService mService;
@@ -67,7 +65,6 @@ public class ProtocolV2 extends BaseProtocol {
   public void writeUriBeacon(ConfigUriBeacon configUriBeacon) throws URISyntaxException{
     // If the characteristic is different write it to the beacon.
     // Before starting the calls define last call
-    Log.d(TAG, "WRITE");
     if (mConfigUriBeacon == null) {
       mLastUUID = POWER_LEVELS;
     } else {
