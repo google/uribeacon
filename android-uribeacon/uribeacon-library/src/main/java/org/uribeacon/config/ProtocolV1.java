@@ -88,22 +88,26 @@ public class ProtocolV1 extends BaseProtocol {
       int status) {
     // If the operation was successful
     UUID uuid = characteristic.getUuid();
-    if (status == BluetoothGatt.GATT_SUCCESS) {
-      if (DATA_LENGTH.equals(uuid)) {
-        mDataLength = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_SINT8, 0);
-        mService.readCharacteristic(DATA_ONE);
-      } else if (DATA_ONE.equals(uuid)) {
-        mData = characteristic.getValue();
-        if (mDataLength > DATA_LENGTH_MAX) {
-          mService.readCharacteristic(DATA_TWO);
-        } else {
+    try {
+      if (status == BluetoothGatt.GATT_SUCCESS) {
+        if (DATA_LENGTH.equals(uuid)) {
+          mDataLength = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_SINT8, 0);
+          mService.readCharacteristic(DATA_ONE);
+        } else if (DATA_ONE.equals(uuid)) {
+          mData = characteristic.getValue();
+          if (mDataLength > DATA_LENGTH_MAX) {
+            mService.readCharacteristic(DATA_TWO);
+          } else {
+            mUriBeaconCallback.onUriBeaconRead(ConfigUriBeacon.parseFromBytes(mData), status);
+          }
+        } else if (DATA_TWO.equals(uuid)) {
+          mData = Util.concatenate(mData, characteristic.getValue());
           mUriBeaconCallback.onUriBeaconRead(ConfigUriBeacon.parseFromBytes(mData), status);
         }
-      } else if (DATA_TWO.equals(uuid)) {
-        mData = Util.concatenate(mData, characteristic.getValue());
-        mUriBeaconCallback.onUriBeaconRead(ConfigUriBeacon.parseFromBytes(mData), status);
+      } else {
+        mUriBeaconCallback.onUriBeaconRead(null, status);
       }
-    } else {
+    } catch (URISyntaxException | IllegalArgumentException e) {
       mUriBeaconCallback.onUriBeaconRead(null, status);
     }
   }
