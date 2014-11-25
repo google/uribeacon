@@ -46,17 +46,17 @@ The assigned number for `<<UriBeacon Config Service>>` is
 ## 3 Service Characteristics
 
 
-| Characteristic            | Ref. | Requirement  | 
-|:--------------------------|:-----|:--------------------|
-| Lock State                | [3.1](#31-lock-state) | Mandatory|
-| Lock                      | [3.2](#32-lock) | Optional| 
-| Unlock                    | [3.3](#33-unlock) | Optional|
-| Uri Data                  | [3.4](#34-uri-data) | Mandatory|
-| Uri Flags                 | [3.5](#35-flags)  | Mandatory|
-| Advertised Tx Power Level | [3.6](#36-advertised-tx-power-level)  | Mandatory|
-| Tx Power Mode             | [3.7](#37-tx-power-mode) | Mandatory |
-| Beacon Period             | [3.8](#38-beacon-period)| Mandatory|
-| Reset                     | [3.9](#39-reset) | Mandatory|
+| Characteristic             | Ref. | Requirement  | 
+|:---------------------------|:-----|:--------------------|
+| Lock State                 | [3.1](#31-lock-state) | Mandatory|
+| Lock                       | [3.2](#32-lock) | Optional| 
+| Unlock                     | [3.3](#33-unlock) | Optional|
+| Uri Data                   | [3.4](#34-uri-data) | Mandatory|
+| Uri Flags                  | [3.5](#35-flags)  | Mandatory|
+| Advertised Tx Power Levels | [3.6](#36-advertised-tx-power-level)  | Mandatory|
+| Tx Power Mode              | [3.7](#37-tx-power-mode) | Mandatory |
+| Beacon Period              | [3.8](#38-beacon-period)| Mandatory|
+| Reset                      | [3.9](#39-reset) | Mandatory|
 
 ||<sup>Broadcast</sup>|<sup>Read</sup>|<sup>Write<br>without<br> Response</sup>|<sup>Write</sup>|<sup>Notify</sup>|<sup>Indicate</sup>|<sup>Signed Write</sup>|<sup>Reliable Write</sup>|<sup>Writable Auxiliaries</sup>|
 |-------------------------:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
@@ -65,7 +65,7 @@ The assigned number for `<<UriBeacon Config Service>>` is
 |Unlock                    |X|X|X|O  |X|X|X|X|X|
 |Uri Data                  |X|M|X|M\*|X|X|X|X|X|
 |Uri Flags                 |X|M|X|M\*|X|X|X|X|X|
-|Advertised Tx Power Level |X|M|X|M\*|X|X|X|X|X|
+|Advertised Tx Power Levels|X|M|X|M\*|X|X|X|X|X|
 |Tx Power Mode             |X|M|X|M\*|X|X|X|X|X|
 |Beacon Period             |X|M|X|M\*|X|X|X|X|X|
 |Reset                     |X|X|X|M\*|X|X|X|X|X|
@@ -128,12 +128,12 @@ The remaining bytes contain either [urn:uuid encoding](https://github.com/google
 The Flags characteristic is a sinlge unsigned byte value containing the
 [UriBeacon Flags](https://github.com/google/uribeacon/tree/master/specification#uribeacon-flags).
 
-### 3.6 Advertised TX Power Level
+### 3.6 Advertised TX Power Levels
 
-| Name | Advertised TX Power Level |
+| Name | Advertised TX Power Levels |
 |:------------|:--------------------------------------------|
 | UUID  | ee0c<b>2086</b>-8786-40ba-ab96-99b91ac981d8|
-|  Description| Reads/writes the Advertised Power Level. |
+|  Description| Reads/writes the Advertised Power Levels array. |
 |  Type | int8[4] |
 |  Lock State | For write, must be unlocked.|
 
