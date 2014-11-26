@@ -68,7 +68,7 @@ public class GattService extends Service {
     super.onDestroy();
   }
 
-  public void writeCharacteristic(UUID uuid, byte[] value) {
+  private BluetoothGattCharacteristic initializeCharacteristic(UUID uuid) {
     BluetoothGattCharacteristic characteristic = mBluetoothGattService.getCharacteristic(uuid);
     // WriteType is WRITE_TYPE_NO_RESPONSE even though the one that requests a response
     // is called WRITE_TYPE_DEFAULT!
@@ -76,7 +76,18 @@ public class GattService extends Service {
       Log.w(TAG, "writeCharacteristic default WriteType is being forced to WRITE_TYPE_DEFAULT");
       characteristic.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT);
     }
+    return characteristic;
+  }
+
+  public void writeCharacteristic(UUID uuid, byte[] value) {
+    BluetoothGattCharacteristic characteristic = initializeCharacteristic(uuid);
     characteristic.setValue(value);
+    mRequestQueue.add(mBluetoothGatt, RequestType.WRITE_CHARACTERISTIC, characteristic);
+  }
+
+  public void writeCharacteristic(UUID uuid, int value, int formatType, int offset) {
+    BluetoothGattCharacteristic characteristic = initializeCharacteristic(uuid);
+    characteristic.setValue(value, formatType, offset);
     mRequestQueue.add(mBluetoothGatt, RequestType.WRITE_CHARACTERISTIC, characteristic);
   }
 

@@ -35,6 +35,7 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import org.uribeacon.beacon.ConfigUriBeacon;
+import org.uribeacon.beacon.ConfigUriBeacon.Builder;
 import org.uribeacon.config.ProtocolV1;
 import org.uribeacon.config.ProtocolV2;
 import org.uribeacon.config.UriBeaconConfig;
@@ -48,13 +49,10 @@ public class ConfigActivity extends Activity{
   private Spinner mSchema;
   private EditText mUriValue;
   private EditText mFlagsValue;
-  private EditText mTxCal1;
-  private EditText mTxCal2;
-  private EditText mTxCal3;
-  private EditText mTxCal4;
+  private EditText[] mAdvertisedTxPowerLevels = new EditText[4];
   private Spinner mTxPowerMode;
-  private EditText mPeriod;
-  private Switch mLock;
+  private EditText mBeaconPeriod;
+  private Switch mLockState;
 
   private ProgressDialog mConnectionDialog = null;
   private static final byte DEFAULT_TX_POWER = -63;
@@ -71,10 +69,8 @@ public class ConfigActivity extends Activity{
     @Override
     public void onUriBeaconWrite(int status) {
       checkRequest(status);
-      if (status == BluetoothGatt.GATT_SUCCESS) {
-        mUriBeaconConfig.closeUriBeacon();
-        finish();
-      }
+      mUriBeaconConfig.closeUriBeacon();
+      finish();
     }
 
     private void checkRequest(int status) {
@@ -93,10 +89,24 @@ public class ConfigActivity extends Activity{
     mUriValue.setEnabled(false);
     String uri = mUriValue.getText().toString();
     try {
-      ConfigUriBeacon configUriBeacon = new ConfigUriBeacon.Builder()
-          .uriString(uri)
-          .txPowerLevel(DEFAULT_TX_POWER)
-          .build();
+      ConfigUriBeacon configUriBeacon;
+      Builder builder = new ConfigUriBeacon.Builder();
+      builder.uriString(uri);
+      if (mUriBeaconConfig.getVersion().equals(ProtocolV2.CONFIG_SERVICE_UUID)) {
+        builder.flags(hexStringToByte(mFlagsValue.getText().toString()))
+            .beaconPeriod(Integer.parseInt(mBeaconPeriod.getText().toString()))
+            .txPowerMode((byte) mTxPowerMode.getSelectedItemPosition());
+        byte[] tempTxCal = new byte[4];
+        for (int i = 0; i < mAdvertisedTxPowerLevels.length; i++) {
+          tempTxCal[i] = Byte.parseByte(mAdvertisedTxPowerLevels[i].getText().toString());
+        }
+        builder.advertisedTxPowerLevels(tempTxCal);
+        configUriBeacon = builder.build();
+      }
+      else {
+        configUriBeacon = builder.txPowerLevel(DEFAULT_TX_POWER)
+            .build();
+      }
       mUriBeaconConfig.writeUriBeacon(configUriBeacon);
     } catch (URISyntaxException e) {
       Toast.makeText(ConfigActivity.this, "Invalid Uri", Toast.LENGTH_LONG).show();
@@ -143,13 +153,13 @@ public class ConfigActivity extends Activity{
     mSchema = (Spinner) findViewById(R.id.spinner_uriProtocols);
     mUriValue = (EditText) findViewById(R.id.editText_uri);
     mFlagsValue = (EditText) findViewById(R.id.editText_flags);
-    mPeriod = (EditText) findViewById(R.id.editText_beaconPeriod);
+    mBeaconPeriod = (EditText) findViewById(R.id.editText_beaconPeriod);
     mTxPowerMode = (Spinner) findViewById(R.id.spinner_powerMode);
-    mTxCal1 = (EditText) findViewById(R.id.editText_txCal1);
-    mTxCal2 = (EditText) findViewById(R.id.editText_txCal2);
-    mTxCal3 = (EditText) findViewById(R.id.editText_txCal3);
-    mTxCal4 = (EditText) findViewById(R.id.editText_txCal4);
-    mLock = (Switch) findViewById(R.id.switch_lock);
+    mAdvertisedTxPowerLevels[0] = (EditText) findViewById(R.id.editText_txCal1);
+    mAdvertisedTxPowerLevels[1] = (EditText) findViewById(R.id.editText_txCal2);
+    mAdvertisedTxPowerLevels[2] = (EditText) findViewById(R.id.editText_txCal3);
+    mAdvertisedTxPowerLevels[3] = (EditText) findViewById(R.id.editText_txCal4);
+    mLockState = (Switch) findViewById(R.id.switch_lock);
   }
 
   public boolean onCreateOptionsMenu(Menu menu) {
@@ -168,15 +178,13 @@ public class ConfigActivity extends Activity{
       mUriValue.setText(configUriBeacon.getUriString());
       if (mUriBeaconConfig.getVersion().equals(ProtocolV2.CONFIG_SERVICE_UUID)) {
         mFlagsValue.setText(byteToHexString(configUriBeacon.getFlags()));
-        mPeriod.setText(Integer.toString(configUriBeacon.getBeaconPeriod()));
+        mBeaconPeriod.setText(Integer.toString(configUriBeacon.getBeaconPeriod()));
         mTxPowerMode.setSelection((int) configUriBeacon.getTxPowerMode());
 
-        EditText[] txCalTable = {mTxCal1, mTxCal2, mTxCal3, mTxCal4};
-        for (int i = 0; i < txCalTable.length; i++) {
-          txCalTable[i].setText(Byte.toString(configUriBeacon.getAdvertisedTxPowerLevels()[i]));
+        for (int i = 0; i < mAdvertisedTxPowerLevels.length; i++) {
+          mAdvertisedTxPowerLevels[i].setText(Integer.toString(configUriBeacon.getAdvertisedTxPowerLevels()[i]));
         }
-
-        mLock.setChecked(configUriBeacon.getLockState());
+        mLockState.setChecked(configUriBeacon.getLockState());
       }
       else if (mUriBeaconConfig.getVersion().equals(ProtocolV1.CONFIG_SERVICE_UUID)) {
         hideV2Fields();
@@ -191,6 +199,9 @@ public class ConfigActivity extends Activity{
     return String.format("%02X", theByte);
   }
 
+  private byte hexStringToByte(String hexString) {
+    return Integer.decode("0x" + hexString).byteValue();
+  }
   private void hideV2Fields(){
     findViewById(R.id.secondRow).setVisibility(View.GONE);
     findViewById(R.id.txCalRow).setVisibility(View.GONE);
