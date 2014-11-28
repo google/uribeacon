@@ -79,6 +79,8 @@ public class UriBeacon {
     put((byte) 12, ".biz");
     put((byte) 13, ".gov");
   }};
+
+  private static final int URI_BEACON_ID_OFFSET = 2;
   private final byte mFlags;
   private final byte mTxPowerLevel;
   private final String mUriString;
@@ -179,7 +181,8 @@ public class UriBeacon {
     if (serviceData == null || serviceData.length < 3) {
       return null;
     }
-    int currentPos = 0;
+    // We need to account for the URI Beacon ID, which accounts for the first two bytes
+    int currentPos = URI_BEACON_ID_OFFSET;
     byte flags = serviceData[currentPos++];
     byte txPowerLevel = serviceData[currentPos++];
     String uri = decodeUri(serviceData, currentPos);
