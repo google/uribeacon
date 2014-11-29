@@ -110,11 +110,13 @@ contents of the parameter.
 |:------------|:--------------------------------------------|
 | UUID  | ee0c<b>2084</b>-8786-40ba-ab96-99b91ac981d8|
 |  Description| Reads/writes the Uri. |
-|  Type | uint8[] |
+|  Type | uint8[]|
 |  Lock State | For write, must be unlocked.|
 
 The Uri Data characteristic is a variable length structure. The first byte contains the [Uri Scheme Prefix](https://github.com/google/uribeacon/tree/master/specification#uribeacon-uri-scheme-prefix).
 The remaining bytes contain either [urn:uuid encoding](https://github.com/google/uribeacon/tree/master/specification#uribeacon-urnuuid-encoding) or  [HTTP URL encoding](https://github.com/google/uribeacon/tree/master/specification#uribeacon-http-url-encoding).
+
+Note: Uri Data must be between 0 and 18 bytes in length.
 
 ### 3.5 Flags
 
