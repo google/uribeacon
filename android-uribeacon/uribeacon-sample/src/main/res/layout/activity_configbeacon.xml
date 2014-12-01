@@ -59,8 +59,21 @@
             android:id="@+id/txCalRow">
         <LinearLayout style="@style/inlineBox">
             <TextView style="@style/label"
-                      android:text="@string/tx_power_high"
+                      android:text="@string/tx_power_lowest"
                       android:id="@+id/labelHigh"/>
+            <RelativeLayout style="@style/unitBox">
+                <EditText style="@style/editText"
+                          android:inputType="numberSigned"
+                          android:id="@+id/editText_txCal0"/>
+                <TextView style="@style/unit"
+                          android:layout_alignBaseline="@id/editText_txCal0"
+                          android:text="@string/dbm"/>
+            </RelativeLayout>
+        </LinearLayout>
+        <LinearLayout style="@style/inlineBox">
+            <TextView style="@style/label"
+                      android:text="@string/tx_power_low"
+                      android:id="@+id/labelMedium"/>
             <RelativeLayout style="@style/unitBox">
                 <EditText style="@style/editText"
                           android:inputType="numberSigned"
@@ -73,7 +86,7 @@
         <LinearLayout style="@style/inlineBox">
             <TextView style="@style/label"
                       android:text="@string/tx_power_medium"
-                      android:id="@+id/labelMedium"/>
+                      android:id="@+id/labelLow"/>
             <RelativeLayout style="@style/unitBox">
                 <EditText style="@style/editText"
                           android:inputType="numberSigned"
@@ -85,27 +98,14 @@
         </LinearLayout>
         <LinearLayout style="@style/inlineBox">
             <TextView style="@style/label"
-                      android:text="@string/tx_power_low"
-                      android:id="@+id/labelLow"/>
+                      android:text="@string/tx_power_high"
+                      android:id="@+id/labelLowest"/>
             <RelativeLayout style="@style/unitBox">
                 <EditText style="@style/editText"
                           android:inputType="numberSigned"
                           android:id="@+id/editText_txCal3"/>
                 <TextView style="@style/unit"
                           android:layout_alignBaseline="@id/editText_txCal3"
-                          android:text="@string/dbm"/>
-            </RelativeLayout>
-        </LinearLayout>
-        <LinearLayout style="@style/inlineBox">
-            <TextView style="@style/label"
-                      android:text="@string/tx_power_lowest"
-                      android:id="@+id/labelLowest"/>
-            <RelativeLayout style="@style/unitBox">
-                <EditText style="@style/editText"
-                          android:inputType="numberSigned"
-                          android:id="@+id/editText_txCal4"/>
-                <TextView style="@style/unit"
-                          android:layout_alignBaseline="@id/editText_txCal4"
                           android:text="@string/dbm"/>
             </RelativeLayout>
         </LinearLayout>
