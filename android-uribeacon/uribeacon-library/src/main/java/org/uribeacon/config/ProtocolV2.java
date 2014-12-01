@@ -41,7 +41,7 @@ public class ProtocolV2 extends BaseProtocol {
   private static final UUID POWER_LEVELS                   = UUID.fromString("ee0c2086-8786-40ba-ab96-99b91ac981d8");
   private static final UUID POWER_MODE                     = UUID.fromString("ee0c2087-8786-40ba-ab96-99b91ac981d8");
   private static final UUID PERIOD                         = UUID.fromString("ee0c2088-8786-40ba-ab96-99b91ac981d8");
-
+  private static final UUID RESET                          = UUID.fromString("ee0c2089-8786-40ba-ab96-99b91ac981d8");
   private static final int LOCK_FORMAT = BluetoothGattCharacteristic.FORMAT_UINT8;
   private static final int PERIOD_FORMAT = BluetoothGattCharacteristic.FORMAT_UINT16;
 
@@ -64,7 +64,10 @@ public class ProtocolV2 extends BaseProtocol {
 
   public void writeUriBeacon(ConfigUriBeacon configUriBeacon) throws URISyntaxException{
     //TODO: If beacon has invalid data initialize a beacon with RESET values
-    if (mConfigUriBeacon == null) {
+    if (configUriBeacon.getReset()) {
+      mLastUUID = RESET;
+      mService.writeCharacteristic(RESET, new byte[]{1});
+    } else if (mConfigUriBeacon == null) {
       mLastUUID = POWER_LEVELS;
       mService.writeCharacteristic(DATA, configUriBeacon.getUriBytes());
       mService.writeCharacteristic(FLAGS, new byte[]{configUriBeacon.getFlags()});
