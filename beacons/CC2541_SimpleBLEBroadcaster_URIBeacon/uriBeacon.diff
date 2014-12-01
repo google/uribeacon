@@ -1,0 +1,49 @@
+71c71
+< #define DEFAULT_ADVERTISING_INTERVAL          160
+---
+> #define DEFAULT_ADVERTISING_INTERVAL          1600
+137,140c137
+<   // Flags; this sets the device to use limited discoverable
+<   // mode (advertises for 30 seconds at a time) instead of general
+<   // discoverable mode (advertises indefinitely)
+<   0x02,   // length of this data
+---
+>   0x02,
+142,149c139,152
+<   GAP_ADTYPE_FLAGS_BREDR_NOT_SUPPORTED,
+< 
+<   // three-byte broadcast of the data "1 2 3"
+<   0x04,   // length of this data including the data type byte
+<   GAP_ADTYPE_MANUFACTURER_SPECIFIC,      // manufacturer specific advertisement data type
+<   1,
+<   2,
+<   3
+---
+>   GAP_ADTYPE_FLAGS_GENERAL|GAP_ADTYPE_FLAGS_BREDR_NOT_SUPPORTED,
+>   0x03,  // length
+>   0x03,  // Param: Service List
+>   0xD8, 0xFE,  // URI Beacon ID
+>   0x0A,  // length
+>   0x16,  // Service Data
+>   0xD8, 0xFE, // URI Beacon ID
+>   0x00,  // flags
+>   0xC5,  // power
+>   0x00,  // http://www.
+>   'A',
+>   'B',
+>   'C',
+>   0x00,  // .".com"
+214,215c217,218
+<     //uint8 advType = GAP_ADTYPE_ADV_NONCONN_IND;   // use non-connectable advertisements
+<     uint8 advType = GAP_ADTYPE_ADV_SCAN_IND; // use scannable unidirected advertisements
+---
+>     uint8 advType = GAP_ADTYPE_ADV_NONCONN_IND;   // use non-connectable advertisements
+>     //uint8 advType = GAP_ADTYPE_ADV_SCAN_IND; // use scannable unidirected advertisements
+219c222
+<     GAPRole_SetParameter( GAPROLE_ADVERT_OFF_TIME, sizeof( uint16 ), &gapRole_AdvertOffTime );
+---
+>     //GAPRole_SetParameter( GAPROLE_ADVERT_OFF_TIME, sizeof( uint16 ), &gapRole_AdvertOffTime );
+221c224
+<     GAPRole_SetParameter( GAPROLE_SCAN_RSP_DATA, sizeof ( scanRspData ), scanRspData );
+---
+>     //GAPRole_SetParameter( GAPROLE_SCAN_RSP_DATA, sizeof ( scanRspData ), scanRspData );
