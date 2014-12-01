@@ -166,6 +166,7 @@ public class ProtocolV2 extends BaseProtocol {
   public void onCharacteristicWrite(android.bluetooth.BluetoothGatt gatt,
       BluetoothGattCharacteristic characteristic, int status) {
     // If the operation was successful
+    Log.d(TAG, "on write");
     if (status == BluetoothGatt.GATT_SUCCESS) {
       if (mLastUUID.equals(characteristic.getUuid())) {
         mUriBeaconCallback.onUriBeaconWrite(status);

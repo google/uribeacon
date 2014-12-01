@@ -55,4 +55,8 @@
     <string name="lock">Lock</string>
     <string name="ms">ms</string>
     <string name="dbm">dBm</string>
+    <string name="cancel">Cancel</string>
+    <string name="enter_password">Enter UriBeacon password</string>
+    <string name="write_beacon">Write</string>
+    <string name="enter_password_again">Enter password again...</string>
 </resources>

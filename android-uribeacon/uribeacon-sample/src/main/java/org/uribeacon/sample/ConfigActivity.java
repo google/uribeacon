@@ -17,6 +17,7 @@
 package org.uribeacon.sample;
 
 import android.app.Activity;
+import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
@@ -35,7 +36,6 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import org.uribeacon.beacon.ConfigUriBeacon;
-import org.uribeacon.beacon.ConfigUriBeacon.Builder;
 import org.uribeacon.config.ProtocolV1;
 import org.uribeacon.config.ProtocolV2;
 import org.uribeacon.config.UriBeaconConfig;
@@ -45,7 +45,7 @@ import org.uribeacon.scan.compat.ScanResult;
 import java.net.URISyntaxException;
 import java.util.List;
 
-public class ConfigActivity extends Activity{
+public class ConfigActivity extends Activity implements PasswordDialogFragment.PasswordDialogListener{
   private Spinner mSchema;
   private EditText mUriValue;
   private EditText mFlagsValue;
@@ -53,6 +53,7 @@ public class ConfigActivity extends Activity{
   private Spinner mTxPowerMode;
   private EditText mBeaconPeriod;
   private Switch mLockState;
+  private boolean mOriginalLockState;
 
   private ProgressDialog mConnectionDialog = null;
   private static final byte DEFAULT_TX_POWER = -63;
@@ -82,38 +83,50 @@ public class ConfigActivity extends Activity{
     }
   };
 
-
+  private void blockUi() {
+    mUriValue.setEnabled(false);
+  }
 
   public void saveConfigBeacon(MenuItem menu) {
-    // block UI
-    mUriValue.setEnabled(false);
-    String uri = mUriValue.getText().toString();
     try {
-      ConfigUriBeacon configUriBeacon;
-      Builder builder = new ConfigUriBeacon.Builder();
-      builder.uriString(uri);
       if (mUriBeaconConfig.getVersion().equals(ProtocolV2.CONFIG_SERVICE_UUID)) {
-        builder.flags(hexStringToByte(mFlagsValue.getText().toString()))
-            .beaconPeriod(Integer.parseInt(mBeaconPeriod.getText().toString()))
-            .txPowerMode((byte) mTxPowerMode.getSelectedItemPosition());
-        byte[] tempTxCal = new byte[4];
-        for (int i = 0; i < mAdvertisedTxPowerLevels.length; i++) {
-          tempTxCal[i] = Byte.parseByte(mAdvertisedTxPowerLevels[i].getText().toString());
+        if (mOriginalLockState || mLockState.isChecked()) {
+          showPasswordDialog();
         }
-        builder.advertisedTxPowerLevels(tempTxCal);
-        configUriBeacon = builder.build();
+        else {
+          writeUriBeaconV2();
+        }
       }
       else {
-        configUriBeacon = builder.txPowerLevel(DEFAULT_TX_POWER)
+        blockUi();
+        ConfigUriBeacon configUriBeacon = new ConfigUriBeacon.Builder()
+            .uriString(mUriValue.getText().toString())
+            .txPowerLevel(DEFAULT_TX_POWER)
             .build();
+        mUriBeaconConfig.writeUriBeacon(configUriBeacon);
       }
-      mUriBeaconConfig.writeUriBeacon(configUriBeacon);
     } catch (URISyntaxException e) {
       Toast.makeText(ConfigActivity.this, "Invalid Uri", Toast.LENGTH_LONG).show();
       mUriBeaconConfig.closeUriBeacon();
       finish();
     }
   }
+
+  private void writeUriBeaconV2() throws URISyntaxException {
+    blockUi();
+    ConfigUriBeacon.Builder builder = new ConfigUriBeacon.Builder()
+        .uriString(mUriValue.getText().toString())
+        .flags(hexStringToByte(mFlagsValue.getText().toString()))
+        .beaconPeriod(Integer.parseInt(mBeaconPeriod.getText().toString()))
+        .txPowerMode((byte) mTxPowerMode.getSelectedItemPosition());
+    byte[] tempTxCal = new byte[4];
+    for (int i = 0; i < mAdvertisedTxPowerLevels.length; i++) {
+      tempTxCal[i] = Byte.parseByte(mAdvertisedTxPowerLevels[i].getText().toString());
+    }
+    builder.advertisedTxPowerLevels(tempTxCal);
+    mUriBeaconConfig.writeUriBeacon(builder.build());
+  }
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -185,6 +198,7 @@ public class ConfigActivity extends Activity{
           mAdvertisedTxPowerLevels[i].setText(Integer.toString(configUriBeacon.getAdvertisedTxPowerLevels()[i]));
         }
         mLockState.setChecked(configUriBeacon.getLockState());
+        mOriginalLockState = configUriBeacon.getLockState();
       }
       else if (mUriBeaconConfig.getVersion().equals(ProtocolV1.CONFIG_SERVICE_UUID)) {
         hideV2Fields();
@@ -213,5 +227,21 @@ public class ConfigActivity extends Activity{
     mUriBeaconConfig.closeUriBeacon();
     Toast.makeText(this, "Disconnected from beacon", Toast.LENGTH_SHORT).show();
     super.onDestroy();
+  }
+
+  public void showPasswordDialog() {
+    DialogFragment dialog = new PasswordDialogFragment();
+    dialog.setArguments(new Bundle());
+    dialog.show(getFragmentManager(), "PasswordDialogFragment");
+  }
+  @Override
+  public void onDialogWriteClick(DialogFragment dialog) {
+    try {
+      writeUriBeaconV2();
+    } catch (URISyntaxException e) {
+      Toast.makeText(ConfigActivity.this, "Invalid Uri", Toast.LENGTH_LONG).show();
+      mUriBeaconConfig.closeUriBeacon();
+      finish();
+    }
   }
 }
