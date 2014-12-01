@@ -35,4 +35,42 @@ If you see. "Segment ISTACK is too long" error in IAR 8.30, you can change "numb
 
 ![reg](02_compile_ERR_8_30.png)
 
+3.Change "static uint8 advertData[]" to:
+```c
+static uint8 advertData[] = 
+{ 
+  0x02,
+  GAP_ADTYPE_FLAGS,
+  GAP_ADTYPE_FLAGS_GENERAL|GAP_ADTYPE_FLAGS_BREDR_NOT_SUPPORTED,
+  0x03,  // length
+  0x03,  // Param: Service List
+  0xD8, 0xFE,  // URI Beacon ID
+  0x0A,  // length
+  0x16,  // Service Data
+  0xD8, 0xFE, // URI Beacon ID
+  0x00,  // flags
+  0xC5,  // power
+  0x00,  // http://www.
+  'A',
+  'B',
+  'C',
+  0x00,  // .".com"
+};
+```
+And change "advType" to "GAP_ADTYPE_ADV_NONCONN_IND", comment out "GAPRole_SetParameter( GAPROLE_ADVERT_OFF_TIME, sizeof( uint16 ), &gapRole_AdvertOffTime );" and "GAPRole_SetParameter( GAPROLE_SCAN_RSP_DATA, sizeof ( scanRspData ), scanRspData );"
+```c
+    uint8 advType = GAP_ADTYPE_ADV_NONCONN_IND;   // use non-connectable advertisements
+    //uint8 advType = GAP_ADTYPE_ADV_SCAN_IND; // use scannable unidirected advertisements
 
+    // Set the GAP Role Parameters
+    GAPRole_SetParameter( GAPROLE_ADVERT_ENABLED, sizeof( uint8 ), &initial_advertising_enable );
+    //GAPRole_SetParameter( GAPROLE_ADVERT_OFF_TIME, sizeof( uint16 ), &gapRole_AdvertOffTime );
+    
+    //GAPRole_SetParameter( GAPROLE_SCAN_RSP_DATA, sizeof ( scanRspData ), scanRspData );
+```
+Also you can change "DEFAULT_ADVERTISING_INTERVAL" to save some power
+```c
+#define DEFAULT_ADVERTISING_INTERVAL          1600
+```
+
+You can refer to "uriBeacon.diff" about all these changes.
