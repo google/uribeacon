@@ -155,10 +155,10 @@ public class ConfigActivity extends Activity{
     mFlagsValue = (EditText) findViewById(R.id.editText_flags);
     mBeaconPeriod = (EditText) findViewById(R.id.editText_beaconPeriod);
     mTxPowerMode = (Spinner) findViewById(R.id.spinner_powerMode);
-    mAdvertisedTxPowerLevels[0] = (EditText) findViewById(R.id.editText_txCal1);
-    mAdvertisedTxPowerLevels[1] = (EditText) findViewById(R.id.editText_txCal2);
-    mAdvertisedTxPowerLevels[2] = (EditText) findViewById(R.id.editText_txCal3);
-    mAdvertisedTxPowerLevels[3] = (EditText) findViewById(R.id.editText_txCal4);
+    mAdvertisedTxPowerLevels[0] = (EditText) findViewById(R.id.editText_txCal0);
+    mAdvertisedTxPowerLevels[1] = (EditText) findViewById(R.id.editText_txCal1);
+    mAdvertisedTxPowerLevels[2] = (EditText) findViewById(R.id.editText_txCal2);
+    mAdvertisedTxPowerLevels[3] = (EditText) findViewById(R.id.editText_txCal3);
     mLockState = (Switch) findViewById(R.id.switch_lock);
   }
 
