@@ -100,6 +100,10 @@ public class ProtocolV2 extends BaseProtocol {
       if (configUriBeacon.getLockState()) {
         mLastUUID = LOCK;
       }
+      // If there are no changes or the only change is that the beacon was unlocked, return.
+      if (mLastUUID == null) {
+        mUriBeaconCallback.onUriBeaconWrite(BluetoothGatt.GATT_SUCCESS);
+      }
       // Start enqueing writes
       if (!configUriBeacon.getUriString().equals(mConfigUriBeacon.getUriString())) {
         mService.writeCharacteristic(DATA, configUriBeacon.getUriBytes());
