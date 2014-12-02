@@ -9,8 +9,6 @@ import android.app.Fragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.Button;
 
 
 /**
@@ -19,10 +17,12 @@ import android.widget.Button;
 public class PasswordDialogFragment extends DialogFragment {
 
   private static final String TAG = PasswordDialogListener.class.getCanonicalName();
+  public static final String RESET = "reset";
 
   public interface PasswordDialogListener {
     public void onDialogWriteClick(boolean reset);
   }
+
   private PasswordDialogListener mListener;
   private boolean mReset;
   public PasswordDialogFragment() {
@@ -30,6 +30,7 @@ public class PasswordDialogFragment extends DialogFragment {
   @Override
   public void onAttach(Activity activity) {
     super.onAttach(activity);
+    mReset = getArguments().getBoolean(RESET);
     try {
       mListener = (PasswordDialogListener) activity;
     } catch (ClassCastException e) {
@@ -40,7 +41,6 @@ public class PasswordDialogFragment extends DialogFragment {
 
   @Override
   public Dialog onCreateDialog(Bundle savedInstanceState) {
-    mReset = getArguments().getBoolean("reset");
     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
     LayoutInflater inflater = getActivity().getLayoutInflater();
     builder.setView(inflater.inflate(R.layout.fragment_password_dialog, null))
@@ -50,21 +50,13 @@ public class PasswordDialogFragment extends DialogFragment {
             PasswordDialogFragment.this.getDialog().cancel();
           }
         })
-        .setPositiveButton(R.string.write_beacon, null);
+        .setPositiveButton(R.string.write_beacon, new DialogInterface.OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialog, int id) {
+            mListener.onDialogWriteClick(mReset);
+            dismiss();
+          }
+        });
     return builder.create();
-  }
-
-  @Override
-  public void onResume() {
-    super.onResume();
-    AlertDialog alertDialog = (AlertDialog) getDialog();
-    Button writeButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
-    writeButton.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        mListener.onDialogWriteClick(mReset);
-        dismiss();
-      }
-    });
   }
 }

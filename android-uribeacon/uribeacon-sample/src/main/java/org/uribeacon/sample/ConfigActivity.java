@@ -112,21 +112,20 @@ public class ConfigActivity extends Activity implements PasswordDialogFragment.P
     }
   }
   public void onResetClicked(MenuItem menu) {
-    if (mOriginalLockState || mLockState.isChecked()) {
+    if (mOriginalLockState) {
       showPasswordDialog(true);
-    }
-    else {
+    } else {
       resetConfigBeacon();
     }
   }
   private void resetConfigBeacon() {
     try {
       ConfigUriBeacon configUriBeacon = new ConfigUriBeacon.Builder()
-        .reset(true)
-        .build();
+          .reset(true)
+          .build();
       mUriBeaconConfig.writeUriBeacon(configUriBeacon);
     } catch (URISyntaxException e) {
-      e.printStackTrace();
+      Toast.makeText(ConfigActivity.this, R.string.reset_failed, Toast.LENGTH_SHORT).show();
     }
   }
   private void writeUriBeaconV2() throws URISyntaxException {
@@ -249,9 +248,9 @@ public class ConfigActivity extends Activity implements PasswordDialogFragment.P
   public void showPasswordDialog(boolean reset) {
     DialogFragment dialog = new PasswordDialogFragment();
     Bundle args = new Bundle();
-    args.putBoolean("reset", reset);
+    args.putBoolean(PasswordDialogFragment.RESET, reset);
     dialog.setArguments(args);
-    dialog.show(getFragmentManager(), "PasswordDialogFragment");
+    dialog.show(getFragmentManager(), PasswordDialogFragment.class.getCanonicalName());
   }
   @Override
   public void onDialogWriteClick(boolean reset) {
