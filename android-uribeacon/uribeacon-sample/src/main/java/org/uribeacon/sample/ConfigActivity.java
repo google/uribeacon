@@ -100,7 +100,7 @@ public class ConfigActivity extends Activity implements PasswordDialogFragment.P
       else {
         blockUi();
         ConfigUriBeacon configUriBeacon = new ConfigUriBeacon.Builder()
-            .uriString(mUriValue.getText().toString())
+            .uriString(getUri())
             .txPowerLevel(DEFAULT_TX_POWER)
             .build();
         mUriBeaconConfig.writeUriBeacon(configUriBeacon);
@@ -131,7 +131,7 @@ public class ConfigActivity extends Activity implements PasswordDialogFragment.P
   private void writeUriBeaconV2() throws URISyntaxException {
     blockUi();
     ConfigUriBeacon.Builder builder = new ConfigUriBeacon.Builder()
-        .uriString(mSchema.getSelectedItem() + mUriValue.getText().toString())
+        .uriString(getUri())
         .flags(hexStringToByte(mFlagsValue.getText().toString()))
         .beaconPeriod(Integer.parseInt(mBeaconPeriod.getText().toString()))
         .txPowerMode((byte) mTxPowerMode.getSelectedItemPosition());
@@ -142,7 +142,10 @@ public class ConfigActivity extends Activity implements PasswordDialogFragment.P
     builder.advertisedTxPowerLevels(tempTxCal);
     mUriBeaconConfig.writeUriBeacon(builder.build());
   }
-
+  private String getUri() {
+    return mUriValue.getText().toString().isEmpty() ?
+        mUriValue.getText().toString() : mSchema.getSelectedItem() + mUriValue.getText().toString();
+  }
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
