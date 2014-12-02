@@ -49,14 +49,16 @@ echo ""
 # Convert the text Uri to bytes. Here we always add http:// code 03
 URI_BYTES="03 `echo -n $URI_TEXT | hexdump -v -e '/1 "%02X "'`"
 
-# These are the 3 fields within the Advertisign Data
+# Additional advertising payload service data
 AD_FLAGS="02 01 1a"
 AD_SERVICE_UUID="03 03 d8 fe"
+
+# Build advertisement payload
 AD_SERVICE_DATA_BODY="16 d8 fe $URI_FLAGS $URI_TX_POWER $URI_BYTES"
 AD_SERVICE_DATA_LEN=$(printf '%x' $(echo -n $AD_SERVICE_DATA_BODY | wc -w))
 AD_SERVICE_DATA="$AD_SERVICE_DATA_LEN $AD_SERVICE_DATA_BODY"
 
-# This is the entire Advertisement Data that is broadcast
+# This is the advertisement to be broadcast
 AD_DATA="$AD_FLAGS $AD_SERVICE_UUID $AD_SERVICE_DATA"
 
 # Pad Advertising Data with 00 to 32 bytes for hcitool
