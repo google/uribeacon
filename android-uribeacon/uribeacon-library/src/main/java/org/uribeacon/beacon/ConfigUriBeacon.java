@@ -20,6 +20,8 @@ import java.net.URISyntaxException;
 
 public class ConfigUriBeacon extends UriBeacon {
   private static final String TAG = ConfigUriBeacon.class.getCanonicalName();
+  // This error should be defined in the BluetoothGatt library but it isn't.
+  public static final int INSUFFICIENT_AUTHORIZATION = 8;
   public static final int PERIOD_NONE = -1;
   public static final byte POWER_MODE_NONE = -1;
   public static final byte POWER_MODE_ULTRA_LOW = 0;

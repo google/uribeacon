@@ -62,4 +62,8 @@
     <string name="reset_failed">Could not reset UriBeacon to its default values</string>
     <string name="no_password">Please enter a password</string>
     <string name="password_missmatch">Passwords don\'t match</string>
+    <string name="failed_to_read">Failed to read beacon</string>
+    <string name="failed_with_code">Failed with code:</string>
+    <string name="wrong_password">Wrong password please try again...</string>
+    <string name="failed_to_write">Failed to update beacon</string>
 </resources>

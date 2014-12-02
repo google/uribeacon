@@ -71,22 +71,28 @@ public class ConfigActivity extends Activity implements PasswordDialogFragment.P
   private final UriBeaconCallback mUriBeaconCallback = new UriBeaconCallback() {
     @Override
     public void onUriBeaconRead(ConfigUriBeacon configUriBeacon, int status) {
-      checkRequest(status);
-      updateInputFields(configUriBeacon);
+      if (status == BluetoothGatt.GATT_SUCCESS) {
+        updateInputFields(configUriBeacon);
+      } else if (status == BluetoothGatt.GATT_FAILURE) {
+        Toast.makeText(ConfigActivity.this, R.string.failed_to_read, Toast.LENGTH_SHORT).show();
+        finish();
+      } else {
+        Toast.makeText(ConfigActivity.this, getString(R.string.failed_with_code) + status, Toast.LENGTH_SHORT).show();
+        finish();
+      }
     }
 
     @Override
     public void onUriBeaconWrite(int status) {
-      checkRequest(status);
-      mUriBeaconConfig.closeUriBeacon();
-      finish();
-    }
-
-    private void checkRequest(int status) {
-      if (status == BluetoothGatt.GATT_FAILURE) {
-        Toast.makeText(ConfigActivity.this, "Failed to update the beacon", Toast.LENGTH_SHORT)
-            .show();
+      if (status == BluetoothGatt.GATT_SUCCESS) {
+        mUriBeaconConfig.closeUriBeacon();
         finish();
+      } else if (status == BluetoothGatt.GATT_FAILURE) {
+        Toast.makeText(ConfigActivity.this, R.string.failed_to_write, Toast.LENGTH_SHORT).show();
+      } else if (status == ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION) {
+        Toast.makeText(ConfigActivity.this, R.string.wrong_password, Toast.LENGTH_SHORT).show();
+      } else {
+        Toast.makeText(ConfigActivity.this, getString(R.string.failed_with_code) + status, Toast.LENGTH_SHORT).show();
       }
     }
   };
