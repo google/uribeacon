@@ -93,6 +93,7 @@ public class ConfigUriBeacon extends UriBeacon {
   public boolean getReset() {
     return mReset;
   }
+
   public static final class Builder extends UriBeacon.Builder {
     boolean mLockState;
     byte[] mAdvertisedTxPowerLevels;
@@ -161,6 +162,11 @@ public class ConfigUriBeacon extends UriBeacon {
       return this;
     }
 
+    /**
+     * Indicates if the beacon should be reset or not.
+     * @param reset If the beacon should be reset
+     * @return The ConfigUriBeacon Builder
+     */
     public Builder reset(boolean reset) {
       mReset = reset;
       return this;
