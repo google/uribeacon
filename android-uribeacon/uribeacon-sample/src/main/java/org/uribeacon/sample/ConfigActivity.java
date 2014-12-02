@@ -91,7 +91,7 @@ public class ConfigActivity extends Activity implements PasswordDialogFragment.P
     try {
       if (mUriBeaconConfig.getVersion().equals(ProtocolV2.CONFIG_SERVICE_UUID)) {
         if (mOriginalLockState || mLockState.isChecked()) {
-          showPasswordDialog();
+          showPasswordDialog(false);
         }
         else {
           writeUriBeaconV2();
@@ -111,7 +111,23 @@ public class ConfigActivity extends Activity implements PasswordDialogFragment.P
       finish();
     }
   }
-
+  public void onResetClicked(MenuItem menu) {
+    if (mOriginalLockState) {
+      showPasswordDialog(true);
+    } else {
+      resetConfigBeacon();
+    }
+  }
+  private void resetConfigBeacon() {
+    try {
+      ConfigUriBeacon configUriBeacon = new ConfigUriBeacon.Builder()
+          .reset(true)
+          .build();
+      mUriBeaconConfig.writeUriBeacon(configUriBeacon);
+    } catch (URISyntaxException e) {
+      Toast.makeText(ConfigActivity.this, R.string.reset_failed, Toast.LENGTH_SHORT).show();
+    }
+  }
   private void writeUriBeaconV2() throws URISyntaxException {
     blockUi();
     ConfigUriBeacon.Builder builder = new ConfigUriBeacon.Builder()
@@ -229,15 +245,21 @@ public class ConfigActivity extends Activity implements PasswordDialogFragment.P
     super.onDestroy();
   }
 
-  public void showPasswordDialog() {
+  public void showPasswordDialog(boolean reset) {
     DialogFragment dialog = new PasswordDialogFragment();
-    dialog.setArguments(new Bundle());
-    dialog.show(getFragmentManager(), "PasswordDialogFragment");
+    Bundle args = new Bundle();
+    args.putBoolean(PasswordDialogFragment.RESET, reset);
+    dialog.setArguments(args);
+    dialog.show(getFragmentManager(), PasswordDialogFragment.class.getCanonicalName());
   }
   @Override
-  public void onDialogWriteClick(DialogFragment dialog) {
+  public void onDialogWriteClick(boolean reset) {
     try {
-      writeUriBeaconV2();
+      if (reset) {
+        resetConfigBeacon();
+      } else {
+        writeUriBeaconV2();
+      }
     } catch (URISyntaxException e) {
       Toast.makeText(ConfigActivity.this, "Invalid Uri", Toast.LENGTH_LONG).show();
       mUriBeaconConfig.closeUriBeacon();

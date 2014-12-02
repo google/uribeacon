@@ -20,15 +20,21 @@ import android.widget.Toast;
  */
 public class PasswordDialogFragment extends DialogFragment {
 
+  private static final String TAG = PasswordDialogListener.class.getCanonicalName();
+  public static final String RESET = "reset";
+
   public interface PasswordDialogListener {
-    public void onDialogWriteClick(DialogFragment dialog);
+    public void onDialogWriteClick(boolean reset);
   }
+
   private PasswordDialogListener mListener;
+  private boolean mReset;
   public PasswordDialogFragment() {
   }
   @Override
   public void onAttach(Activity activity) {
     super.onAttach(activity);
+    mReset = getArguments().getBoolean(RESET);
     try {
       mListener = (PasswordDialogListener) activity;
     } catch (ClassCastException e) {
@@ -36,9 +42,9 @@ public class PasswordDialogFragment extends DialogFragment {
           + PasswordDialogListener.class.getCanonicalName());
     }
   }
+
   @Override
   public Dialog onCreateDialog(Bundle savedInstanceState) {
-
     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
     LayoutInflater inflater = getActivity().getLayoutInflater();
     builder.setView(inflater.inflate(R.layout.fragment_password_dialog, null))
@@ -70,7 +76,7 @@ public class PasswordDialogFragment extends DialogFragment {
         } else if (!password1.equals(password2)) {
           Toast.makeText(getActivity(), R.string.password_missmatch, Toast.LENGTH_SHORT).show();
         } else {
-          mListener.onDialogWriteClick(PasswordDialogFragment.this);
+          mListener.onDialogWriteClick(mReset);
           dismiss();
         }
       }
