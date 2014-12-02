@@ -92,7 +92,15 @@ public class ConfigActivity extends Activity implements PasswordDialogFragment.P
   };
 
   private void blockUi() {
+    mSchema.setEnabled(false);
     mUriValue.setEnabled(false);
+    mFlagsValue.setEnabled(false);
+    for (EditText txCal : mAdvertisedTxPowerLevels) {
+      txCal.setEnabled(false);
+    }
+    mTxPowerMode.setEnabled(false);
+    mBeaconPeriod.setEnabled(false);
+    mLockState.setEnabled(false);
   }
 
   public void saveConfigBeacon(MenuItem menu) {
