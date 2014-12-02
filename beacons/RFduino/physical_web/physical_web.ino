@@ -11,7 +11,7 @@ uint8_t advdata[] =
   0x16,  // Service Data
   0xD8, 0xFE, // URI Beacon ID
   0x00,  // flags
-  0x20,  // power
+  0xEE,  // power
   0x00,  // http://www.
   'A',
   'B',
