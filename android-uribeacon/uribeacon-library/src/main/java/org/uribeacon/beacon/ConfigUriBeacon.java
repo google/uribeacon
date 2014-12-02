@@ -40,19 +40,14 @@ public class ConfigUriBeacon extends UriBeacon {
   private int mBeaconPeriod;
   private boolean mReset;
 
-  private ConfigUriBeacon(UriBeacon uriBeacon, byte[] key, boolean lockState, byte[] advertisedTxPowerLevels, byte txPowerMode, int beaconPeriod) {
+  private ConfigUriBeacon(UriBeacon uriBeacon, byte[] key, boolean lockState, byte[] advertisedTxPowerLevels, byte txPowerMode, int beaconPeriod, boolean reset) {
     super(uriBeacon);
     mKey = key;
     mLockState = lockState;
     mAdvertisedTxPowerLevels = advertisedTxPowerLevels;
     mTxPowerMode = txPowerMode;
     mBeaconPeriod = beaconPeriod;
-    mReset = false;
-  }
-
-  private ConfigUriBeacon(byte[] key) {
-    mKey = key;
-    mReset = true;
+    mReset = reset;
   }
 
   /**
@@ -203,7 +198,8 @@ public class ConfigUriBeacon extends UriBeacon {
      */
     public ConfigUriBeacon build() throws URISyntaxException {
       if (mReset) {
-        return new ConfigUriBeacon(null, mKey, false, null, POWER_MODE_NONE, PERIOD_NONE, mReset);
+        UriBeacon uriBeacon = new UriBeacon.Builder().uriString("").build();
+        return new ConfigUriBeacon(uriBeacon, mKey, false, null, POWER_MODE_NONE, PERIOD_NONE, mReset);
       }
       UriBeacon uriBeacon = super.build();
       if (mTxPowerMode != POWER_MODE_NONE || mBeaconPeriod != PERIOD_NONE ||
