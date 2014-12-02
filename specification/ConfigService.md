@@ -27,14 +27,14 @@ This service is not dependent upon any other [services](https://developer.blueto
 
 |Transport   | Supported |
 |:-----------|-----------|
-| Classic	| false	 |
-| Low Energy | true	  |
+| Classic    | false	 |
+| Low Energy | true      |
 
 ### 1.3 Error Codes
 
-| Code | Description  |
-|:-----|:-------------|
-| 0xA0 | The beacon is not writable. |
+| Code   | Description                |
+|:-------|:---------------------------|
+| 0x08   | Insufficient Authorization |
 
 
 ## 2 Service Declaration
