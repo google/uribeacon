@@ -24,7 +24,7 @@ public class PasswordDialogFragment extends DialogFragment {
   public static final String RESET = "reset";
 
   public interface PasswordDialogListener {
-    public void onDialogWriteClick(boolean reset);
+    public void onDialogWriteClick(String password, boolean reset);
   }
 
   private PasswordDialogListener mListener;
@@ -76,7 +76,7 @@ public class PasswordDialogFragment extends DialogFragment {
         } else if (!password1.equals(password2)) {
           Toast.makeText(getActivity(), R.string.password_missmatch, Toast.LENGTH_SHORT).show();
         } else {
-          mListener.onDialogWriteClick(mReset);
+          mListener.onDialogWriteClick(password1, mReset);
           dismiss();
         }
       }

@@ -18,6 +18,7 @@
                 android:id="@+id/spinner_uriProtocols"/>
         <EditText style="@style/editText"
                   android:inputType="textUri"
+                  android:nextFocusDown="@+id/editText_flags"
                   android:hint="@string/exampleCom"
                   android:id="@+id/editText_uri"/>
     </LinearLayout>
@@ -29,7 +30,8 @@
                       android:id="@+id/flagsLabel"/>
             <EditText style="@style/editText"
                       android:inputType="textCapWords"
-                      android:id="@+id/editText_flags"/>
+                      android:nextFocusDown="@+id/editText_beaconPeriod"
+                      android:id="@id/editText_flags"/>
         </LinearLayout>
         <LinearLayout style="@style/inlineBox">
             <TextView style="@style/label"
@@ -38,7 +40,8 @@
             <RelativeLayout style="@style/unitBox">
                 <EditText style="@style/editText"
                           android:inputType="number"
-                          android:id="@+id/editText_beaconPeriod"/>
+                          android:nextFocusDown="@+id/editText_txCal0"
+                          android:id="@id/editText_beaconPeriod"/>
                 <TextView style="@style/unit"
                           android:text="@string/ms"
                           android:layout_alignBaseline="@id/editText_beaconPeriod"/>
@@ -64,7 +67,8 @@
             <RelativeLayout style="@style/unitBox">
                 <EditText style="@style/editText"
                           android:inputType="numberSigned"
-                          android:id="@+id/editText_txCal0"/>
+                          android:nextFocusDown="@+id/editText_txCal1"
+                          android:id="@id/editText_txCal0"/>
                 <TextView style="@style/unit"
                           android:layout_alignBaseline="@id/editText_txCal0"
                           android:text="@string/dbm"/>
@@ -77,7 +81,8 @@
             <RelativeLayout style="@style/unitBox">
                 <EditText style="@style/editText"
                           android:inputType="numberSigned"
-                          android:id="@+id/editText_txCal1"/>
+                          android:nextFocusDown="@+id/editText_txCal2"
+                          android:id="@id/editText_txCal1"/>
                 <TextView style="@style/unit"
                           android:layout_alignBaseline="@id/editText_txCal1"
                           android:text="@string/dbm"/>
@@ -90,7 +95,8 @@
             <RelativeLayout style="@style/unitBox">
                 <EditText style="@style/editText"
                           android:inputType="numberSigned"
-                          android:id="@+id/editText_txCal2"/>
+                          android:nextFocusDown="@+id/editText_txCal3"
+                          android:id="@id/editText_txCal2"/>
                 <TextView style="@style/unit"
                           android:layout_alignBaseline="@id/editText_txCal2"
                           android:text="@string/dbm"/>
@@ -103,7 +109,8 @@
             <RelativeLayout style="@style/unitBox">
                 <EditText style="@style/editText"
                           android:inputType="numberSigned"
-                          android:id="@+id/editText_txCal3"/>
+                          android:imeOptions="actionDone"
+                          android:id="@id/editText_txCal3"/>
                 <TextView style="@style/unit"
                           android:layout_alignBaseline="@id/editText_txCal3"
                           android:text="@string/dbm"/>

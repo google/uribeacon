@@ -43,7 +43,14 @@ import org.uribeacon.config.UriBeaconConfig.UriBeaconCallback;
 import org.uribeacon.scan.compat.ScanResult;
 
 import java.net.URISyntaxException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.KeySpec;
 import java.util.List;
+
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
 
 public class ConfigActivity extends Activity implements PasswordDialogFragment.PasswordDialogListener{
   private Spinner mSchema;
@@ -57,6 +64,7 @@ public class ConfigActivity extends Activity implements PasswordDialogFragment.P
 
   private ProgressDialog mConnectionDialog = null;
   private static final byte DEFAULT_TX_POWER = -63;
+  private static final int ITERATIONS = 1000;
   private final String TAG = "ConfigActivity";
   private UriBeaconConfig mUriBeaconConfig;
 
@@ -84,7 +92,15 @@ public class ConfigActivity extends Activity implements PasswordDialogFragment.P
   };
 
   private void blockUi() {
+    mSchema.setEnabled(false);
     mUriValue.setEnabled(false);
+    mFlagsValue.setEnabled(false);
+    for (EditText txCal : mAdvertisedTxPowerLevels) {
+      txCal.setEnabled(false);
+    }
+    mTxPowerMode.setEnabled(false);
+    mBeaconPeriod.setEnabled(false);
+    mLockState.setEnabled(false);
   }
 
   public void saveConfigBeacon(MenuItem menu) {
@@ -94,7 +110,7 @@ public class ConfigActivity extends Activity implements PasswordDialogFragment.P
           showPasswordDialog(false);
         }
         else {
-          writeUriBeaconV2();
+          writeUriBeaconV2(null);
         }
       }
       else {
@@ -115,12 +131,13 @@ public class ConfigActivity extends Activity implements PasswordDialogFragment.P
     if (mOriginalLockState) {
       showPasswordDialog(true);
     } else {
-      resetConfigBeacon();
+      resetConfigBeacon(null);
     }
   }
-  private void resetConfigBeacon() {
+  private void resetConfigBeacon(byte[] key) {
     try {
       ConfigUriBeacon configUriBeacon = new ConfigUriBeacon.Builder()
+          .key(key)
           .reset(true)
           .build();
       mUriBeaconConfig.writeUriBeacon(configUriBeacon);
@@ -128,9 +145,11 @@ public class ConfigActivity extends Activity implements PasswordDialogFragment.P
       Toast.makeText(ConfigActivity.this, R.string.reset_failed, Toast.LENGTH_SHORT).show();
     }
   }
-  private void writeUriBeaconV2() throws URISyntaxException {
+  private void writeUriBeaconV2(byte[] key) throws URISyntaxException {
     blockUi();
     ConfigUriBeacon.Builder builder = new ConfigUriBeacon.Builder()
+        .key(key)
+        .lockState(mLockState.isChecked())
         .uriString(getUri())
         .flags(hexStringToByte(mFlagsValue.getText().toString()))
         .beaconPeriod(Integer.parseInt(mBeaconPeriod.getText().toString()))
@@ -253,7 +272,7 @@ public class ConfigActivity extends Activity implements PasswordDialogFragment.P
     super.onDestroy();
   }
 
-  public void showPasswordDialog(boolean reset) {
+  private void showPasswordDialog(boolean reset) {
     DialogFragment dialog = new PasswordDialogFragment();
     Bundle args = new Bundle();
     args.putBoolean(PasswordDialogFragment.RESET, reset);
@@ -261,17 +280,38 @@ public class ConfigActivity extends Activity implements PasswordDialogFragment.P
     dialog.show(getFragmentManager(), PasswordDialogFragment.class.getCanonicalName());
   }
   @Override
-  public void onDialogWriteClick(boolean reset) {
+  public void onDialogWriteClick(String password, boolean reset) {
     try {
+      byte[] key = generateKey(password);
       if (reset) {
-        resetConfigBeacon();
+        resetConfigBeacon(key);
       } else {
-        writeUriBeaconV2();
+        writeUriBeaconV2(key);
       }
     } catch (URISyntaxException e) {
       Toast.makeText(ConfigActivity.this, "Invalid Uri", Toast.LENGTH_LONG).show();
       mUriBeaconConfig.closeUriBeacon();
       finish();
     }
+  }
+
+  /**
+   * Method that generates a 128bit key
+   *
+   * @param password the password used to generate the key
+   * @return The 128bit key in a byte[]
+   */
+  private static byte[] generateKey(String password) {
+    try {
+      byte[] salt = new byte[1];
+      SecretKeyFactory secretKeyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+      KeySpec keySpec = new PBEKeySpec(password.toCharArray(), salt, ITERATIONS, ConfigUriBeacon.KEY_LENGTH);
+      SecretKey secretKey = secretKeyFactory.generateSecret(keySpec);
+      // Return it in a byte[]
+      return secretKey.getEncoded();
+    } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+      e.printStackTrace();
+    }
+    return null;
   }
 }

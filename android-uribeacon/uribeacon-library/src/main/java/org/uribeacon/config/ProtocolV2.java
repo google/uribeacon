@@ -36,6 +36,8 @@ public class ProtocolV2 extends BaseProtocol {
 
   public static final ParcelUuid CONFIG_SERVICE_UUID = ParcelUuid.fromString("ee0c2080-8786-40ba-ab96-99b91ac981d8");
   private static final UUID LOCK_STATE                     = UUID.fromString("ee0c2081-8786-40ba-ab96-99b91ac981d8");
+  private static final UUID LOCK                           = UUID.fromString("ee0c2082-8786-40ba-ab96-99b91ac981d8");
+  private static final UUID UNLOCK                         = UUID.fromString("ee0c2083-8786-40ba-ab96-99b91ac981d8");
   private static final UUID DATA                           = UUID.fromString("ee0c2084-8786-40ba-ab96-99b91ac981d8");
   private static final UUID FLAGS                          = UUID.fromString("ee0c2085-8786-40ba-ab96-99b91ac981d8");
   private static final UUID POWER_LEVELS                   = UUID.fromString("ee0c2086-8786-40ba-ab96-99b91ac981d8");
@@ -64,6 +66,9 @@ public class ProtocolV2 extends BaseProtocol {
 
   public void writeUriBeacon(ConfigUriBeacon configUriBeacon) throws URISyntaxException{
     //TODO: If beacon has invalid data initialize a beacon with RESET values
+    if (mConfigUriBeacon.getLockState()) {
+      mService.writeCharacteristic(UNLOCK, configUriBeacon.getKey());
+    }
     if (configUriBeacon.getReset()) {
       mLastUUID = RESET;
       mService.writeCharacteristic(RESET, new byte[]{1});
@@ -92,6 +97,9 @@ public class ProtocolV2 extends BaseProtocol {
       if (configUriBeacon.getBeaconPeriod() != mConfigUriBeacon.getBeaconPeriod()) {
         mLastUUID = PERIOD;
       }
+      if (configUriBeacon.getLockState()) {
+        mLastUUID = LOCK;
+      }
       // Start enqueing writes
       if (!configUriBeacon.getUriString().equals(mConfigUriBeacon.getUriString())) {
         mService.writeCharacteristic(DATA, configUriBeacon.getUriBytes());
@@ -109,7 +117,9 @@ public class ProtocolV2 extends BaseProtocol {
       if (configUriBeacon.getBeaconPeriod() != mConfigUriBeacon.getBeaconPeriod()) {
         mService.writeCharacteristic(PERIOD, configUriBeacon.getBeaconPeriod(), PERIOD_FORMAT, 0);
       }
-
+      if (configUriBeacon.getLockState()) {
+        mService.writeCharacteristic(LOCK, configUriBeacon.getKey());
+      }
     }
   }
 
