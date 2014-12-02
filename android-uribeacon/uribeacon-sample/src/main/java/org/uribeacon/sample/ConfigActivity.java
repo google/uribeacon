@@ -131,7 +131,7 @@ public class ConfigActivity extends Activity implements PasswordDialogFragment.P
   private void writeUriBeaconV2() throws URISyntaxException {
     blockUi();
     ConfigUriBeacon.Builder builder = new ConfigUriBeacon.Builder()
-        .uriString(mUriValue.getText().toString())
+        .uriString(mSchema.getSelectedItem() + mUriValue.getText().toString())
         .flags(hexStringToByte(mFlagsValue.getText().toString()))
         .beaconPeriod(Integer.parseInt(mBeaconPeriod.getText().toString()))
         .txPowerMode((byte) mTxPowerMode.getSelectedItemPosition());
@@ -204,7 +204,13 @@ public class ConfigActivity extends Activity implements PasswordDialogFragment.P
 
   private void updateInputFields(ConfigUriBeacon configUriBeacon) {
     if (mUriValue != null && configUriBeacon != null) {
-      mUriValue.setText(configUriBeacon.getUriString());
+      String[] uriProtocols = getResources().getStringArray(R.array.uriProtocols);
+      for (int i = 0; i < uriProtocols.length; i++) {
+        if (configUriBeacon.getUriString().startsWith(uriProtocols[i])) {
+          mSchema.setSelection(i);
+          mUriValue.setText(configUriBeacon.getUriString().replace(uriProtocols[i], ""));
+        }
+      }
       if (mUriBeaconConfig.getVersion().equals(ProtocolV2.CONFIG_SERVICE_UUID)) {
         mFlagsValue.setText(byteToHexString(configUriBeacon.getFlags()));
         mBeaconPeriod.setText(Integer.toString(configUriBeacon.getBeaconPeriod()));
@@ -224,7 +230,6 @@ public class ConfigActivity extends Activity implements PasswordDialogFragment.P
       Toast.makeText(this, "Beacon Contains Invalid Data", Toast.LENGTH_SHORT).show();
     }
   }
-
   private String byteToHexString(byte theByte) {
     return String.format("%02X", theByte);
   }
