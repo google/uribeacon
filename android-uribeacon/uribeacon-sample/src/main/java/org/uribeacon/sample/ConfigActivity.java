@@ -43,14 +43,7 @@ import org.uribeacon.config.UriBeaconConfig.UriBeaconCallback;
 import org.uribeacon.scan.compat.ScanResult;
 
 import java.net.URISyntaxException;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.KeySpec;
 import java.util.List;
-
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
 
 public class ConfigActivity extends Activity implements PasswordDialogFragment.PasswordDialogListener{
   private Spinner mSchema;
@@ -66,8 +59,6 @@ public class ConfigActivity extends Activity implements PasswordDialogFragment.P
   private static final byte DEFAULT_TX_POWER = -63;
   private final String TAG = "ConfigActivity";
   private UriBeaconConfig mUriBeaconConfig;
-  private final static int BEACON_KEY_LENGTH = 128;
-  private final static int ITERATIONS = 1000;
 
   private final UriBeaconCallback mUriBeaconCallback = new UriBeaconCallback() {
     @Override
@@ -125,14 +116,13 @@ public class ConfigActivity extends Activity implements PasswordDialogFragment.P
       showPasswordDialog(true);
     }
     else {
-      resetConfigBeacon(null);
+      resetConfigBeacon();
     }
   }
-  private void resetConfigBeacon(byte[] key) {
+  private void resetConfigBeacon() {
     try {
       ConfigUriBeacon configUriBeacon = new ConfigUriBeacon.Builder()
         .reset(true)
-        .key(key)
         .build();
       mUriBeaconConfig.writeUriBeacon(configUriBeacon);
     } catch (URISyntaxException e) {
@@ -141,16 +131,6 @@ public class ConfigActivity extends Activity implements PasswordDialogFragment.P
   }
   private void writeUriBeaconV2() throws URISyntaxException {
     blockUi();
-    mUriBeaconConfig.writeUriBeacon(someNameHere().build());
-  }
-  private void writeUriBeaconV2(byte[] key) throws URISyntaxException {
-    blockUi();
-    ConfigUriBeacon.Builder builder = someNameHere();
-    builder.key(key);
-    mUriBeaconConfig.writeUriBeacon(builder.build());
-  }
-
-  private ConfigUriBeacon.Builder someNameHere() {
     ConfigUriBeacon.Builder builder = new ConfigUriBeacon.Builder()
         .uriString(mUriValue.getText().toString())
         .flags(hexStringToByte(mFlagsValue.getText().toString()))
@@ -161,7 +141,7 @@ public class ConfigActivity extends Activity implements PasswordDialogFragment.P
       tempTxCal[i] = Byte.parseByte(mAdvertisedTxPowerLevels[i].getText().toString());
     }
     builder.advertisedTxPowerLevels(tempTxCal);
-    return builder;
+    mUriBeaconConfig.writeUriBeacon(builder.build());
   }
 
   @Override
@@ -274,37 +254,17 @@ public class ConfigActivity extends Activity implements PasswordDialogFragment.P
     dialog.show(getFragmentManager(), "PasswordDialogFragment");
   }
   @Override
-  public void onDialogWriteClick(String password, boolean reset) {
+  public void onDialogWriteClick(boolean reset) {
     try {
-      byte[] keyByte = generateKey(password);
       if (reset) {
-        resetConfigBeacon(keyByte);
+        resetConfigBeacon();
       } else {
-        writeUriBeaconV2(keyByte);
+        writeUriBeaconV2();
       }
     } catch (URISyntaxException e) {
       Toast.makeText(ConfigActivity.this, "Invalid Uri", Toast.LENGTH_LONG).show();
       mUriBeaconConfig.closeUriBeacon();
       finish();
     }
-  }
-  /**
-   * Method that generates a 128bit key
-   *
-   * @param password the password used to generate the key
-   * @return The 128bit key in a byte[]
-   */
-  private static byte[] generateKey(String password) {
-    try {
-      byte[] salt = new byte[1];
-      SecretKeyFactory secretKeyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
-      KeySpec keySpec = new PBEKeySpec(password.toCharArray(), salt, ITERATIONS, BEACON_KEY_LENGTH);
-      SecretKey secretKey = secretKeyFactory.generateSecret(keySpec);
-      // Return it in a byte[]
-      return secretKey.getEncoded();
-    } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-      e.printStackTrace();
-    }
-    return null;
   }
 }
