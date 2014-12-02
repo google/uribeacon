@@ -159,7 +159,7 @@ public class UriBeacon {
       if (length > MAX_URI_LENGTH) {
         throw new URISyntaxException(mUriString, "Uri size is larger than "
             + MAX_URI_LENGTH + " bytes");
-      } else if (length == 0) {
+      } else if (length == -1) {
         throw new URISyntaxException(mUriString, "Not a valid URI");
       }
       return new UriBeacon(mFlags, mTxPowerLevel, mUriString);
@@ -188,6 +188,9 @@ public class UriBeacon {
   }
 
   private static String decodeUri(byte[] serviceData, int offset) {
+    if (serviceData.length == 0) {
+      return "";
+    }
     StringBuilder uriBuilder = new StringBuilder();
     if (offset < serviceData.length) {
       byte b = serviceData[offset++];
@@ -321,6 +324,9 @@ public class UriBeacon {
    * @return the Uri string with expansion codes.
    */
   public static byte[] encodeUri(String uri) {
+    if (uri.length() == 0) {
+      return new byte[0];
+    }
     ByteBuffer bb = ByteBuffer.allocate(uri.length());
     // UUIDs are ordered as byte array, which means most significant first
     bb.order(ByteOrder.BIG_ENDIAN);
@@ -435,7 +441,7 @@ public class UriBeacon {
   private static int uriLength(String uriString) {
     byte[] encodedUri = encodeUri(uriString);
     if (encodedUri == null) {
-      return 0;
+      return -1;
     }
     else {
       return encodedUri.length;
