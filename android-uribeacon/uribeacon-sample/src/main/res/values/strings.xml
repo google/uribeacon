@@ -59,4 +59,6 @@
     <string name="enter_password">Enter UriBeacon password</string>
     <string name="write_beacon">Write</string>
     <string name="enter_password_again">Enter password again...</string>
+    <string name="no_password">Please enter a password</string>
+    <string name="password_missmatch">Passwords don\'t match</string>
 </resources>
