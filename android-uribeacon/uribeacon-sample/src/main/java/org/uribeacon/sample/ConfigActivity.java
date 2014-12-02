@@ -94,21 +94,21 @@ public class ConfigActivity extends Activity implements PasswordDialogFragment.P
       } else {
         Toast.makeText(ConfigActivity.this, getString(R.string.failed_with_code) + status, Toast.LENGTH_SHORT).show();
       }
+      enableUi(true);
     }
   };
 
-  private void blockUi() {
-    mSchema.setEnabled(false);
-    mUriValue.setEnabled(false);
-    mFlagsValue.setEnabled(false);
+  private void enableUi(boolean block) {
+    mSchema.setEnabled(block);
+    mUriValue.setEnabled(block);
+    mFlagsValue.setEnabled(block);
     for (EditText txCal : mAdvertisedTxPowerLevels) {
-      txCal.setEnabled(false);
+      txCal.setEnabled(block);
     }
-    mTxPowerMode.setEnabled(false);
-    mBeaconPeriod.setEnabled(false);
-    mLockState.setEnabled(false);
+    mTxPowerMode.setEnabled(block);
+    mBeaconPeriod.setEnabled(block);
+    mLockState.setEnabled(block);
   }
-
   public void saveConfigBeacon(MenuItem menu) {
     try {
       if (mUriBeaconConfig.getVersion().equals(ProtocolV2.CONFIG_SERVICE_UUID)) {
@@ -120,7 +120,7 @@ public class ConfigActivity extends Activity implements PasswordDialogFragment.P
         }
       }
       else {
-        blockUi();
+        enableUi(false);
         ConfigUriBeacon configUriBeacon = new ConfigUriBeacon.Builder()
             .uriString(mUriValue.getText().toString())
             .txPowerLevel(DEFAULT_TX_POWER)
@@ -142,6 +142,7 @@ public class ConfigActivity extends Activity implements PasswordDialogFragment.P
   }
   private void resetConfigBeacon(byte[] key) {
     try {
+      enableUi(false);
       ConfigUriBeacon configUriBeacon = new ConfigUriBeacon.Builder()
           .key(key)
           .reset(true)
@@ -152,7 +153,7 @@ public class ConfigActivity extends Activity implements PasswordDialogFragment.P
     }
   }
   private void writeUriBeaconV2(byte[] key) throws URISyntaxException {
-    blockUi();
+    enableUi(false);
     ConfigUriBeacon.Builder builder = new ConfigUriBeacon.Builder()
         .key(key)
         .lockState(mLockState.isChecked())
