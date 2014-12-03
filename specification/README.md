@@ -91,10 +91,10 @@ EIR Data Type and Advertising Data Type (AD Type) Values](https://www.bluetooth.
 
 Bit   | Description
 :---- | :----------
-0     | Hidden
+0     | Invisible Hint
 1..7  | Reserved for future use. Must be zero.
 
-The `Hidden` flag is a command for the user-agent that tells it not to access a particular UriBeacon. This is a guideline only, and is not a blocking method. User agents may, with user approval, display hidden beacons.
+The `Invisible Hint` flag is a command for the user-agent that tells it not to access or display the UriBeacon. This is a guideline only, and is not a blocking method. User agents may, with user approval, display invisible beacons.
 
 ### UriBeacon Tx Power Level
 

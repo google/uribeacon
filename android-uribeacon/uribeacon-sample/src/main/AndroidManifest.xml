@@ -49,10 +49,8 @@
             android:label="@string/title_activity_uribeacon_settings" />
         <activity
             android:name="org.uribeacon.sample.ConfigActivity"
-            android:label="@string/title_activity_uribeacon_config" />
-        <activity
-            android:name="org.uribeacon.sample.ConfigListActivity"
-            android:label="@string/title_activity_config" />
+            android:label="@string/title_activity_uribeacon_config"
+            android:windowSoftInputMode="adjustResize"/>
     </application>
 
 </manifest>
