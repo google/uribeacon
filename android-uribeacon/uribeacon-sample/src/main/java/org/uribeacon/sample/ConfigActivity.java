@@ -198,6 +198,7 @@ public class ConfigActivity extends Activity implements PasswordDialogFragment.P
             finish();
           }
         });
+        mConnectionDialog.show();
       }
       List<ParcelUuid> uuids = scanResult.getScanRecord().getServiceUuids();
       // Assuming the first uuid is the config uuid
@@ -254,6 +255,7 @@ public class ConfigActivity extends Activity implements PasswordDialogFragment.P
       else if (mUriBeaconConfig.getVersion().equals(ProtocolV1.CONFIG_SERVICE_UUID)) {
         hideV2Fields();
       }
+      mConnectionDialog.dismiss();
     }
     else {
       Toast.makeText(this, "Beacon Contains Invalid Data", Toast.LENGTH_SHORT).show();
@@ -266,6 +268,7 @@ public class ConfigActivity extends Activity implements PasswordDialogFragment.P
   private byte hexStringToByte(String hexString) {
     return Integer.decode("0x" + hexString).byteValue();
   }
+
   private void hideV2Fields(){
     findViewById(R.id.secondRow).setVisibility(View.GONE);
     findViewById(R.id.txCalRow).setVisibility(View.GONE);
