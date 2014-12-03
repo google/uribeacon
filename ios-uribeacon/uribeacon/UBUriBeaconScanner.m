@@ -23,6 +23,9 @@
 #import "UBUriBeaconPrivate.h"
 #import "UBUriBeaconReader.h"
 #import "UBUriBeaconWriter.h"
+#import "UBUriReader.h"
+#import "UBUriWriter.h"
+#import "NSURL+UB.h"
 
 #import <CoreBluetooth/CoreBluetooth.h>
 #import <UIKit/UIKit.h>
@@ -122,7 +125,8 @@ static stateChange stateGraph[] = {
      STATE_SCANNING},  // stop scanning, start scanning, set timer
 };
 
-@interface UBUriBeaconScanner ()<CBCentralManagerDelegate, CBPeripheralDelegate>
+@interface UBUriBeaconScanner () <CBCentralManagerDelegate,
+                                  CBPeripheralDelegate>
 
 @end
 
@@ -287,13 +291,13 @@ static stateChange stateGraph[] = {
   _updatedBeacons = [NSMutableDictionary dictionary];
   _updatedConfigurableBeacons = [NSMutableDictionary dictionary];
   if (applicationActive) {
-    [_beaconsCentralManager scanForPeripheralsWithServices:
-                                @[ [CBUUID UUIDWithString:URIBEACON_SERVICE] ]
-                                                   options:nil];
-    [_configurableBeaconsCentralManager
-        scanForPeripheralsWithServices:
-            @[ [CBUUID UUIDWithString:CONFIG_SERVICE] ]
-                               options:nil];
+    [_beaconsCentralManager scanForPeripheralsWithServices:@[
+      [CBUUID UUIDWithString:URIBEACON_SERVICE]
+    ] options:nil];
+    [_configurableBeaconsCentralManager scanForPeripheralsWithServices:@[
+      [CBUUID UUIDWithString:CONFIG_SERVICE],
+      [CBUUID UUIDWithString:CONFIG_V2_SERVICE]
+    ] options:nil];
     [self _startTimerScanning];
   } else {
     NSArray *services = @[ [CBUUID UUIDWithString:URIBEACON_SERVICE] ];
@@ -586,6 +590,38 @@ static stateChange stateGraph[] = {
       [_readers removeObjectForKey:[peripheral identifier]];
       if (readCompletionBlock != nil) {
         readCompletionBlock(error, data);
+      }
+  }];
+}
+
+- (void)_writeURIv2WithPeripheral:(CBPeripheral *)peripheral
+                              url:(NSURL *)url
+                  completionBlock:(void (^)(NSError *error))block {
+  UBUriWriter *writer = [[UBUriWriter alloc] init];
+  [writer setPeripheral:peripheral];
+  [writer setData:[url ub_encodedBeaconURI]];
+  [writer setCharacteristic:CONFIG_V2_CHARACTERISTIC_URI];
+  [_writers setObject:writer forKey:[peripheral identifier]];
+  [writer writeWithCompletionBlock:^(NSError *error) {
+      void (^writeCompletionBlock)(NSError * error) = [block copy];
+      [_writers removeObjectForKey:[peripheral identifier]];
+      if (writeCompletionBlock != nil) {
+        writeCompletionBlock(error);
+      }
+  }];
+}
+
+- (void)_readURIv2WithPeripheral:(CBPeripheral *)peripheral
+                 completionBlock:(void (^)(NSError *error, NSURL *uri))block {
+  UBUriReader *reader = [[UBUriReader alloc] init];
+  [reader setPeripheral:peripheral];
+  [reader setCharacteristic:CONFIG_V2_CHARACTERISTIC_URI];
+  [_readers setObject:reader forKey:[peripheral identifier]];
+  [reader readWithCompletionBlock:^(NSError *error, NSData *data) {
+      void (^readCompletionBlock)(NSError * error, NSURL * uri) = [block copy];
+      [_readers removeObjectForKey:[peripheral identifier]];
+      if (readCompletionBlock != nil) {
+        readCompletionBlock(error, [NSURL ub_decodedBeaconURI:data]);
       }
   }];
 }

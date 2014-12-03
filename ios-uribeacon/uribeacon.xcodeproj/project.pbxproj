@@ -30,6 +30,8 @@
 		BD7792F419A2C76400278B6A /* UBUriBeaconWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = BD7792F319A2C76400278B6A /* UBUriBeaconWriter.m */; };
 		BD7792F719A3055800278B6A /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BD7792F619A3055800278B6A /* SettingsViewController.m */; };
 		BD7792FA19A30AB700278B6A /* ConfigureViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BD7792F919A30AB700278B6A /* ConfigureViewController.m */; };
+		BDBFD67C1A2E633300A0B5E0 /* UBUriWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = BDBFD67B1A2E633300A0B5E0 /* UBUriWriter.m */; };
+		BDBFD67F1A2E634100A0B5E0 /* UBUriReader.m in Sources */ = {isa = PBXBuildFile; fileRef = BDBFD67E1A2E634100A0B5E0 /* UBUriReader.m */; };
 		BDE9F17A19A673B700AA8DFB /* libMBProgressHUD.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BDE9F17719A5770500AA8DFB /* libMBProgressHUD.a */; };
 		BDE9F2B219AFF90C00AA8DFB /* UBUriBeaconReader.m in Sources */ = {isa = PBXBuildFile; fileRef = BDE9F2B119AFF90C00AA8DFB /* UBUriBeaconReader.m */; };
 /* End PBXBuildFile section */
@@ -111,6 +113,10 @@
 		BD7792F619A3055800278B6A /* SettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsViewController.m; sourceTree = "<group>"; };
 		BD7792F819A30AB700278B6A /* ConfigureViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConfigureViewController.h; sourceTree = "<group>"; };
 		BD7792F919A30AB700278B6A /* ConfigureViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConfigureViewController.m; sourceTree = "<group>"; };
+		BDBFD67A1A2E633300A0B5E0 /* UBUriWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UBUriWriter.h; sourceTree = "<group>"; };
+		BDBFD67B1A2E633300A0B5E0 /* UBUriWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UBUriWriter.m; sourceTree = "<group>"; };
+		BDBFD67D1A2E634100A0B5E0 /* UBUriReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UBUriReader.h; sourceTree = "<group>"; };
+		BDBFD67E1A2E634100A0B5E0 /* UBUriReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UBUriReader.m; sourceTree = "<group>"; };
 		BDE9F17219A5770500AA8DFB /* MBProgressHUD.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MBProgressHUD.xcodeproj; path = "uribeacon-sample/third-party/MBProgressHUD/MBProgressHUD.xcodeproj"; sourceTree = "<group>"; };
 		BDE9F2B019AFF90C00AA8DFB /* UBUriBeaconReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UBUriBeaconReader.h; sourceTree = "<group>"; };
 		BDE9F2B119AFF90C00AA8DFB /* UBUriBeaconReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UBUriBeaconReader.m; sourceTree = "<group>"; };
@@ -208,6 +214,10 @@
 				BD7792B3199C0CF100278B6A /* UBUriBeacon.h */,
 				BD7792B4199C0CF100278B6A /* UBUriBeacon.m */,
 				BD7792BF199C347400278B6A /* UBUriBeaconPrivate.h */,
+				BDBFD67A1A2E633300A0B5E0 /* UBUriWriter.h */,
+				BDBFD67B1A2E633300A0B5E0 /* UBUriWriter.m */,
+				BDBFD67D1A2E634100A0B5E0 /* UBUriReader.h */,
+				BDBFD67E1A2E634100A0B5E0 /* UBUriReader.m */,
 			);
 			path = uribeacon;
 			sourceTree = "<group>";
@@ -429,7 +439,9 @@
 				BDE9F2B219AFF90C00AA8DFB /* UBUriBeaconReader.m in Sources */,
 				BD7792BB199C148000278B6A /* NSURL+UB.m in Sources */,
 				BD7792F419A2C76400278B6A /* UBUriBeaconWriter.m in Sources */,
+				BDBFD67F1A2E634100A0B5E0 /* UBUriReader.m in Sources */,
 				BD7792B2199C0CDE00278B6A /* UBConfigurableUriBeacon.m in Sources */,
+				BDBFD67C1A2E633300A0B5E0 /* UBUriWriter.m in Sources */,
 				BD7792AE199C0B2900278B6A /* UBUriBeaconScanner.m in Sources */,
 				BD7792BA199C148000278B6A /* NSString+UB.m in Sources */,
 				BD7792B5199C0CF100278B6A /* UBUriBeacon.m in Sources */,

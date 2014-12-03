@@ -14,21 +14,14 @@
  * limitations under the License.
  */
 
-#import "NSURL+UB.h"
+#import <Foundation/Foundation.h>
+#import <CoreBluetooth/CoreBluetooth.h>
 
-#import "NSString+UB.h"
+@interface UBUriReader : NSObject
 
-@implementation NSURL (PW)
+@property(nonatomic, retain) CBPeripheral *peripheral;
+@property(nonatomic, copy) NSString *characteristic;
 
-+ (NSURL *)ub_decodedBeaconURI:(NSData *)data {
-  if (data == nil) {
-    return nil;
-  }
-  return [NSURL URLWithString:[NSString ub_decodedBeaconURIString:data]];
-}
-
-- (NSData *)ub_encodedBeaconURI {
-  return [[self absoluteString] ub_encodedBeaconURIString];
-}
+- (void)readWithCompletionBlock:(void (^)(NSError *error, NSData *data))block;
 
 @end
