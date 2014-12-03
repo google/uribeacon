@@ -126,6 +126,9 @@
     if (data != nil) {
       UBUriBeacon *beacon =
           [[UBUriBeacon alloc] initWithPeripheral:nil data:data RSSI:0];
+      if ([[url absoluteString] length] == 0) {
+        url = nil;
+      }
       if (![url isEqual:[beacon URI]]) {
         NSLog(@"failed %@", url);
         failure++;

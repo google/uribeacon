@@ -71,6 +71,14 @@ static const char *expansionsMapping[255];
     } else {
       [resultData appendBytes:expansionValue length:strlen(expansionValue)];
     }
+    if ((i == 0) && (bytes[0] == 4) && (length == sizeof(uuid_t) + 1)) {
+      uuid_t bytes;
+      memcpy(&bytes, ((const char *) [data bytes]) + 1, sizeof(uuid_t));
+      NSUUID * uuid = [[NSUUID alloc] initWithUUIDBytes:bytes];
+      const char * uuidString = [[uuid UUIDString] UTF8String];
+      [resultData appendBytes:uuidString length:strlen(uuidString)];
+      break;
+    }
   }
 
   return
@@ -111,6 +119,18 @@ static const char *expansionsMapping[255];
     } else {
       [encodedData appendBytes:bytes + i length:1];
       i++;
+    }
+    if ((i == foundLength) && (found == 4)) {
+      NSString *uuidString = [[NSString alloc]
+          initWithData:[data subdataWithRange:NSMakeRange(
+                                                  foundLength,
+                                                  [data length] - foundLength)]
+              encoding:NSUTF8StringEncoding];
+      NSUUID *uuid = [[NSUUID alloc] initWithUUIDString:uuidString];
+      uuid_t bytes;
+      [uuid getUUIDBytes:bytes];
+      [encodedData appendBytes:(const char *)&bytes length:sizeof(bytes)];
+      break;
     }
   }
   return encodedData;
