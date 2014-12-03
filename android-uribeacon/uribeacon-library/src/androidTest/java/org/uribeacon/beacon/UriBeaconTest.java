@@ -32,7 +32,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
-import java.util.Arrays;
 
 /**
  * Unit tests for the {@link UriBeacon} class.
@@ -241,7 +240,7 @@ public class UriBeaconTest extends AndroidTestCase {
       } else {
         byte[] scanRecord = jsonToByteArray(scanRecordJson);
         byte[] uriBeaconScanRecord = uriBeacon.toByteArray();
-        assertTrue("Assert failed for " + uriBeacon, Arrays.equals(scanRecord, uriBeaconScanRecord));
+        MoreAsserts.assertEquals(scanRecord, uriBeaconScanRecord);
       }
     }
   }

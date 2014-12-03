@@ -13,6 +13,7 @@
                {"url":"https://123.com", "scanRecord":[3,3,216,254,10,22,216,254,0,20,3,"123",7]},
                {"url":"http://web.mit.edu/", "scanRecord":[3,3,216,254,14,22,216,254,0,20,2,"web.mit",2]},
                {"url":"urn:uuid:B1E13D51-5FC9-4D5B-902B-AB668DD54981","scanRecord":[3,3,216,254,22,22,216,254,0,20, 4,
-                    0xB1, 0xE1, 0x3D, 0x51, 0x5F, 0xC9, 0x4D, 0x5B, 0x90, 0x2B, 0xAB, 0x66, 0x8D, 0xD5, 0x49, 0x81]}
+                    0xB1, 0xE1, 0x3D, 0x51, 0x5F, 0xC9, 0x4D, 0x5B, 0x90, 0x2B, 0xAB, 0x66, 0x8D, 0xD5, 0x49, 0x81]},
+               {"url":"", "scanRecord":[3,3,216,254,5,22,216,254,0,20]}
                ]
 }
