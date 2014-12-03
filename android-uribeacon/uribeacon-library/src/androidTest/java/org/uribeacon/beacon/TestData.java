@@ -70,7 +70,7 @@ public class TestData {
   };
   public static final String urlTestString = "https://www.uribeacon.org/test";
   public static final byte[] urlTestByteArray = new byte[] {
-      // 'https://www.' enconded
+      // 'https://www.' encoded
       0x01,
       // uribeacon
       'u', 'r', 'i', 'b', 'e', 'a', 'c', 'o', 'n',
@@ -79,6 +79,7 @@ public class TestData {
       // test
       't', 'e', 's', 't'
   };
+  public static final byte urlTestByteArrayLength = (byte) urlTestByteArray.length;
   public static final String uuidTestString = "urn:uuid:B1E13D51-5FC9-4D5B-902B-AB668DD54981";
   public static final byte[] uuidTestByteArray = new byte[]{
       // 'urn:uuid:' encoded
@@ -90,5 +91,69 @@ public class TestData {
       (byte) 0x8D, (byte) 0xD5, (byte) 0x49, (byte) 0x81
   };
   public static final String malformedUrlString = "wrong://wrong";
-  public static final byte[] malformedUrlByteArray = new byte[]{42, 23, 41, 123, 12, -1, -13, -40};
+  public static final byte[] malformedUrlByteArray = malformedUrlString.getBytes();
+  public static final String longButValidUrlString = "http://23456789111315171";
+  public static final byte[] longButValidUrlByteArray = new byte[] {
+      // 'http://' encoded
+      0x02,
+      // 23456789
+      '2', '3', '4', '5', '6', '7', '8', '9',
+      // 10
+      '1', '1',
+      '1', '3',
+      '1', '5',
+      '1', '7',
+      '1'
+  };
+  public static final String longButInvalidUrlString = "http://234567891113151719";
+  public static final byte[] longButInvalidUrlByteArray = new byte[] {
+      // 'http://' encoded
+      0x02,
+      // 23456789
+      '2', '3', '4', '5', '6', '7', '8', '9',
+      // 10
+      '1', '1',
+      '1', '3',
+      '1', '5',
+      '1', '7',
+      '1', '9'
+  };
+  public static final byte emptyAdbPacketLength = 5;
+  public static final byte noFlags = 0;
+  public static final byte noTxPowerLevel = 0;
+  public static final byte[] emptyAdbPacketBytes = new byte[]{
+      // URI Service UUID Field
+      (byte) 0x03, (byte) 0x03, (byte) 0xD8,(byte) 0xFE,
+      // length
+      emptyAdbPacketLength,
+      // Uri Service data field header
+      0x16, (byte) 0xD8, (byte) 0xFE,
+      // Flags
+      noFlags,
+      // TxPowerLevel
+      noTxPowerLevel
+      // No uri
+  };
+
+  public static final byte[] urlAdbPacketBytes = new byte[]{
+      // URI Service UUID Field
+      (byte) 0x03, (byte) 0x03, (byte) 0xD8,(byte) 0xFE,
+      // base length + uri length
+      (byte) (emptyAdbPacketLength + urlTestByteArrayLength),
+      // Uri Service data field header
+      0x16, (byte) 0xD8, (byte) 0xFE,
+      // Flags
+      noFlags,
+      // TxPowerLevel
+      noTxPowerLevel,
+      // Uri
+      // 'https://www.' encoded
+      0x01,
+      // uribeacon
+      'u', 'r', 'i', 'b', 'e', 'a', 'c', 'o', 'n',
+      // '.org/' encoded
+      0x01,
+      // test
+      't', 'e', 's', 't'
+  };
 }
