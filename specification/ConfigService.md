@@ -185,10 +185,10 @@ Writing a non-zero value to this characteristic will set all characteristics to 
 
 | Characteristic | Default Value |
 |:---------------|:--------------|
-| Uri Data | None or vendor specified |
+| Uri Data | vendor specified |
 | Uri Flags | 0 |
 | TX Power Mode | TX_POWER_MODE_LOW |
-| Beacon Period | 0 (disabled) or vendor specified |
+| Beacon Period | 1000 (1 second) |
 | Lock | 00000000-00000-0000-0000-000000000000 |
 
 ### 4 Reserved Characteristics
