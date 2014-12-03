@@ -39,8 +39,8 @@ public class UriBeacon {
   private static final int DATA_TYPE_SERVICE_DATA = 0x16;
 
   /**
-   * The Service Data UUID is the reserved 16-bit Service Data Code
-   * in the form of a globally unique 128-bit UUID.
+   * The Service Data UUID is the reserved 16-bit Service Data Code in the form of a globally unique
+   * 128-bit UUID.
    */
   public static final ParcelUuid URI_SERVICE_UUID =
       ParcelUuid.fromString("0000FED8-0000-1000-8000-00805F9B34FB");
@@ -60,10 +60,8 @@ public class UriBeacon {
 
 
   /**
-   * Expansion strings for "http" and "https" schemes. These contain strings appearing anywhere
-   * in a URL. Restricted to Generic TLDs.
-   * <p/>
-   * Note: this is a scheme specific encoding.
+   * Expansion strings for "http" and "https" schemes. These contain strings appearing anywhere in a
+   * URL. Restricted to Generic TLDs. <p/> Note: this is a scheme specific encoding.
    */
   private static final SparseArray<String> URL_CODES = new SparseArray<String>() {{
     put((byte) 0, ".com/");
@@ -81,22 +79,24 @@ public class UriBeacon {
     put((byte) 12, ".biz");
     put((byte) 13, ".gov");
   }};
-
   private final byte mFlags;
   private final byte mTxPowerLevel;
   private final String mUriString;
 
   private static final int FLAGS_FIELD_SIZE = 3;
   private static final int URI_SERVICE_FLAGS_TXPOWER_SIZE = 2;
-  private static final byte[] URI_SERVICE_UUID_FIELD = {(byte) 0x03, (byte) 0x03, (byte) 0xD8, (byte) 0xFE};
+  private static final byte[] URI_SERVICE_UUID_FIELD = {(byte) 0x03, (byte) 0x03, (byte) 0xD8,
+      (byte) 0xFE};
   private static final byte[] URI_SERVICE_DATA_FIELD_HEADER = {0x16, (byte) 0xD8, (byte) 0xFE};
   private static final int MAX_ADVERTISING_DATA_BYTES = 31;
+  private static final int MAX_URI_LENGTH = 18;
 
-  public static final class Builder {
+  public static class Builder {
+
     private byte mFlags;
     private byte mTxPowerLevel;
     private String mUriString;
-
+    private byte[] mUriBytes;
     /**
      * Add flags to the UriBeacon advertised data.
      *
@@ -118,7 +118,10 @@ public class UriBeacon {
       mUriString = uriString;
       return this;
     }
-
+    public Builder uriString(byte[] uriBytes) {
+      mUriBytes = uriBytes;
+      return this;
+    }
     /**
      * Add a Tx Power Level to the UriBeacon advertised data.
      *
@@ -130,7 +133,20 @@ public class UriBeacon {
       return this;
     }
 
+    /**
+     * Build the beacon.
+     *
+     * @return The UriBeacon
+     * @throws URISyntaxException if the uri provided is not valid
+     */
     public UriBeacon build() throws URISyntaxException {
+      if (mUriBytes != null) {
+        mUriString = decodeUri(mUriBytes, 0);
+        if (mUriString == null) {
+          throw new IllegalArgumentException("Could not decode URI");
+        }
+      }
+
       if (mUriString == null) {
         throw new IllegalArgumentException(
             "UriBeacon advertisements must include a URI");
@@ -139,8 +155,12 @@ public class UriBeacon {
       // The Service UUID is 4 bytes. The Service Data contains a header (4 bytes),
       // Flags (1 byte) and  TX Power Level (1 byte).
       // So this works out to 28 - 4 - 4 - 1 - 1 = 18 bytes for Service Data Uri.
-      if (totalBytes(mUriString) > MAX_ADVERTISING_DATA_BYTES - FLAGS_FIELD_SIZE) {
-        throw new URISyntaxException(mUriString, "Uri size is larger than 18 bytes");
+      int length = uriLength(mUriString);
+      if (length > MAX_URI_LENGTH) {
+        throw new URISyntaxException(mUriString, "Uri size is larger than "
+            + MAX_URI_LENGTH + " bytes");
+      } else if (length == -1) {
+        throw new URISyntaxException(mUriString, "Not a valid URI");
       }
       return new UriBeacon(mFlags, mTxPowerLevel, mUriString);
     }
@@ -148,9 +168,8 @@ public class UriBeacon {
 
 
   /**
-   * Parse scan record bytes to {@link UriBeacon}.
-   * <p/>
-   * The format is defined in Uri Beacon Definition.
+   * Parse scan record bytes to {@link UriBeacon}. <p/> The format is defined in Uri Beacon
+   * Definition.
    *
    * @param scanRecordBytes The scan record of Bluetooth LE advertisement and/or scan response.
    */
@@ -164,10 +183,14 @@ public class UriBeacon {
     byte flags = serviceData[currentPos++];
     byte txPowerLevel = serviceData[currentPos++];
     String uri = decodeUri(serviceData, currentPos);
+    //TODO: Use builder instead since builder checks for errors
     return new UriBeacon(flags, txPowerLevel, uri);
   }
 
   private static String decodeUri(byte[] serviceData, int offset) {
+    if (serviceData.length == 0) {
+      return "";
+    }
     StringBuilder uriBuilder = new StringBuilder();
     if (offset < serviceData.length) {
       byte b = serviceData[offset++];
@@ -216,6 +239,13 @@ public class UriBeacon {
     return urnBuilder.toString();
   }
 
+  // Copy constructor
+  UriBeacon(UriBeacon uriBeacon) {
+    mUriString = uriBeacon.getUriString();
+    mFlags = uriBeacon.getFlags();
+    mTxPowerLevel = uriBeacon.getTxPowerLevel();
+  }
+
   private UriBeacon(byte flags, byte txPowerLevel, String uriString) {
     mFlags = flags;
     mTxPowerLevel = txPowerLevel;
@@ -223,10 +253,17 @@ public class UriBeacon {
   }
 
   /**
+   * @return The Uri that will be broadcasted in a byte[]
+   */
+  public byte[] getUriBytes() {
+    return encodeUri(mUriString);
+  }
+
+  /**
    * Finds the longest expansion from the uriString at the current position.
    *
    * @param uriString the Uri
-   * @param pos       start position
+   * @param pos start position
    * @return an index in URI_MAP or 0 if none.
    */
   private static byte findLongestExpansion(String uriString, int pos) {
@@ -253,9 +290,8 @@ public class UriBeacon {
 
   /**
    * Returns the transmission power level of the packet in dBm. This value can be used to calculate
-   * the path loss of a received packet using the following equation:
-   * <p/>
-   * <code>path loss = txPowerLevel - RSSI</code>
+   * the path loss of a received packet using the following equation: <p/> <code>path loss =
+   * txPowerLevel - RSSI</code>
    */
   public byte getTxPowerLevel() {
     return mTxPowerLevel;
@@ -288,6 +324,9 @@ public class UriBeacon {
    * @return the Uri string with expansion codes.
    */
   public static byte[] encodeUri(String uri) {
+    if (uri.length() == 0) {
+      return new byte[0];
+    }
     ByteBuffer bb = ByteBuffer.allocate(uri.length());
     // UUIDs are ordered as byte array, which means most significant first
     bb.order(ByteOrder.BIG_ENDIAN);
@@ -399,7 +438,15 @@ public class UriBeacon {
     size += encodedUri.length;
     return size;
   }
-
+  private static int uriLength(String uriString) {
+    byte[] encodedUri = encodeUri(uriString);
+    if (encodedUri == null) {
+      return -1;
+    }
+    else {
+      return encodedUri.length;
+    }
+  }
   /**
    * Return the Service Data for Uri Service.
    *

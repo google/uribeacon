@@ -49,11 +49,11 @@
 
     <string name="pref_title_main_filters">Filter Settings</string>
 
-   <!-- BLE iBeacon Filter -->
+    <!-- BLE iBeacon Filter -->
 
-    <string name="pref_key_uribeacon">UriBeaocn</string>
-    <string name="pref_title_filter_uribeacon">Filter UriBeaocn</string>
-    <string name="pref_summary_off_filter_uribeacon">Not filtering on UriBeaocn</string>
-    <string name="pref_summary_on_filter_uribeacon">Filtering on UriBeaocn</string>
+    <string name="pref_key_uribeacon">UriBeacon</string>
+    <string name="pref_title_filter_uribeacon">Filter UriBeacon</string>
+    <string name="pref_summary_off_filter_uribeacon">Not filtering on UriBeacon</string>
+    <string name="pref_summary_on_filter_uribeacon">Filtering on UriBeacon</string>
 
 </resources>
