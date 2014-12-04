@@ -64,19 +64,18 @@ public class ProtocolV2 extends BaseProtocol {
   }
 
 
-  public void writeUriBeacon(ConfigUriBeacon configUriBeacon) throws URISyntaxException{
+  public void writeUriBeacon(ConfigUriBeacon configUriBeacon) throws URISyntaxException {
     //TODO: If beacon has invalid data initialize a beacon with RESET values
+    // Define last call
     if (mConfigUriBeacon.getLockState()) {
       if (configUriBeacon.getKey() == null) {
         mUriBeaconCallback.onUriBeaconWrite(ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION);
       }
-      mService.writeCharacteristic(UNLOCK, configUriBeacon.getKey());
+      mLastUUID = UNLOCK;
     }
     if (configUriBeacon.getReset()) {
       mLastUUID = RESET;
-      mService.writeCharacteristic(RESET, new byte[]{1});
     } else {
-      // Define last call
       if (configUriBeacon.getUriString() != null
           && !configUriBeacon.getUriString().equals(mConfigUriBeacon.getUriString())) {
         mLastUUID = DATA;
@@ -104,10 +103,17 @@ public class ProtocolV2 extends BaseProtocol {
         mLastUUID = LOCK;
       }
       // If there are no changes or the only change is that the beacon was unlocked, return.
-      if (mLastUUID == null) {
-        mUriBeaconCallback.onUriBeaconWrite(BluetoothGatt.GATT_SUCCESS);
-      }
-      // Start enqueing writes
+    }
+    if (mLastUUID == null) {
+      mUriBeaconCallback.onUriBeaconWrite(BluetoothGatt.GATT_SUCCESS);
+    }
+    // Start enqueing writes
+    if (mConfigUriBeacon.getLockState()) {
+      mService.writeCharacteristic(UNLOCK, configUriBeacon.getKey());
+    }
+    if (configUriBeacon.getReset()) {
+      mService.writeCharacteristic(RESET, new byte[]{1});
+    } else {
       if (configUriBeacon.getUriString() != null
           && !configUriBeacon.getUriString().equals(mConfigUriBeacon.getUriString())) {
         mService.writeCharacteristic(DATA, configUriBeacon.getUriBytes());
