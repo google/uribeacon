@@ -67,37 +67,40 @@ public class ProtocolV2 extends BaseProtocol {
   public void writeUriBeacon(ConfigUriBeacon configUriBeacon) throws URISyntaxException{
     //TODO: If beacon has invalid data initialize a beacon with RESET values
     if (mConfigUriBeacon.getLockState()) {
+      if (configUriBeacon.getKey() == null) {
+        mUriBeaconCallback.onUriBeaconWrite(ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION);
+      }
       mService.writeCharacteristic(UNLOCK, configUriBeacon.getKey());
     }
     if (configUriBeacon.getReset()) {
       mLastUUID = RESET;
       mService.writeCharacteristic(RESET, new byte[]{1});
-    } else if (mConfigUriBeacon == null) {
-      mLastUUID = POWER_LEVELS;
-      mService.writeCharacteristic(DATA, configUriBeacon.getUriBytes());
-      mService.writeCharacteristic(FLAGS, new byte[]{configUriBeacon.getFlags()});
-      mService.writeCharacteristic(PERIOD, configUriBeacon.getBeaconPeriod(), PERIOD_FORMAT, 0);
-      mService.writeCharacteristic(POWER_MODE, new byte[]{configUriBeacon.getTxPowerMode()});
-      mService.writeCharacteristic(POWER_LEVELS, configUriBeacon.getAdvertisedTxPowerLevels());
     } else {
       // Define last call
-      if (!configUriBeacon.getUriString().equals(mConfigUriBeacon.getUriString())) {
+      if (configUriBeacon.getUriString() != null
+          && !configUriBeacon.getUriString().equals(mConfigUriBeacon.getUriString())) {
         mLastUUID = DATA;
       }
       if (configUriBeacon.getFlags() != mConfigUriBeacon.getFlags()) {
         mLastUUID = FLAGS;
       }
-      if (!Arrays.equals(configUriBeacon.getAdvertisedTxPowerLevels(),
+      if (configUriBeacon.getAdvertisedTxPowerLevels() != null
+          && !Arrays.equals(configUriBeacon.getAdvertisedTxPowerLevels(),
           mConfigUriBeacon.getAdvertisedTxPowerLevels())) {
         mLastUUID = POWER_LEVELS;
       }
-      if (configUriBeacon.getTxPowerMode() != mConfigUriBeacon.getTxPowerMode()) {
+      if (configUriBeacon.getTxPowerMode() != ConfigUriBeacon.POWER_MODE_NONE
+          && configUriBeacon.getTxPowerMode() != mConfigUriBeacon.getTxPowerMode()) {
         mLastUUID = POWER_MODE;
       }
-      if (configUriBeacon.getBeaconPeriod() != mConfigUriBeacon.getBeaconPeriod()) {
+      if (configUriBeacon.getBeaconPeriod() != ConfigUriBeacon.PERIOD_NONE
+          && configUriBeacon.getBeaconPeriod() != mConfigUriBeacon.getBeaconPeriod()) {
         mLastUUID = PERIOD;
       }
       if (configUriBeacon.getLockState()) {
+        if (configUriBeacon.getKey() == null) {
+          mUriBeaconCallback.onUriBeaconWrite(ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION);
+        }
         mLastUUID = LOCK;
       }
       // If there are no changes or the only change is that the beacon was unlocked, return.
@@ -105,20 +108,24 @@ public class ProtocolV2 extends BaseProtocol {
         mUriBeaconCallback.onUriBeaconWrite(BluetoothGatt.GATT_SUCCESS);
       }
       // Start enqueing writes
-      if (!configUriBeacon.getUriString().equals(mConfigUriBeacon.getUriString())) {
+      if (configUriBeacon.getUriString() != null
+          && !configUriBeacon.getUriString().equals(mConfigUriBeacon.getUriString())) {
         mService.writeCharacteristic(DATA, configUriBeacon.getUriBytes());
       }
       if (configUriBeacon.getFlags() != mConfigUriBeacon.getFlags()) {
         mService.writeCharacteristic(FLAGS, new byte[]{configUriBeacon.getFlags()});
       }
-      if (!Arrays.equals(configUriBeacon.getAdvertisedTxPowerLevels(),
+      if (configUriBeacon.getAdvertisedTxPowerLevels() != null
+          && !Arrays.equals(configUriBeacon.getAdvertisedTxPowerLevels(),
           mConfigUriBeacon.getAdvertisedTxPowerLevels())) {
         mService.writeCharacteristic(POWER_LEVELS, configUriBeacon.getAdvertisedTxPowerLevels());
       }
-      if (configUriBeacon.getTxPowerMode() != mConfigUriBeacon.getTxPowerMode()) {
+      if (configUriBeacon.getTxPowerMode() != ConfigUriBeacon.POWER_MODE_NONE
+          && configUriBeacon.getTxPowerMode() != mConfigUriBeacon.getTxPowerMode()) {
         mService.writeCharacteristic(POWER_MODE, new byte[]{configUriBeacon.getTxPowerMode()});
       }
-      if (configUriBeacon.getBeaconPeriod() != mConfigUriBeacon.getBeaconPeriod()) {
+      if (configUriBeacon.getBeaconPeriod() != ConfigUriBeacon.PERIOD_NONE
+          && configUriBeacon.getBeaconPeriod() != mConfigUriBeacon.getBeaconPeriod()) {
         mService.writeCharacteristic(PERIOD, configUriBeacon.getBeaconPeriod(), PERIOD_FORMAT, 0);
       }
       if (configUriBeacon.getLockState()) {
