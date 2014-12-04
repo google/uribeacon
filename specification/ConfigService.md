@@ -34,7 +34,7 @@ This service is not dependent upon any other [services](https://developer.blueto
 
 | Code   | Description                |
 |:-------|:---------------------------|
-| 0x05   | Insufficient Authorization |
+| 0x08   | Insufficient Authorization |
 
 
 ## 2 Service Declaration
