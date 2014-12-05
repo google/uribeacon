@@ -23,6 +23,7 @@ import android.os.ParcelUuid;
 import android.util.Log;
 
 import org.uribeacon.beacon.ConfigUriBeacon;
+import org.uribeacon.beacon.UriBeacon;
 import org.uribeacon.config.UriBeaconConfig.UriBeaconCallback;
 
 import java.net.URISyntaxException;
@@ -38,11 +39,13 @@ public class ProtocolV1 extends BaseProtocol {
   private static final UUID DATA_TWO = UUID.fromString("b35d7da8-eed4-4d59-8f89-f6573edea967");
   private static final UUID DATA_LENGTH = UUID.fromString("b35d7da9-eed4-4d59-8f89-f6573edea967");
   private static final int DATA_LENGTH_MAX = 20;
+  private static final byte TX_POWER_LEVEL_DEFAULT = -22;
   private final GattService mService;
   private final UriBeaconCallback mUriBeaconCallback;
   private Integer mDataLength;
   private byte[] mData;
   private byte[] mDataWrite;
+  private ConfigUriBeacon mConfigUriBeacon;
 
   public ProtocolV1(GattService serviceConnection,
       UriBeaconCallback uriBeaconCallback) {
@@ -56,8 +59,25 @@ public class ProtocolV1 extends BaseProtocol {
 
 
   public void writeUriBeacon(ConfigUriBeacon configUriBeacon) throws URISyntaxException {
-
-    mDataWrite = configUriBeacon.toByteArray();
+    ConfigUriBeacon.Builder correctedUriBeaconBuilder = new ConfigUriBeacon.Builder();
+    if (configUriBeacon.getFlags() != UriBeacon.NO_FLAGS) {
+      correctedUriBeaconBuilder.flags(configUriBeacon.getFlags());
+    } else {
+      correctedUriBeaconBuilder.flags(mConfigUriBeacon.getFlags());
+    }
+    // If the tx power level was set by user
+    if (configUriBeacon.getTxPowerLevel() != UriBeacon.NO_TX_POWER_LEVEL) {
+      correctedUriBeaconBuilder.txPowerLevel(configUriBeacon.getTxPowerLevel());
+    // If the tx power level was not set by user but the beacon had a value already
+    } else if (mConfigUriBeacon.getTxPowerLevel() != UriBeacon.NO_TX_POWER_LEVEL) {
+      correctedUriBeaconBuilder.txPowerLevel(mConfigUriBeacon.getTxPowerLevel());
+    // If neither the beacon nor the user had values
+    } else {
+      correctedUriBeaconBuilder.txPowerLevel(TX_POWER_LEVEL_DEFAULT);
+    }
+    correctedUriBeaconBuilder.uriString(configUriBeacon.getUriString());
+    ConfigUriBeacon correctedUriBeacon = correctedUriBeaconBuilder.build();
+    mDataWrite = correctedUriBeacon.toByteArray();
     if (mDataWrite.length <= 20) {
       // write the value
       mService.writeCharacteristic(DATA_ONE, mDataWrite);
@@ -97,11 +117,13 @@ public class ProtocolV1 extends BaseProtocol {
         if (mDataLength > DATA_LENGTH_MAX) {
           mService.readCharacteristic(DATA_TWO);
         } else {
-          mUriBeaconCallback.onUriBeaconRead(ConfigUriBeacon.parseFromBytes(mData), status);
+          mConfigUriBeacon = ConfigUriBeacon.parseFromBytes(mData);
+          mUriBeaconCallback.onUriBeaconRead(mConfigUriBeacon, status);
         }
       } else if (DATA_TWO.equals(uuid)) {
         mData = Util.concatenate(mData, characteristic.getValue());
-        mUriBeaconCallback.onUriBeaconRead(ConfigUriBeacon.parseFromBytes(mData), status);
+        mConfigUriBeacon = ConfigUriBeacon.parseFromBytes(mData);
+        mUriBeaconCallback.onUriBeaconRead(mConfigUriBeacon, status);
       }
     } else {
       mUriBeaconCallback.onUriBeaconRead(null, status);

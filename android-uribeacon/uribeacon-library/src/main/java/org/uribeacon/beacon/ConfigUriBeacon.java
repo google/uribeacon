@@ -34,7 +34,6 @@ public class ConfigUriBeacon extends UriBeacon {
 
   private static final byte TX_POWER_LEVEL_MAX_VALUE = 20;
   private static final byte TX_POWER_LEVEL_MIN_VALUE = -100;
-
   private byte[] mKey;
   private boolean mLockState;
   private byte[] mAdvertisedTxPowerLevels;
@@ -60,6 +59,14 @@ public class ConfigUriBeacon extends UriBeacon {
    */
   public static ConfigUriBeacon parseFromBytes(byte[] scanRecordBytes) {
     UriBeacon uriBeacon = UriBeacon.parseFromBytes(scanRecordBytes);
+    if (uriBeacon == null) {
+      try {
+        uriBeacon = new UriBeacon.Builder().uriString(UriBeacon.NO_URI).build();
+      } catch (URISyntaxException e) {
+        // There should be no error thrown!
+        e.printStackTrace();
+      }
+    }
     return new ConfigUriBeacon(uriBeacon, null, false, null, POWER_MODE_NONE, PERIOD_NONE, false);
   }
 
@@ -206,7 +213,7 @@ public class ConfigUriBeacon extends UriBeacon {
      */
     public ConfigUriBeacon build() throws URISyntaxException {
       if (mReset) {
-        UriBeacon uriBeacon = new UriBeacon.Builder().uriString("").build();
+        UriBeacon uriBeacon = new UriBeacon.Builder().uriString(NO_URI).build();
         return new ConfigUriBeacon(uriBeacon, mKey, false, null, POWER_MODE_NONE, PERIOD_NONE, mReset);
       }
       UriBeacon uriBeacon = super.build();

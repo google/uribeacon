@@ -90,11 +90,13 @@ public class UriBeacon {
   private static final byte[] URI_SERVICE_DATA_FIELD_HEADER = {0x16, (byte) 0xD8, (byte) 0xFE};
   private static final int MAX_ADVERTISING_DATA_BYTES = 31;
   private static final int MAX_URI_LENGTH = 18;
-
+  public static final byte NO_TX_POWER_LEVEL = -101;
+  public static final byte NO_FLAGS = 0;
+  public static final String NO_URI = "";
   public static class Builder {
 
-    private byte mFlags;
-    private byte mTxPowerLevel;
+    private byte mFlags = NO_FLAGS;
+    private byte mTxPowerLevel = NO_TX_POWER_LEVEL;
     private String mUriString;
     private byte[] mUriBytes;
     /**
@@ -189,7 +191,7 @@ public class UriBeacon {
 
   private static String decodeUri(byte[] serviceData, int offset) {
     if (serviceData.length == 0) {
-      return "";
+      return NO_URI;
     }
     StringBuilder uriBuilder = new StringBuilder();
     if (offset < serviceData.length) {
