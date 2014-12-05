@@ -20,16 +20,16 @@
 
 #define URIBEACON_SERVICE @"FED8"
 
-#define CONFIG_SERVICE @"b35d7da6-eed4-4d59-8f89-f6573edea967"
+#define CONFIG_V1_SERVICE @"b35d7da6-eed4-4d59-8f89-f6573edea967"
 //                              ^
 
-#define CONFIG_CHARACTERISTIC_DATA1 @"b35d7da7-eed4-4d59-8f89-f6573edea967"
+#define CONFIG_V1_CHARACTERISTIC_DATA1 @"b35d7da7-eed4-4d59-8f89-f6573edea967"
 //                                           ^
 
-#define CONFIG_CHARACTERISTIC_DATA2 @"b35d7da8-eed4-4d59-8f89-f6573edea967"
+#define CONFIG_V1_CHARACTERISTIC_DATA2 @"b35d7da8-eed4-4d59-8f89-f6573edea967"
 //                                           ^
 
-#define CONFIG_CHARACTERISTIC_DATASIZE @"b35d7da9-eed4-4d59-8f89-f6573edea967"
+#define CONFIG_V1_CHARACTERISTIC_DATASIZE @"b35d7da9-eed4-4d59-8f89-f6573edea967"
 //                                              ^
 
 #define CONFIG_V2_SERVICE @"ee0c2080-8786-40ba-ab96-99b91ac981d8"

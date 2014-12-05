@@ -53,7 +53,7 @@ enum {
   _completionBlock = [block copy];
 
   [_peripheral setDelegate:self];
-  [_peripheral discoverServices:@[ [CBUUID UUIDWithString:CONFIG_SERVICE] ]];
+  [_peripheral discoverServices:@[ [CBUUID UUIDWithString:CONFIG_V1_SERVICE] ]];
 }
 
 - (void)peripheral:(CBPeripheral *)peripheral
@@ -66,8 +66,8 @@ enum {
   CBService *service = [[peripheral services] objectAtIndex:0];
   [peripheral discoverCharacteristics:
                   @[
-                    [CBUUID UUIDWithString:CONFIG_CHARACTERISTIC_DATA1],
-                    [CBUUID UUIDWithString:CONFIG_CHARACTERISTIC_DATA2]
+                    [CBUUID UUIDWithString:CONFIG_V1_CHARACTERISTIC_DATA1],
+                    [CBUUID UUIDWithString:CONFIG_V1_CHARACTERISTIC_DATA2]
                   ] forService:service];
 }
 
@@ -85,7 +85,7 @@ enum {
   }
 
   CBCharacteristic *c = [_characteristics
-      objectForKey:[CBUUID UUIDWithString:CONFIG_CHARACTERISTIC_DATA1]];
+      objectForKey:[CBUUID UUIDWithString:CONFIG_V1_CHARACTERISTIC_DATA1]];
   _length = [[self data] length];
 
   NSData *data = nil;
@@ -116,7 +116,7 @@ enum {
     NSData *data = [[self data] subdataWithRange:NSMakeRange(20, _length - 20)];
     _state = NEED_WRITE_DATA2;
     CBCharacteristic *c = [_characteristics
-        objectForKey:[CBUUID UUIDWithString:CONFIG_CHARACTERISTIC_DATA2]];
+        objectForKey:[CBUUID UUIDWithString:CONFIG_V1_CHARACTERISTIC_DATA2]];
     [peripheral writeValue:data
          forCharacteristic:c
                       type:CBCharacteristicWriteWithResponse];

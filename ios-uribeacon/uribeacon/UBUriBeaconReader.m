@@ -55,7 +55,7 @@ enum {
   _completionBlock = [block copy];
 
   [_peripheral setDelegate:self];
-  [_peripheral discoverServices:@[ [CBUUID UUIDWithString:CONFIG_SERVICE] ]];
+  [_peripheral discoverServices:@[ [CBUUID UUIDWithString:CONFIG_V1_SERVICE] ]];
 }
 
 - (void)peripheral:(CBPeripheral *)peripheral
@@ -68,9 +68,9 @@ enum {
   CBService *service = [[peripheral services] objectAtIndex:0];
   [peripheral discoverCharacteristics:
                   @[
-                    [CBUUID UUIDWithString:CONFIG_CHARACTERISTIC_DATA1],
-                    [CBUUID UUIDWithString:CONFIG_CHARACTERISTIC_DATA2],
-                    [CBUUID UUIDWithString:CONFIG_CHARACTERISTIC_DATASIZE]
+                    [CBUUID UUIDWithString:CONFIG_V1_CHARACTERISTIC_DATA1],
+                    [CBUUID UUIDWithString:CONFIG_V1_CHARACTERISTIC_DATA2],
+                    [CBUUID UUIDWithString:CONFIG_V1_CHARACTERISTIC_DATASIZE]
                   ] forService:service];
 }
 
@@ -90,7 +90,7 @@ enum {
   _result = [NSMutableData data];
   _state = NEED_READ_DATASIZE;
   CBCharacteristic *c = [_characteristics
-      objectForKey:[CBUUID UUIDWithString:CONFIG_CHARACTERISTIC_DATASIZE]];
+      objectForKey:[CBUUID UUIDWithString:CONFIG_V1_CHARACTERISTIC_DATASIZE]];
   [peripheral readValueForCharacteristic:c];
 }
 
@@ -114,7 +114,7 @@ enum {
       } else {
         _state = NEED_READ_DATA1;
         CBCharacteristic *c = [_characteristics
-            objectForKey:[CBUUID UUIDWithString:CONFIG_CHARACTERISTIC_DATA1]];
+            objectForKey:[CBUUID UUIDWithString:CONFIG_V1_CHARACTERISTIC_DATA1]];
         [peripheral readValueForCharacteristic:c];
       }
       break;
@@ -125,7 +125,7 @@ enum {
       } else {
         _state = NEED_READ_DATA2;
         CBCharacteristic *c = [_characteristics
-            objectForKey:[CBUUID UUIDWithString:CONFIG_CHARACTERISTIC_DATA2]];
+            objectForKey:[CBUUID UUIDWithString:CONFIG_V1_CHARACTERISTIC_DATA2]];
         [peripheral readValueForCharacteristic:c];
       }
       break;

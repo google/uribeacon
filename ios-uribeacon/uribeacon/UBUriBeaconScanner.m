@@ -295,7 +295,7 @@ static stateChange stateGraph[] = {
       [CBUUID UUIDWithString:URIBEACON_SERVICE]
     ] options:nil];
     [_configurableBeaconsCentralManager scanForPeripheralsWithServices:@[
-      [CBUUID UUIDWithString:CONFIG_SERVICE],
+      [CBUUID UUIDWithString:CONFIG_V1_SERVICE],
       [CBUUID UUIDWithString:CONFIG_V2_SERVICE]
     ] options:nil];
     [self _startTimerScanning];

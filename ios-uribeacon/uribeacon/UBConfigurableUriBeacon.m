@@ -47,7 +47,7 @@ enum {
   if ([serviceUUIDS containsObject:[CBUUID UUIDWithString:CONFIG_V2_SERVICE]]) {
     _version = URIBEACON_V2;
   } else if ([serviceUUIDS
-                 containsObject:[CBUUID UUIDWithString:CONFIG_SERVICE]]) {
+                 containsObject:[CBUUID UUIDWithString:CONFIG_V1_SERVICE]]) {
     _version = URIBEACON_V1;
   } else {
     return nil;
