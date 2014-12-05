@@ -63,7 +63,6 @@ public class ConfigActivity extends Activity implements PasswordDialogFragment.P
   private boolean mOriginalLockState;
 
   private ProgressDialog mConnectionDialog = null;
-  private static final byte DEFAULT_TX_POWER = -63;
   private static final int ITERATIONS = 1000;
   private final String TAG = "ConfigActivity";
   private UriBeaconConfig mUriBeaconConfig;
@@ -123,7 +122,6 @@ public class ConfigActivity extends Activity implements PasswordDialogFragment.P
         enableUi(false);
         ConfigUriBeacon configUriBeacon = new ConfigUriBeacon.Builder()
             .uriString(getUri())
-            .txPowerLevel(DEFAULT_TX_POWER)
             .build();
         mUriBeaconConfig.writeUriBeacon(configUriBeacon);
       }
