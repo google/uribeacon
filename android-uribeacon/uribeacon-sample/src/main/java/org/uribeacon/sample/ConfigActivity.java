@@ -202,12 +202,12 @@ public class ConfigActivity extends Activity implements PasswordDialogFragment.P
       }
       List<ParcelUuid> uuids = scanResult.getScanRecord().getServiceUuids();
       // Check which uuid is the config uuid
-      ParcelUuid services[] = {ProtocolV1.CONFIG_SERVICE_UUID, ProtocolV2.CONFIG_SERVICE_UUID};
-      for (ParcelUuid serviceUuid : services){
-        int uuidIndex= uuids.indexOf(serviceUuid);
-        if (uuidIndex>=0) {
-          mUriBeaconConfig = new UriBeaconConfig(this, mUriBeaconCallback, uuids.get(uuidIndex));
+      ParcelUuid services[] = {ProtocolV2.CONFIG_SERVICE_UUID, ProtocolV1.CONFIG_SERVICE_UUID};
+      for (ParcelUuid serviceUuid : services) {
+        if (uuids.contains(serviceUuid)) {
+          mUriBeaconConfig = new UriBeaconConfig(this, mUriBeaconCallback, serviceUuid);
           mUriBeaconConfig.connectUriBeacon(device);
+          break;
         }
       }
     }
