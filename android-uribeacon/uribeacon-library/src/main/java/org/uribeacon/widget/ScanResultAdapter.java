@@ -173,6 +173,7 @@ public abstract class ScanResultAdapter extends BaseAdapter {
   public class DeviceSighting implements Comparable<DeviceSighting> {
     public ScanResult scanResult;
     public double latestDistance;
+    public long period;
 
     public DeviceSighting(ScanResult scanResult, double distance) {
       this.scanResult = scanResult;
@@ -180,6 +181,11 @@ public abstract class ScanResultAdapter extends BaseAdapter {
     }
 
     public void updateSighting(ScanResult scanResult, double distance) {
+      long currentPeriod = TimeUnit.NANOSECONDS.toMillis(scanResult.getTimestampNanos()
+          - this.scanResult.getTimestampNanos());
+      this.period = this.period != 0 ?
+          (this.period + currentPeriod)/2
+          : currentPeriod;
       this.scanResult = scanResult;
       this.latestDistance = distance;
     }
