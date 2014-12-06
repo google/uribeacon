@@ -15,6 +15,8 @@
  */
 package org.uribeacon.sample;
 
+import static android.preference.PreferenceManager.getDefaultSharedPreferences;
+
 import android.app.Activity;
 import android.app.ListActivity;
 import android.bluetooth.BluetoothAdapter;
@@ -49,8 +51,6 @@ import org.uribeacon.widget.ScanResultAdapter;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static android.preference.PreferenceManager.getDefaultSharedPreferences;
-
 /**
  * Activity for scanning and displaying available Bluetooth LE devices.
  */
@@ -61,7 +61,7 @@ public class UriBeaconScanActivity extends ListActivity implements SwipeRefreshL
   // Keep devices in adapter on screen forever.
   private static final int DEVICE_LIFETIME_SECONDS = Integer.MAX_VALUE;
   private static final Handler mHandler = new Handler();
-  private static final long SCAN_TIME_MILLIS = TimeUnit.SECONDS.toMillis(5);
+  private static final long SCAN_TIME_MILLIS = TimeUnit.SECONDS.toMillis(10);
   private final BluetoothAdapter.LeScanCallback mLeScanCallback = new LeScanCallback();
   private DeviceListAdapter mLeDeviceListAdapter;
   private BluetoothAdapter mBluetoothAdapter;

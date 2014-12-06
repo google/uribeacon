@@ -100,7 +100,11 @@ class DeviceListAdapter extends ScanResultAdapter {
         .append(scanResult.getRssi())
         .append(" Distance: ")
         .append(distance);
-
+    if (deviceSighting.period != 0) {
+      deviceData
+          .append("Period(ms): ")
+          .append(deviceSighting.period);
+    }
     // The stabilized region computed from the hysteresis.
     int region = mRegionResolver.getRegion(scanResult.getDevice().getAddress());
 
