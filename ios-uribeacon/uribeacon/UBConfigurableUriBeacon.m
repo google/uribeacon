@@ -23,9 +23,16 @@
 #import "UBUriBeaconPrivate.h"
 #import "NSURL+UB.h"
 
+enum {
+  URIBEACON_VERSION_NONE = 0,
+  URIBEACON_V1 = 1,
+  URIBEACON_V2 = 2,
+};
+
 @implementation UBConfigurableUriBeacon {
   UBUriBeaconScanner *_scanner;
   CBPeripheral *_peripheral;
+  int _version;
 }
 
 - (id)initWithPeripheral:(CBPeripheral *)peripheral
@@ -37,10 +44,12 @@
   }
   NSArray *serviceUUIDS =
       [advertisementData objectForKey:CBAdvertisementDataServiceUUIDsKey];
-  if (![serviceUUIDS
-          containsObject:
-              [CBUUID
-                  UUIDWithString:@"B35D7DA6-EED4-4D59-8F89-F6573EDEA967"]]) {
+  if ([serviceUUIDS containsObject:[CBUUID UUIDWithString:CONFIG_V2_SERVICE]]) {
+    _version = URIBEACON_V2;
+  } else if ([serviceUUIDS
+                 containsObject:[CBUUID UUIDWithString:CONFIG_V1_SERVICE]]) {
+    _version = URIBEACON_V1;
+  } else {
     return nil;
   }
   _peripheral = peripheral;
@@ -75,21 +84,41 @@
 
 - (void)writeBeacon:(UBUriBeacon *)beacon
     completionBlock:(void (^)(NSError *error))block {
-  [[self scanner] _writeBeaconWithPeripheral:_peripheral
-                           advertisementData:[beacon _advertisementData]
-                             completionBlock:block];
+  if (_version == URIBEACON_V1) {
+    [[self scanner] _writeBeaconWithPeripheral:_peripheral
+                             advertisementData:[beacon _advertisementData]
+                               completionBlock:block];
+  } else if (_version == URIBEACON_V2) {
+    [[self scanner] _writeURIv2WithPeripheral:_peripheral
+                                          url:[beacon URI]
+                              completionBlock:block];
+  } else {
+    NSAssert(0, @"invalid configurable beacon");
+  }
 }
 
-- (void)readBeaconWithCompletionBlock:(void (^)(NSError* error,
-                                                UBUriBeacon* beacon))block {
-  [[self scanner] _readBeaconWithPeripheral:_peripheral
-                            completionBlock:^(NSError* error, NSData* data) {
-                                UBUriBeacon* beacon = [[UBUriBeacon alloc]
-                                    initWithPeripheral:_peripheral
-                                                  data:data
-                                                  RSSI:[self RSSI]];
-                                block(error, beacon);
-                            }];
+- (void)readBeaconWithCompletionBlock:(void (^)(NSError *error,
+                                                UBUriBeacon *beacon))block {
+  if (_version == URIBEACON_V1) {
+    [[self scanner] _readBeaconWithPeripheral:_peripheral
+                              completionBlock:^(NSError *error, NSData *data) {
+                                  UBUriBeacon *beacon = [[UBUriBeacon alloc]
+                                      initWithPeripheral:_peripheral
+                                                    data:data
+                                                    RSSI:[self RSSI]];
+                                  block(error, beacon);
+                              }];
+  } else if (_version == URIBEACON_V2) {
+    [[self scanner]
+        _readURIv2WithPeripheral:_peripheral
+                 completionBlock:^(NSError *error, NSURL *uri) {
+                     UBUriBeacon *beacon =
+                         [[UBUriBeacon alloc] initWithURI:uri txPowerLevel:0];
+                     block(error, beacon);
+                 }];
+  } else {
+    NSAssert(0, @"invalid configurable beacon");
+  }
 }
 
 - (void)_updateWithConfigurableBeacon:(UBConfigurableUriBeacon *)beacon {

@@ -33,4 +33,11 @@
 - (void)_readBeaconWithPeripheral:(CBPeripheral *)peripheral
                   completionBlock:(void (^)(NSError *error, NSData *data))block;
 
+- (void)_writeURIv2WithPeripheral:(CBPeripheral *)peripheral
+                              url:(NSURL *)url
+                  completionBlock:(void (^)(NSError *error))block;
+
+- (void)_readURIv2WithPeripheral:(CBPeripheral *)peripheral
+                 completionBlock:(void (^)(NSError *error, NSURL *uri))block;
+
 @end

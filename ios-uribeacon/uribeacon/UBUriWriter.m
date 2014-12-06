@@ -14,24 +14,16 @@
  * limitations under the License.
  */
 
-#import "UBUriBeaconWriter.h"
+#import "UBUriWriter.h"
 
 #include "UBUriBeaconPrivate.h"
 
-enum {
-  NEED_WRITE_DATA1,
-  NEED_WRITE_DATA2,
-};
-
-@interface UBUriBeaconWriter ()<CBPeripheralDelegate>
+@interface UBUriWriter () <CBPeripheralDelegate>
 
 @end
 
-@implementation UBUriBeaconWriter {
-  int _state;
-  NSMutableDictionary *_characteristics;
+@implementation UBUriWriter {
   void (^_completionBlock)(NSError *error);
-  NSUInteger _length;
 }
 
 - (id)init {
@@ -39,8 +31,6 @@ enum {
   if (!self) {
     return nil;
   }
-
-  _state = NEED_WRITE_DATA1;
 
   return self;
 }
@@ -53,7 +43,7 @@ enum {
   _completionBlock = [block copy];
 
   [_peripheral setDelegate:self];
-  [_peripheral discoverServices:@[ [CBUUID UUIDWithString:CONFIG_V1_SERVICE] ]];
+  [_peripheral discoverServices:@[ [CBUUID UUIDWithString:CONFIG_V2_SERVICE] ]];
 }
 
 - (void)peripheral:(CBPeripheral *)peripheral
@@ -63,12 +53,17 @@ enum {
     return;
   }
 
-  CBService *service = [[peripheral services] objectAtIndex:0];
-  [peripheral discoverCharacteristics:
-                  @[
-                    [CBUUID UUIDWithString:CONFIG_V1_CHARACTERISTIC_DATA1],
-                    [CBUUID UUIDWithString:CONFIG_V1_CHARACTERISTIC_DATA2]
-                  ] forService:service];
+  CBService *service = nil;
+  for (CBService *s in [peripheral services]) {
+    if ([[[s UUID] UUIDString] caseInsensitiveCompare:CONFIG_V2_SERVICE] ==
+        NSOrderedSame) {
+      service = s;
+    }
+  }
+
+  [peripheral discoverCharacteristics:@[
+    [CBUUID UUIDWithString:[self characteristic]]
+  ] forService:service];
 }
 
 - (void)peripheral:(CBPeripheral *)peripheral
@@ -79,22 +74,15 @@ enum {
     return;
   }
 
-  _characteristics = [NSMutableDictionary dictionary];
+  CBCharacteristic *c = nil;
   for (CBCharacteristic *characteristic in [service characteristics]) {
-    [_characteristics setObject:characteristic forKey:[characteristic UUID]];
+    if ([[[characteristic UUID] UUIDString]
+            caseInsensitiveCompare:[self characteristic]] == NSOrderedSame) {
+      c = characteristic;
+    }
   }
 
-  CBCharacteristic *c = [_characteristics
-      objectForKey:[CBUUID UUIDWithString:CONFIG_V1_CHARACTERISTIC_DATA1]];
-  _length = [[self data] length];
-
-  NSData *data = nil;
-  if (_length > 20) {
-    data = [[self data] subdataWithRange:NSMakeRange(0, 20)];
-  } else {
-    data = [self data];
-  }
-  [peripheral writeValue:data
+  [peripheral writeValue:[self data]
        forCharacteristic:c
                     type:CBCharacteristicWriteWithResponse];
 }
@@ -102,27 +90,7 @@ enum {
 - (void)peripheral:(CBPeripheral *)peripheral
     didWriteValueForCharacteristic:(CBCharacteristic *)characteristic
                              error:(NSError *)error {
-  if (error != nil) {
-    [self _writeDoneWithError:error];
-    return;
-  }
-
-  if (_state == NEED_WRITE_DATA2) {
-    [self _writeDoneWithError:nil];
-    return;
-  }
-
-  if (_length > 20) {
-    NSData *data = [[self data] subdataWithRange:NSMakeRange(20, _length - 20)];
-    _state = NEED_WRITE_DATA2;
-    CBCharacteristic *c = [_characteristics
-        objectForKey:[CBUUID UUIDWithString:CONFIG_V1_CHARACTERISTIC_DATA2]];
-    [peripheral writeValue:data
-         forCharacteristic:c
-                      type:CBCharacteristicWriteWithResponse];
-  } else {
-    [self _writeDoneWithError:nil];
-  }
+  [self _writeDoneWithError:error];
 }
 
 - (void)_writeDoneWithError:(NSError *)error {
