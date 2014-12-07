@@ -32,7 +32,7 @@ brew install cmake
 The issue the following
 
 ```
-git clone http://github.com/google/uribeacon
+git clone --recursive http://github.com/google/uribeacon
 cd uribeacon/beacon/mbed
 mkdir build
 cd build
@@ -42,3 +42,4 @@ make
 
 Install the `combined.hex` onto the target over the USB.
 
+NOTE: Mac doesn't flash onto the nRF51822-Dongle. Stick with Linux!
