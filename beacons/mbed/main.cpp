@@ -95,7 +95,7 @@ int main(void)
   ble.accumulateScanResponse(GapAdvertisingData::COMPLETE_LOCAL_NAME, (uint8_t *)DEVICE_NAME, sizeof(DEVICE_NAME));
   ble.accumulateScanResponse(GapAdvertisingData::TX_POWER_LEVEL, (uint8_t *)TX_POWER_LEVEL, sizeof(TX_POWER_LEVEL));
   ble.setDeviceName((uint8_t *) DEVICE_NAME);
-  ble.setAdvertisingParams(GapAdvertisingParams::ADV_NON_CONNECTABLE_UNDIRECTED);
+  ble.setAdvertisingParams(GapAdvertisingParams::ADV_SCANNABLE_UNDIRECTED);
   ble.setAdvertisingType(GapAdvertisingParams::ADV_SCANNABLE_UNDIRECTED);
   ble.setAdvertisingInterval(Gap::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(1000));
   ble.setAdvertisingInterval(1600); /* 1000ms; in multiples of 0.625ms. */
