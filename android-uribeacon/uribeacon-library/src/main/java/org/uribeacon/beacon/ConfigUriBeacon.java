@@ -212,6 +212,9 @@ public class ConfigUriBeacon extends UriBeacon {
      * @return The ConfigUriBeacon
      */
     public ConfigUriBeacon build() throws URISyntaxException {
+      if (mKey != null && mKey.length != KEY_LENGTH) {
+        throw new URISyntaxException(Integer.toString(mKey.length), "Invalid Key Length");
+      }
       if (mReset) {
         UriBeacon uriBeacon = new UriBeacon.Builder().uriString(NO_URI).build();
         return new ConfigUriBeacon(uriBeacon, mKey, false, null, POWER_MODE_NONE, PERIOD_NONE, mReset);
