@@ -10,8 +10,11 @@
 
     <TextView style="@style/label"
               android:text="@string/uri"
+              android:visibility="gone"
               android:id="@+id/uriLabel"/>
-    <LinearLayout style="@style/row">
+    <LinearLayout style="@style/row"
+            android:visibility="gone"
+            android:id="@+id/urlRow">
         <Spinner android:layout_height="wrap_content"
                  android:layout_width="wrap_content"
                  android:entries="@array/uriProtocols"
@@ -23,7 +26,34 @@
                   android:id="@+id/editText_uri"/>
     </LinearLayout>
     <LinearLayout style="@style/row"
-                  android:id="@+id/secondRow">
+                  android:visibility="gone"
+                  android:id="@+id/secondRowV1">
+        <LinearLayout style="@style/inlineBox">
+            <TextView style="@style/label"
+                      android:text="@string/flags"
+                      android:id="@+id/flagsLabelV1"/>
+            <EditText style="@style/editText"
+                      android:inputType="textCapWords"
+                      android:nextFocusDown="@+id/editText_txPowerLevel"
+                      android:id="@+id/editText_flagsV1"/>
+        </LinearLayout>
+        <LinearLayout style="@style/inlineBox">
+            <TextView style="@style/label"
+                      android:text="@string/tx_power_level"/>
+            <RelativeLayout style="@style/unitBox">
+                <EditText style="@style/editText"
+                          android:inputType="numberSigned"
+                          android:imeOptions="actionDone"
+                          android:id="@id/editText_txPowerLevel"/>
+                <TextView style="@style/unit"
+                          android:layout_alignBaseline="@id/editText_txPowerLevel"
+                          android:text="@string/dbm"/>
+            </RelativeLayout>
+        </LinearLayout>
+    </LinearLayout>
+    <LinearLayout style="@style/row"
+                  android:visibility="gone"
+                  android:id="@+id/secondRowV2">
         <LinearLayout style="@style/inlineBox">
             <TextView style="@style/label"
                       android:text="@string/flags"
@@ -59,6 +89,7 @@
     </LinearLayout>
     <LinearLayout
             style="@style/row"
+            android:visibility="gone"
             android:id="@+id/txCalRow">
         <LinearLayout style="@style/inlineBox">
             <TextView style="@style/label"
@@ -117,10 +148,12 @@
             </RelativeLayout>
         </LinearLayout>
     </LinearLayout>
-    <LinearLayout android:layout_height="wrap_content"
+    <LinearLayout
+            android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:layout_gravity="end"
             android:orientation="vertical"
+            android:visibility="gone"
             android:id="@+id/lastRow">
         <TextView style="@style/label"
                   android:text="@string/lock"
