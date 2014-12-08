@@ -55,6 +55,10 @@ import javax.crypto.spec.PBEKeySpec;
 public class ConfigActivity extends Activity implements PasswordDialogFragment.PasswordDialogListener{
   private Spinner mSchema;
   private EditText mUriValue;
+  // V1
+  private EditText mFlagsV1;
+  private EditText mTxPowerLevel;
+  // V2
   private EditText mFlagsValue;
   private EditText[] mAdvertisedTxPowerLevels = new EditText[4];
   private Spinner mTxPowerMode;
@@ -119,11 +123,7 @@ public class ConfigActivity extends Activity implements PasswordDialogFragment.P
         }
       }
       else {
-        enableUi(false);
-        ConfigUriBeacon configUriBeacon = new ConfigUriBeacon.Builder()
-            .uriString(getUri())
-            .build();
-        mUriBeaconConfig.writeUriBeacon(configUriBeacon);
+        writeUriBeaconV1();
       }
     } catch (URISyntaxException e) {
       Toast.makeText(ConfigActivity.this, "Invalid Uri", Toast.LENGTH_LONG).show();
@@ -138,6 +138,17 @@ public class ConfigActivity extends Activity implements PasswordDialogFragment.P
       resetConfigBeacon(null);
     }
   }
+
+  public void onAdvanceSettingsClicked(View view) {
+    view.setVisibility(View.GONE);
+    if (mUriBeaconConfig.getVersion().equals(ProtocolV2.CONFIG_SERVICE_UUID)) {
+      showV2Fields();
+    }
+    else if (mUriBeaconConfig.getVersion().equals(ProtocolV1.CONFIG_SERVICE_UUID)) {
+      showV1Fields();
+    }
+  }
+
   private void resetConfigBeacon(byte[] key) {
     try {
       enableUi(false);
@@ -150,6 +161,17 @@ public class ConfigActivity extends Activity implements PasswordDialogFragment.P
       Toast.makeText(ConfigActivity.this, R.string.reset_failed, Toast.LENGTH_SHORT).show();
     }
   }
+
+  private void writeUriBeaconV1() throws URISyntaxException {
+    enableUi(false);
+    ConfigUriBeacon configUriBeacon = new ConfigUriBeacon.Builder()
+        .uriString(getUri())
+        .txPowerLevel(Byte.parseByte(mTxPowerLevel.getText().toString()))
+        .flags(hexStringToByte(mFlagsV1.getText().toString()))
+        .build();
+    mUriBeaconConfig.writeUriBeacon(configUriBeacon);
+  }
+
   private void writeUriBeaconV2(byte[] key) throws URISyntaxException {
     enableUi(false);
     ConfigUriBeacon.Builder builder = new ConfigUriBeacon.Builder()
@@ -212,8 +234,13 @@ public class ConfigActivity extends Activity implements PasswordDialogFragment.P
   }
 
   private void initializeTextFields() {
+    // Common
     mSchema = (Spinner) findViewById(R.id.spinner_uriProtocols);
     mUriValue = (EditText) findViewById(R.id.editText_uri);
+    // V1
+    mTxPowerLevel = (EditText) findViewById(R.id.editText_txPowerLevel);
+    mFlagsV1 = (EditText) findViewById(R.id.editText_flagsV1);
+    // V2
     mFlagsValue = (EditText) findViewById(R.id.editText_flags);
     mBeaconPeriod = (EditText) findViewById(R.id.editText_beaconPeriod);
     mTxPowerMode = (Spinner) findViewById(R.id.spinner_powerMode);
@@ -256,8 +283,10 @@ public class ConfigActivity extends Activity implements PasswordDialogFragment.P
         mOriginalLockState = configUriBeacon.getLockState();
       }
       else if (mUriBeaconConfig.getVersion().equals(ProtocolV1.CONFIG_SERVICE_UUID)) {
-        hideV2Fields();
+        mTxPowerLevel.setText(Integer.toString(configUriBeacon.getTxPowerLevel()));
+        mFlagsV1.setText(byteToHexString(configUriBeacon.getFlags()));
       }
+      showBasicFields();
       mConnectionDialog.dismiss();
     }
     else {
@@ -271,11 +300,18 @@ public class ConfigActivity extends Activity implements PasswordDialogFragment.P
   private byte hexStringToByte(String hexString) {
     return Integer.decode("0x" + hexString).byteValue();
   }
-
-  private void hideV2Fields(){
-    findViewById(R.id.secondRow).setVisibility(View.GONE);
-    findViewById(R.id.txCalRow).setVisibility(View.GONE);
-    findViewById(R.id.lastRow).setVisibility(View.GONE);
+  private void showBasicFields() {
+    findViewById(R.id.uriLabel).setVisibility(View.VISIBLE);
+    findViewById(R.id.urlRow).setVisibility(View.VISIBLE);
+    findViewById(R.id.button_advanced_settings).setVisibility(View.VISIBLE);
+  }
+  private void showV1Fields(){
+    findViewById(R.id.secondRowV1).setVisibility(View.VISIBLE);
+  }
+  private void showV2Fields(){
+    findViewById(R.id.secondRowV2).setVisibility(View.VISIBLE);
+    findViewById(R.id.txCalRow).setVisibility(View.VISIBLE);
+    findViewById(R.id.lastRow).setVisibility(View.VISIBLE);
   }
   @Override
   public void onDestroy() {
