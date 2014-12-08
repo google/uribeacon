@@ -1,6 +1,5 @@
 package org.uribeacon.beacon;
 
-import android.content.Context;
 import android.test.AndroidTestCase;
 import android.test.MoreAsserts;
 
@@ -16,20 +15,22 @@ public class ConfigUriBeaconTest extends AndroidTestCase{
     super.setUp();
   }
 
-  @Override
-  public void setContext(Context context) {
-    super.setContext(context);
+  public byte[] makeTxPowerLevelArray(byte value) {
+    return new byte[]{value, value, value, value};
   }
 
-  public void testNotSettingAnything() {
+  public void testNotSettingAnything() throws URISyntaxException {
     try {
       new ConfigUriBeacon.Builder().build();
-    } catch (URISyntaxException e) {
-      Assert.fail(SHOULD_NOT_FAIL + e.getReason());
+      Assert.fail("Should fail");
     } catch (IllegalArgumentException e) {
       assertEquals("UriBeacon advertisements must include a URI", e.getMessage());
     }
   }
+
+  /////////////////
+  ////// URI //////
+  /////////////////
   public void testWithEmptyUriString() throws URISyntaxException {
     ConfigUriBeacon configUriBeacon =  new ConfigUriBeacon.Builder()
         .uriString(TestData.emptyTestString)
@@ -62,6 +63,7 @@ public class ConfigUriBeaconTest extends AndroidTestCase{
       new ConfigUriBeacon.Builder()
           .uriString(TestData.malformedUrlByteArray)
           .build();
+      Assert.fail("Should fail");
     } catch (IllegalArgumentException e) {
       assertEquals("Could not decode URI", e.getMessage());
     }
@@ -104,6 +106,7 @@ public class ConfigUriBeaconTest extends AndroidTestCase{
       new ConfigUriBeacon.Builder()
           .uriString(TestData.longButInvalidUrlString)
           .build();
+      Assert.fail("Should fail");
     } catch (URISyntaxException e) {
       assertEquals("Uri size is larger than 18 bytes", e.getReason());
     }
@@ -114,11 +117,14 @@ public class ConfigUriBeaconTest extends AndroidTestCase{
       new ConfigUriBeacon.Builder()
           .uriString(TestData.longButInvalidUrlByteArray)
           .build();
+      Assert.fail("Should fail");
     } catch (URISyntaxException e) {
       assertEquals("Uri size is larger than 18 bytes", e.getReason());
     }
   }
-
+  //////////////////
+  ////// LOCK //////
+  //////////////////
   public void testFalseLock() throws URISyntaxException {
     ConfigUriBeacon configUriBeacon = new ConfigUriBeacon.Builder()
         .uriString(TestData.emptyTestString)
@@ -135,10 +141,279 @@ public class ConfigUriBeaconTest extends AndroidTestCase{
     assertEquals(true, configUriBeacon.getLockState());
   }
 
-  public void testShortKey() throws URISyntaxException {
+  /////////////////
+  ////// KEY //////
+  /////////////////
+  public void testCorrectLengthKey() throws URISyntaxException {
     ConfigUriBeacon configUriBeacon = new ConfigUriBeacon.Builder()
         .uriString(TestData.emptyTestString)
-        .key(TestData.shortKey)
+        .key(TestData.validKey)
         .build();
+    MoreAsserts.assertEquals(TestData.validKey, configUriBeacon.getKey());
+  }
+  //TODO: add more key tests
+
+  /////////////////////
+  ////// FLAGS ////////
+  /////////////////////
+  public void testNoFlags() throws URISyntaxException {
+    ConfigUriBeacon configUriBeacon = new ConfigUriBeacon.Builder()
+        .uriString(TestData.emptyTestString)
+        .build();
+    assertEquals(0, configUriBeacon.getFlags());
+  }
+
+  public void testOneFlag() throws URISyntaxException {
+    ConfigUriBeacon configUriBeacon = new ConfigUriBeacon.Builder()
+        .uriString(TestData.emptyTestString)
+        .flags((byte) 1)
+        .build();
+    assertEquals(1, configUriBeacon.getFlags());
+  }
+
+  /////////////////////////////
+  ////// TX POWER LEVELS //////
+  /////////////////////////////
+  public void testNotSettingTxPowerLevels() throws URISyntaxException {
+    try {
+      new ConfigUriBeacon.Builder()
+          .uriString(TestData.emptyTestString)
+          .beaconPeriod(TestData.validPeriod)
+          .txPowerMode(TestData.validTxPowerMode)
+          .build();
+      Assert.fail("Should fail");
+    } catch (IllegalArgumentException e) {
+      assertEquals("Must include Tx AdvertisedPowerLevels", e.getMessage());
+    }
+  }
+
+  public void testEmptyTxPowerLevels() {
+    try {
+      new ConfigUriBeacon.Builder()
+          .uriString(TestData.emptyTestString)
+          .txPowerMode(TestData.validTxPowerMode)
+          .beaconPeriod(TestData.validPeriod)
+          .advertisedTxPowerLevels(new byte[0])
+          .build();
+      Assert.fail("Should fail");
+    } catch (URISyntaxException e) {
+      assertEquals("Invalid length for Tx Advertised Power Levels", e.getReason());
+    }
+  }
+
+  public void testShorterTxPowerLevels() {
+    try {
+      new ConfigUriBeacon.Builder()
+          .uriString(TestData.emptyTestString)
+          .advertisedTxPowerLevels(new byte[3])
+          .txPowerMode(TestData.validTxPowerMode)
+          .beaconPeriod(TestData.validPeriod)
+          .build();
+      Assert.fail("Should fail");
+    } catch (URISyntaxException e) {
+      assertEquals("Invalid length for Tx Advertised Power Levels", e.getReason());
+    }
+  }
+
+  public void testLongerTxPowerLevels() throws URISyntaxException {
+    try {
+      new ConfigUriBeacon.Builder()
+          .uriString(TestData.emptyTestString)
+          .advertisedTxPowerLevels(new byte[5])
+          .txPowerMode(TestData.validTxPowerMode)
+          .beaconPeriod(TestData.validPeriod)
+          .build();
+      Assert.fail("Should have failed");
+    } catch (URISyntaxException e) {
+      assertEquals("Invalid length for Tx Advertised Power Levels", e.getReason());
+    }
+  }
+
+  public void testLowTxPowerLevels() {
+    try {
+      new ConfigUriBeacon.Builder()
+          .uriString(TestData.emptyTestString)
+          .advertisedTxPowerLevels(makeTxPowerLevelArray(
+              (byte) (ConfigUriBeacon.TX_POWER_LEVEL_MIN_VALUE -1)))
+          .txPowerMode(TestData.validTxPowerMode)
+          .beaconPeriod(TestData.validPeriod)
+          .build();
+      Assert.fail("Should have failed");
+    } catch (URISyntaxException e) {
+      assertEquals("Invalid TxPower Level", e.getReason());
+    }
+  }
+
+  public void testHighTxPowerLevels() {
+    try {
+      new ConfigUriBeacon.Builder()
+          .uriString(TestData.emptyTestString)
+          .advertisedTxPowerLevels(makeTxPowerLevelArray(
+              (byte) (ConfigUriBeacon.TX_POWER_LEVEL_MAX_VALUE + 1)))
+          .txPowerMode(TestData.validTxPowerMode)
+          .beaconPeriod(TestData.validPeriod)
+          .build();
+      Assert.fail("Should have failed");
+    } catch (URISyntaxException e) {
+      assertEquals("Invalid TxPower Level", e.getReason());
+    }
+  }
+
+  public void testCorrectPowerLevelsOnly() throws URISyntaxException {
+    try {
+      for (byte i = ConfigUriBeacon.TX_POWER_LEVEL_MIN_VALUE;
+           i <= ConfigUriBeacon.TX_POWER_LEVEL_MAX_VALUE; i++) {
+        new ConfigUriBeacon.Builder()
+            .uriString(TestData.emptyTestString)
+            .advertisedTxPowerLevels(makeTxPowerLevelArray(i))
+            .build();
+        Assert.fail("Should fail");
+      }
+    } catch (IllegalArgumentException e) {
+      assertEquals("Must include Tx Power Mode", e.getMessage());
+    }
+  }
+
+  public void testCorrectPowerLevels() throws URISyntaxException {
+    for (byte i = ConfigUriBeacon.TX_POWER_LEVEL_MIN_VALUE;
+         i <= ConfigUriBeacon.TX_POWER_LEVEL_MAX_VALUE; i++) {
+      byte[] testTxPowerLevels = makeTxPowerLevelArray(i);
+      ConfigUriBeacon beacon = new ConfigUriBeacon.Builder()
+          .uriString(TestData.emptyTestString)
+          .advertisedTxPowerLevels(testTxPowerLevels)
+          .beaconPeriod(TestData.validPeriod)
+          .txPowerMode(TestData.validTxPowerMode)
+          .build();
+      MoreAsserts.assertEquals(testTxPowerLevels, beacon.getAdvertisedTxPowerLevels());
+    }
+  }
+  ////////////////////////
+  ////// POWER MODE //////
+  ////////////////////////
+
+  public void testNotSetPowerMode() throws URISyntaxException {
+    try {
+      ConfigUriBeacon beacon =  new ConfigUriBeacon.Builder()
+          .uriString(TestData.emptyTestString)
+          .advertisedTxPowerLevels(makeTxPowerLevelArray(TestData.validTxPowerLevels))
+          .beaconPeriod(TestData.validPeriod)
+          .build();
+      Assert.fail("Should fail");
+    } catch (IllegalArgumentException e) {
+      assertEquals("Must include Tx Power Mode", e.getMessage());
+    }
+  }
+
+  public void testSetLowInvalidPowerMode() {
+    try {
+      new ConfigUriBeacon.Builder()
+          .uriString(TestData.emptyTestString)
+          .beaconPeriod(TestData.validPeriod)
+          .advertisedTxPowerLevels(makeTxPowerLevelArray(TestData.validTxPowerLevels))
+          .txPowerMode((byte) (ConfigUriBeacon.POWER_MODE_NONE - 1))
+          .build();
+      Assert.fail("Should fail");
+    } catch (URISyntaxException e) {
+      assertEquals("Unknown power mode", e.getReason());
+    }
+  }
+
+  public void testSetHighInvalidPowerMode() {
+    try {
+      new ConfigUriBeacon.Builder()
+          .uriString(TestData.emptyTestString)
+          .beaconPeriod(TestData.validPeriod)
+          .advertisedTxPowerLevels(makeTxPowerLevelArray(TestData.validTxPowerLevels))
+          .txPowerMode((byte) (ConfigUriBeacon.POWER_MODE_HIGH + 1))
+          .build();
+      Assert.fail("Should fail");
+    } catch (URISyntaxException e) {
+      assertEquals("Unknown power mode", e.getReason());
+    }
+  }
+
+  public void testSetValidPowerMode() throws URISyntaxException {
+    for (byte i = ConfigUriBeacon.POWER_MODE_ULTRA_LOW; i <= ConfigUriBeacon.POWER_MODE_HIGH;
+        i++) {
+      ConfigUriBeacon configUriBeacon = new ConfigUriBeacon.Builder()
+          .uriString(TestData.emptyTestString)
+          .beaconPeriod(TestData.validPeriod)
+          .advertisedTxPowerLevels(makeTxPowerLevelArray(TestData.validTxPowerLevels))
+          .txPowerMode(i)
+          .build();
+      assertEquals(i, configUriBeacon.getTxPowerMode());
+    }
+  }
+
+  ///////////////////////////
+  ////// Beacon Period //////
+  ///////////////////////////
+  public void testNotSetPeriod() throws URISyntaxException {
+    try {
+      new ConfigUriBeacon.Builder()
+          .uriString(TestData.emptyTestString)
+          .advertisedTxPowerLevels(makeTxPowerLevelArray(TestData.validTxPowerLevels))
+          .txPowerMode(TestData.validTxPowerMode)
+          .build();
+      Assert.fail("Should fail");
+    } catch (IllegalArgumentException e) {
+      assertEquals("Need Broadcasting Period", e.getMessage());
+    }
+  }
+
+  public void testInvalidLowPeriod() {
+    try {
+      new ConfigUriBeacon.Builder()
+          .uriString(TestData.emptyTestString)
+          .advertisedTxPowerLevels(makeTxPowerLevelArray(TestData.validTxPowerLevels))
+          .txPowerMode(TestData.validTxPowerMode)
+          .beaconPeriod(ConfigUriBeacon.PERIOD_NONE - 1)
+          .build();
+    } catch (URISyntaxException e) {
+      assertEquals("Invalid broadcasting period", e.getReason());
+    }
+  }
+
+  public void testInvalidHighPeriod() {
+    try {
+      new ConfigUriBeacon.Builder()
+          .uriString(TestData.emptyTestString)
+          .advertisedTxPowerLevels(makeTxPowerLevelArray(TestData.validTxPowerLevels))
+          .txPowerMode(TestData.validTxPowerMode)
+          .beaconPeriod(ConfigUriBeacon.UINT16_MAX_VALUE)
+          .build();
+    } catch (URISyntaxException e) {
+      assertEquals("Invalid broadcasting period", e.getReason());
+    }
+  }
+
+  public void testValidPeriod() throws URISyntaxException {
+    for (int i = ConfigUriBeacon.UINT16_MIN_VALUE; i <= ConfigUriBeacon.UINT16_MAX_VALUE;
+        i++) {
+      ConfigUriBeacon beacon =  new ConfigUriBeacon.Builder()
+          .uriString(TestData.emptyTestString)
+          .advertisedTxPowerLevels(makeTxPowerLevelArray(TestData.validTxPowerLevels))
+          .txPowerMode(TestData.validTxPowerMode)
+          .beaconPeriod(i)
+          .build();
+      assertEquals(i, beacon.getBeaconPeriod());
+    }
+  }
+
+  ///////////////////
+  ////// Reset //////
+  ///////////////////
+  public void testOnlyTrueReset() throws URISyntaxException {
+    ConfigUriBeacon beacon = new ConfigUriBeacon.Builder()
+        .reset(true)
+        .build();
+    assertTrue(beacon.getReset());
+  }
+  public void testOnlyFalseReset() throws URISyntaxException {
+    ConfigUriBeacon beacon = new ConfigUriBeacon.Builder()
+        .reset(false)
+        .uriString(TestData.emptyTestString)
+        .build();
+    assertFalse(beacon.getReset());
   }
 }

@@ -167,9 +167,12 @@ public class TestData {
       't', 'e', 's', 't'
   };
 
-  public static final byte[] shortKey = new byte[127];
+  public static final byte[] validKey = new byte[128];
 
-  public static final byte[] correctKey = new byte[128];
+  public static final byte validTxPowerLevels = 0;
 
-  public static final byte[] longKey = new byte[129];
+  public static final int validPeriod = 100;
+
+  public static final byte validTxPowerMode = 1;
+
 }

@@ -29,11 +29,11 @@ public class ConfigUriBeacon extends UriBeacon {
   public static final byte POWER_MODE_MEDIUM = 2;
   public static final byte POWER_MODE_HIGH = 3;
   public static final int KEY_LENGTH = 128;
-  private static final int UINT16_MIN_VALUE = 0;
-  private static final int UINT16_MAX_VALUE = 65535;
+  public static final int UINT16_MIN_VALUE = 0;
+  public static final int UINT16_MAX_VALUE = 65535;
+  public static final byte TX_POWER_LEVEL_MAX_VALUE = 20;
+  public static final byte TX_POWER_LEVEL_MIN_VALUE = -100;
 
-  private static final byte TX_POWER_LEVEL_MAX_VALUE = 20;
-  private static final byte TX_POWER_LEVEL_MIN_VALUE = -100;
   private byte[] mKey;
   private boolean mLockState;
   private byte[] mAdvertisedTxPowerLevels;
@@ -228,6 +228,9 @@ public class ConfigUriBeacon extends UriBeacon {
     }
 
     private void checkTxPowerMode() throws URISyntaxException {
+      if (mTxPowerMode == POWER_MODE_NONE) {
+        throw new IllegalArgumentException("Must include Tx Power Mode");
+      }
       if (mTxPowerMode < POWER_MODE_NONE || mTxPowerMode > POWER_MODE_HIGH) {
         throw new URISyntaxException(Integer.toString(mTxPowerMode), "Unknown power mode");
       }
@@ -238,14 +241,14 @@ public class ConfigUriBeacon extends UriBeacon {
         throw new IllegalArgumentException("Must include Tx AdvertisedPowerLevels");
       }
       if (mAdvertisedTxPowerLevels.length != 4) {
-        throw new URISyntaxException("Invalid length for Tx Advertised Power Levels",
-            Integer.toString(mAdvertisedTxPowerLevels.length));
+        throw new URISyntaxException(Integer.toString(mAdvertisedTxPowerLevels.length),
+            "Invalid length for Tx Advertised Power Levels");
       }
       for (int i = 0; i < mAdvertisedTxPowerLevels.length; i++) {
         if (mAdvertisedTxPowerLevels[i] < TX_POWER_LEVEL_MIN_VALUE
             || mAdvertisedTxPowerLevels[i] > TX_POWER_LEVEL_MAX_VALUE) {
-          throw new URISyntaxException("Invalid TxPower Level",
-              Byte.toString(mAdvertisedTxPowerLevels[i]), i);
+          throw new URISyntaxException(Byte.toString(mAdvertisedTxPowerLevels[i]),
+              "Invalid TxPower Level", i);
         }
       }
     }
@@ -254,7 +257,7 @@ public class ConfigUriBeacon extends UriBeacon {
         throw new IllegalArgumentException("Need Broadcasting Period");
       }
       if (mBeaconPeriod < UINT16_MIN_VALUE || mBeaconPeriod > UINT16_MAX_VALUE) {
-        throw new URISyntaxException("Invalid broadcasting period", Integer.toString(mBeaconPeriod));
+        throw new URISyntaxException(Integer.toString(mBeaconPeriod), "Invalid broadcasting period");
       }
     }
   }
