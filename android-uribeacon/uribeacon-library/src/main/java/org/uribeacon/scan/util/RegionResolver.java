@@ -287,4 +287,8 @@ public class RegionResolver {
     }
     return (int) mSmoothedRssi.get(address).addValue(rssi);
   }
+
+  public int getSmoothedRssi(String address) {
+    return (int) mSmoothedRssi.get(address).getValue();
+  }
 }

@@ -89,7 +89,7 @@ class DeviceListAdapter extends ScanResultAdapter {
 
     long tsMillis = TimeUnit.NANOSECONDS.toMillis(scanResult.getTimestampNanos());
     String distance = String.format(Locale.US, "%.1f",
-        mRegionResolver.getDistance(scanResult.getDevice().getAddress()));
+        mRegionResolver.getDistance(deviceAddress));
 
     deviceData
         .append("Timestamp: ")
@@ -98,15 +98,17 @@ class DeviceListAdapter extends ScanResultAdapter {
         .append(txPowerLevel)
         .append(" RSSI: ")
         .append(scanResult.getRssi())
+        .append(" Avg RSSI: ")
+        .append(mRegionResolver.getSmoothedRssi(deviceAddress))
         .append(" Distance: ")
         .append(distance);
     if (deviceSighting.period != 0) {
       deviceData
-          .append("Period(ms): ")
+          .append(" Period(ms): ")
           .append(deviceSighting.period);
     }
     // The stabilized region computed from the hysteresis.
-    int region = mRegionResolver.getRegion(scanResult.getDevice().getAddress());
+    int region = mRegionResolver.getRegion(deviceAddress);
 
     if (scanResult.getDevice().getAddress().equals(nearest)) {
       deviceData.append(" Region: NEAREST");
