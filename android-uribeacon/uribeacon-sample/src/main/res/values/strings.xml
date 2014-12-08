@@ -67,4 +67,5 @@
     <string name="wrong_password">Wrong password please try again...</string>
     <string name="failed_to_write">Failed to update beacon</string>
     <string name="tx_power_level">Tx Power Level</string>
+    <string name="show_advanced_settings">Show Advanced Settings</string>
 </resources>

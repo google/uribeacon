@@ -13,7 +13,7 @@
               android:visibility="gone"
               android:id="@+id/uriLabel"/>
     <LinearLayout style="@style/row"
-            android:visibility="gone"
+                  android:visibility="gone"
             android:id="@+id/urlRow">
         <Spinner android:layout_height="wrap_content"
                  android:layout_width="wrap_content"
@@ -163,4 +163,11 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/switch_lock"/>
     </LinearLayout>
+    <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:onClick="onAdvanceSettingsClicked"
+            android:text="@string/show_advanced_settings"
+            android:id="@+id/button_advanced_settings"/>
 </LinearLayout>
