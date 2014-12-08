@@ -138,6 +138,17 @@ public class ConfigActivity extends Activity implements PasswordDialogFragment.P
       resetConfigBeacon(null);
     }
   }
+
+  public void onAdvanceSettingsClicked(View view) {
+    view.setVisibility(View.GONE);
+    if (mUriBeaconConfig.getVersion().equals(ProtocolV2.CONFIG_SERVICE_UUID)) {
+      showV2Fields();
+    }
+    else if (mUriBeaconConfig.getVersion().equals(ProtocolV1.CONFIG_SERVICE_UUID)) {
+      showV1Fields();
+    }
+  }
+
   private void resetConfigBeacon(byte[] key) {
     try {
       enableUi(false);
@@ -270,13 +281,12 @@ public class ConfigActivity extends Activity implements PasswordDialogFragment.P
         }
         mLockState.setChecked(configUriBeacon.getLockState());
         mOriginalLockState = configUriBeacon.getLockState();
-        showV2Fields();
       }
       else if (mUriBeaconConfig.getVersion().equals(ProtocolV1.CONFIG_SERVICE_UUID)) {
         mTxPowerLevel.setText(Integer.toString(configUriBeacon.getTxPowerLevel()));
         mFlagsV1.setText(byteToHexString(configUriBeacon.getFlags()));
-        showV1Fields();
       }
+      showBasicFields();
       mConnectionDialog.dismiss();
     }
     else {
@@ -290,14 +300,15 @@ public class ConfigActivity extends Activity implements PasswordDialogFragment.P
   private byte hexStringToByte(String hexString) {
     return Integer.decode("0x" + hexString).byteValue();
   }
-  private void showV1Fields(){
+  private void showBasicFields() {
     findViewById(R.id.uriLabel).setVisibility(View.VISIBLE);
     findViewById(R.id.urlRow).setVisibility(View.VISIBLE);
+    findViewById(R.id.button_advanced_settings).setVisibility(View.VISIBLE);
+  }
+  private void showV1Fields(){
     findViewById(R.id.secondRowV1).setVisibility(View.VISIBLE);
   }
   private void showV2Fields(){
-    findViewById(R.id.uriLabel).setVisibility(View.VISIBLE);
-    findViewById(R.id.urlRow).setVisibility(View.VISIBLE);
     findViewById(R.id.secondRowV2).setVisibility(View.VISIBLE);
     findViewById(R.id.txCalRow).setVisibility(View.VISIBLE);
     findViewById(R.id.lastRow).setVisibility(View.VISIBLE);
