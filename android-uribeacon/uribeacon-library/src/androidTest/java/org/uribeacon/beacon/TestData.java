@@ -68,6 +68,11 @@ public class TestData {
       // Expansion code for .org
       0x08
   };
+
+  public static final String emptyTestString = "";
+  public static final byte[] emptyTestByteArray = new byte[] {};
+
+
   public static final String urlTestString = "https://www.uribeacon.org/test";
   public static final byte[] urlTestByteArray = new byte[] {
       // 'https://www.' encoded
@@ -80,6 +85,7 @@ public class TestData {
       't', 'e', 's', 't'
   };
   public static final byte urlTestByteArrayLength = (byte) urlTestByteArray.length;
+
   public static final String uuidTestString = "urn:uuid:B1E13D51-5FC9-4D5B-902B-AB668DD54981";
   public static final byte[] uuidTestByteArray = new byte[]{
       // 'urn:uuid:' encoded
@@ -90,8 +96,10 @@ public class TestData {
       (byte) 0x90, (byte) 0x2B, (byte) 0xAB, (byte) 0x66,
       (byte) 0x8D, (byte) 0xD5, (byte) 0x49, (byte) 0x81
   };
+
   public static final String malformedUrlString = "wrong://wrong";
   public static final byte[] malformedUrlByteArray = malformedUrlString.getBytes();
+
   public static final String longButValidUrlString = "http://23456789111315171";
   public static final byte[] longButValidUrlByteArray = new byte[] {
       // 'http://' encoded
@@ -105,6 +113,7 @@ public class TestData {
       '1', '7',
       '1'
   };
+
   public static final String longButInvalidUrlString = "http://234567891113151719";
   public static final byte[] longButInvalidUrlByteArray = new byte[] {
       // 'http://' encoded
@@ -118,9 +127,10 @@ public class TestData {
       '1', '7',
       '1', '9'
   };
+
   public static final byte emptyAdbPacketLength = 5;
   public static final byte noFlags = 0;
-  public static final byte noTxPowerLevel = 0;
+  public static final byte noTxPowerLevel = -101;
   public static final byte[] emptyAdbPacketBytes = new byte[]{
       // URI Service UUID Field
       (byte) 0x03, (byte) 0x03, (byte) 0xD8,(byte) 0xFE,
@@ -156,4 +166,13 @@ public class TestData {
       // test
       't', 'e', 's', 't'
   };
+
+  public static final byte[] validKey = new byte[128];
+
+  public static final byte validTxPowerLevels = 0;
+
+  public static final int validPeriod = 100;
+
+  public static final byte validTxPowerMode = 1;
+
 }
