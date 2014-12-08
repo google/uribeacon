@@ -9,7 +9,6 @@ import java.net.URISyntaxException;
 
 public class ConfigUriBeaconTest extends AndroidTestCase{
 
-  private static final String SHOULD_NOT_FAIL = "Should not fail: ";
   @Override
   protected void setUp() throws Exception {
     super.setUp();

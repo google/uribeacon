@@ -55,123 +55,116 @@ public class UriBeaconTest extends AndroidTestCase {
   public void testEncodeUriWithInvalidUrl() {
     assertEquals(null, UriBeacon.encodeUri(TestData.malformedUrlString));
   }
-  public void testBuildWithNoUri() {
+  public void testBuildWithNoUri() throws URISyntaxException {
     try {
       new UriBeacon.Builder().build();
       Assert.fail("Should have failed");
     } catch (IllegalArgumentException e) {
+      assertEquals("UriBeacon advertisements must include a URI", e.getMessage());
+    }
+  }
+  public void testBuilderWithEmptyStringUri() throws URISyntaxException {
+    UriBeacon beacon = new UriBeacon.Builder()
+        .uriString("")
+        .build();
+    MoreAsserts.assertEquals(new byte[]{}, beacon.getUriBytes());
+    assertEquals("", beacon.getUriString());
 
-    } catch (URISyntaxException e) {
-      Assert.fail("Should have thrown illegal argument exception");
-    }
   }
-  public void testBuilderWithEmptyStringUri() {
-    try {
-      UriBeacon beacon = new UriBeacon.Builder().uriString("").build();
-      MoreAsserts.assertEquals(new byte[]{}, beacon.getUriBytes());
-      assertEquals("", beacon.getUriString());
-    } catch (URISyntaxException e) {
-      Assert.fail("Should not raise any errors");
-    }
+  public void testBuilderWithEmptyArrayUri() throws URISyntaxException {
+    UriBeacon beacon = new UriBeacon.Builder()
+        .uriString(TestData.emptyTestByteArray)
+        .build();
+    MoreAsserts.assertEquals(new byte[]{}, beacon.getUriBytes());
+    assertEquals("", beacon.getUriString());
   }
-  public void testBuilderWithEmptyArrayUri() {
-    try {
-      UriBeacon beacon = new UriBeacon.Builder().uriString(new byte[]{}).build();
-      MoreAsserts.assertEquals(new byte[]{}, beacon.getUriBytes());
-      assertEquals("", beacon.getUriString());
-    } catch (URISyntaxException e) {
-      Assert.fail("Should not raise any errors");
-    }
+  public void testBuilderWithUriString() throws URISyntaxException {
+    UriBeacon beacon = new UriBeacon.Builder()
+        .uriString(TestData.urlTestString)
+        .build();
+    MoreAsserts.assertEquals(TestData.urlTestByteArray, beacon.getUriBytes());
+    assertEquals(TestData.urlTestString, beacon.getUriString());
   }
-  public void testBuilderWithUriString() {
-    try {
-      UriBeacon beacon = new UriBeacon.Builder().uriString(TestData.urlTestString).build();
-      MoreAsserts.assertEquals(TestData.urlTestByteArray, beacon.getUriBytes());
-      assertEquals(TestData.urlTestString, beacon.getUriString());
-    } catch (URISyntaxException e) {
-      Assert.fail("Should not raise any errors");
-    }
-  }
-  public void testBuilderWithUriByteArray() {
-    try {
-      UriBeacon beacon = new UriBeacon.Builder().uriString(TestData.urlTestByteArray).build();
-      MoreAsserts.assertEquals(TestData.urlTestByteArray, beacon.getUriBytes());
-      assertEquals(TestData.urlTestString, beacon.getUriString());
-    } catch (URISyntaxException e) {
-      Assert.fail("Should not raise any errors");
-    }
+  public void testBuilderWithUriByteArray() throws URISyntaxException {
+    UriBeacon beacon = new UriBeacon.Builder()
+        .uriString(TestData.urlTestByteArray)
+        .build();
+    MoreAsserts.assertEquals(TestData.urlTestByteArray, beacon.getUriBytes());
+    assertEquals(TestData.urlTestString, beacon.getUriString());
   }
   public void testBuilderWithMalformedUriString() {
     try {
-      new UriBeacon.Builder().uriString(TestData.malformedUrlString).build();
+      new UriBeacon.Builder()
+          .uriString(TestData.malformedUrlString)
+          .build();
+      Assert.fail("Should fail");
     } catch (URISyntaxException e) {
       assertEquals("Not a valid URI", e.getReason());
     }
   }
-  public void testBuilderWithMalformedUriByteArray() {
+  public void testBuilderWithMalformedUriByteArray() throws URISyntaxException {
     try {
-      new UriBeacon.Builder().uriString(TestData.malformedUrlByteArray).build();
+      new UriBeacon.Builder()
+          .uriString(TestData.malformedUrlByteArray)
+          .build();
+      Assert.fail("Should not fail");
     } catch (IllegalArgumentException e) {
       assertEquals("Could not decode URI", e.getMessage());
-    } catch (URISyntaxException e) {
-      Assert.fail("Should not raise URISyntaxException");
     }
   }
-  public void testBuilderWithLongValidUriString() {
-    try {
-      UriBeacon beacon = new UriBeacon.Builder().uriString(TestData.longButValidUrlString).build();
-      assertEquals(TestData.longButValidUrlString, beacon.getUriString());
-      MoreAsserts.assertEquals(TestData.longButValidUrlByteArray, beacon.getUriBytes());
-    } catch (URISyntaxException e) {
-      Assert.fail("Should not throw: " + e.getClass().getName());
-    }
+  public void testBuilderWithLongValidUriString() throws URISyntaxException {
+    UriBeacon beacon = new UriBeacon.Builder()
+        .uriString(TestData.longButValidUrlString)
+        .build();
+    assertEquals(TestData.longButValidUrlString, beacon.getUriString());
+    MoreAsserts.assertEquals(TestData.longButValidUrlByteArray, beacon.getUriBytes());
   }
-  public void testBuilderWithLongValidUriByteArray() {
-    try {
-      UriBeacon beacon = new UriBeacon.Builder().uriString(TestData.longButValidUrlByteArray).build();
-      assertEquals(TestData.longButValidUrlString, beacon.getUriString());
-      MoreAsserts.assertEquals(TestData.longButValidUrlByteArray, beacon.getUriBytes());
-    } catch (URISyntaxException e) {
-      Assert.fail("Should not throw: " + e.getClass().getName());
-    }
+  public void testBuilderWithLongValidUriByteArray() throws URISyntaxException {
+    UriBeacon beacon = new UriBeacon.Builder()
+        .uriString(TestData.longButValidUrlByteArray)
+        .build();
+    assertEquals(TestData.longButValidUrlString, beacon.getUriString());
+    MoreAsserts.assertEquals(TestData.longButValidUrlByteArray, beacon.getUriBytes());
   }
   public void testBuilderWithLongInvalidUriString() {
     try {
-      new UriBeacon.Builder().uriString(TestData.longButInvalidUrlString).build();
+      new UriBeacon.Builder()
+          .uriString(TestData.longButInvalidUrlString)
+          .build();
+      Assert.fail("Should fail");
     } catch (URISyntaxException e) {
       assertEquals("Uri size is larger than 18 bytes", e.getReason());
     }
   }
   public void testBuilderWithLongInvalidUriByteArray() {
     try {
-      new UriBeacon.Builder().uriString(TestData.longButInvalidUrlByteArray).build();
+      new UriBeacon.Builder()
+          .uriString(TestData.longButInvalidUrlByteArray)
+          .build();
+      Assert.fail("Should fail");
     } catch (URISyntaxException e) {
       assertEquals("Uri size is larger than 18 bytes", e.getReason());
     }
   }
-  public void testToByteArrayWithEmptyUriString() {
-    try {
-      UriBeacon beacon = new UriBeacon.Builder().uriString("").build();
-      MoreAsserts.assertEquals(TestData.emptyAdbPacketBytes, beacon.toByteArray());
-    } catch (URISyntaxException e) {
-      Assert.fail("Should not throw: " + e.getClass().getName());
-    }
+  public void testToByteArrayWithEmptyUriString() throws URISyntaxException {
+    UriBeacon beacon = new UriBeacon.Builder()
+        .uriString("")
+        .build();
+    MoreAsserts.assertEquals(TestData.emptyAdbPacketBytes, beacon.toByteArray());
+
   }
-  public void testToByteArrayWithUriString() {
-    try {
-      UriBeacon beacon = new UriBeacon.Builder().uriString(TestData.urlTestString).build();
-      MoreAsserts.assertEquals(TestData.urlAdbPacketBytes, beacon.toByteArray());
-    } catch (URISyntaxException e) {
-      Assert.fail("Should not throw: " + e.getClass().getName());
-    }
+  public void testToByteArrayWithUriString() throws URISyntaxException {
+    UriBeacon beacon = new UriBeacon.Builder()
+        .uriString(TestData.urlTestString)
+        .build();
+    MoreAsserts.assertEquals(TestData.urlAdbPacketBytes, beacon.toByteArray());
+
   }
-  public void testToByteArrayWithUriByteArray() {
-    try {
-      UriBeacon beacon = new UriBeacon.Builder().uriString(TestData.urlTestByteArray).build();
+  public void testToByteArrayWithUriByteArray() throws URISyntaxException {
+      UriBeacon beacon = new UriBeacon.Builder()
+          .uriString(TestData.urlTestByteArray)
+          .build();
       MoreAsserts.assertEquals(TestData.urlAdbPacketBytes, beacon.toByteArray());
-    } catch (URISyntaxException e) {
-      Assert.fail("Should not throw: " + e.getClass().getName());
-    }
   }
   // TODO: Add more tests for toByteArray using parseFromBytes instead of builder
   public void testParseFromBytes() {
