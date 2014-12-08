@@ -3,7 +3,7 @@
 	url = https://github.com/jdg/MBProgressHUD
 [submodule "beacons/mbed/third_party/BLE_API"]
 	path = beacons/mbed/third_party/BLE_API
-	url = https://github.com/mbedmicro/BLE_API.git
+	url = https://github.com/schilit/BLE_API.git
 [submodule "beacons/mbed/third_party/mbed"]
 	path = beacons/mbed/third_party/mbed
 	url = https://github.com/mbedmicro/mbed.git
