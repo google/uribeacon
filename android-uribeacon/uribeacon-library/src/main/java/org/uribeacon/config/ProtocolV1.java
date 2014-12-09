@@ -59,6 +59,11 @@ public class ProtocolV1 extends BaseProtocol {
 
 
   public void writeUriBeacon(ConfigUriBeacon configUriBeacon) throws URISyntaxException {
+    if (mConfigUriBeacon == null) {
+      mConfigUriBeacon = new ConfigUriBeacon.Builder()
+          .uriString(ConfigUriBeacon.NO_URI)
+          .build();
+    }
     ConfigUriBeacon.Builder correctedUriBeaconBuilder = new ConfigUriBeacon.Builder();
     if (configUriBeacon.getFlags() != UriBeacon.NO_FLAGS) {
       correctedUriBeaconBuilder.flags(configUriBeacon.getFlags());
@@ -109,21 +114,25 @@ public class ProtocolV1 extends BaseProtocol {
     // If the operation was successful
     UUID uuid = characteristic.getUuid();
     if (status == BluetoothGatt.GATT_SUCCESS) {
-      if (DATA_LENGTH.equals(uuid)) {
-        mDataLength = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_SINT8, 0);
-        mService.readCharacteristic(DATA_ONE);
-      } else if (DATA_ONE.equals(uuid)) {
-        mData = characteristic.getValue();
-        if (mDataLength > DATA_LENGTH_MAX) {
-          mService.readCharacteristic(DATA_TWO);
-        } else {
-          mConfigUriBeacon = ConfigUriBeacon.parseFromBytes(mData);
+      try {
+        if (DATA_LENGTH.equals(uuid)) {
+          mDataLength = characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_SINT8, 0);
+          mService.readCharacteristic(DATA_ONE);
+        } else if (DATA_ONE.equals(uuid)) {
+          mData = characteristic.getValue();
+          if (mDataLength > DATA_LENGTH_MAX) {
+            mService.readCharacteristic(DATA_TWO);
+          } else {
+            mConfigUriBeacon = ConfigUriBeacon.createConfigUriBeacon(mData);
+            mUriBeaconCallback.onUriBeaconRead(mConfigUriBeacon, status);
+          }
+        } else if (DATA_TWO.equals(uuid)) {
+          mData = Util.concatenate(mData, characteristic.getValue());
+          mConfigUriBeacon = ConfigUriBeacon.createConfigUriBeacon(mData);
           mUriBeaconCallback.onUriBeaconRead(mConfigUriBeacon, status);
         }
-      } else if (DATA_TWO.equals(uuid)) {
-        mData = Util.concatenate(mData, characteristic.getValue());
-        mConfigUriBeacon = ConfigUriBeacon.parseFromBytes(mData);
-        mUriBeaconCallback.onUriBeaconRead(mConfigUriBeacon, status);
+      } catch (URISyntaxException | IllegalArgumentException e) {
+        mUriBeaconCallback.onUriBeaconRead(null, status);
       }
     } else {
       mUriBeaconCallback.onUriBeaconRead(null, status);

@@ -57,17 +57,20 @@ public class ConfigUriBeacon extends UriBeacon {
    *
    * @param scanRecordBytes The scan record of Bluetooth LE advertisement and/or scan response.
    */
-  public static ConfigUriBeacon parseFromBytes(byte[] scanRecordBytes) {
+  public static ConfigUriBeacon createConfigUriBeacon(byte[] scanRecordBytes)
+      throws URISyntaxException {
     UriBeacon uriBeacon = UriBeacon.parseFromBytes(scanRecordBytes);
     if (uriBeacon == null) {
-      try {
-        uriBeacon = new UriBeacon.Builder().uriString(UriBeacon.NO_URI).build();
-      } catch (URISyntaxException e) {
-        // There should be no error thrown!
-        e.printStackTrace();
-      }
+      uriBeacon = new UriBeacon.Builder().uriString(UriBeacon.NO_URI).build();
     }
-    return new ConfigUriBeacon(uriBeacon, null, false, null, POWER_MODE_NONE, PERIOD_NONE, false);
+    if (uriBeacon.getUriString() == null) {
+      throw new IllegalArgumentException("Could not decode URI");
+    }
+    return new ConfigUriBeacon.Builder()
+        .uriString(uriBeacon.getUriString())
+        .txPowerLevel(uriBeacon.getTxPowerLevel())
+        .flags(uriBeacon.getFlags())
+        .build();
   }
 
   /**

@@ -157,14 +157,14 @@ public class UriBeaconTest extends AndroidTestCase {
     UriBeacon beacon = new UriBeacon.Builder()
         .uriString(TestData.urlTestString)
         .build();
-    MoreAsserts.assertEquals(TestData.urlAdbPacketBytes, beacon.toByteArray());
+    MoreAsserts.assertEquals(TestData.validUrlAdbPacketBytes, beacon.toByteArray());
 
   }
   public void testToByteArrayWithUriByteArray() throws URISyntaxException {
       UriBeacon beacon = new UriBeacon.Builder()
           .uriString(TestData.urlTestByteArray)
           .build();
-      MoreAsserts.assertEquals(TestData.urlAdbPacketBytes, beacon.toByteArray());
+      MoreAsserts.assertEquals(TestData.validUrlAdbPacketBytes, beacon.toByteArray());
   }
   // TODO: Add more tests for toByteArray using parseFromBytes instead of builder
   public void testParseFromBytes() {

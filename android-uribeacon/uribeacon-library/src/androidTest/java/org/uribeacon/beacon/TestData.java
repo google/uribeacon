@@ -145,7 +145,7 @@ public class TestData {
       // No uri
   };
 
-  public static final byte[] urlAdbPacketBytes = new byte[]{
+  public static final byte[] validUrlAdbPacketBytes = new byte[]{
       // URI Service UUID Field
       (byte) 0x03, (byte) 0x03, (byte) 0xD8,(byte) 0xFE,
       // base length + uri length
@@ -165,6 +165,69 @@ public class TestData {
       0x01,
       // test
       't', 'e', 's', 't'
+  };
+  public static final byte[] invalidUrlAdbPacketBytes = new byte[]{
+      // URI Service UUID Field
+      (byte) 0x03, (byte) 0x03, (byte) 0xD8,(byte) 0xFE,
+      // base length + uri length
+      (byte) (emptyAdbPacketLength + malformedUrlString.length()),
+      // Uri Service data field header
+      0x16, (byte) 0xD8, (byte) 0xFE,
+      // Flags
+      noFlags,
+      // TxPowerLevel
+      noTxPowerLevel,
+      // Uri
+      // wrong://wrong
+      'w', 'r', 'o', 'n', 'g', ':', '/', '/', 'w', 'r', 'o', 'n', 'g'
+  };
+
+  public static final byte[] longValidUrlAdbPacketBytes = new byte[]{
+      // URI Service UUID Field
+      (byte) 0x03, (byte) 0x03, (byte) 0xD8,(byte) 0xFE,
+      // base length + uri length
+      (byte) (emptyAdbPacketLength + longButValidUrlByteArray.length),
+      // Uri Service data field header
+      0x16, (byte) 0xD8, (byte) 0xFE,
+      // Flags
+      noFlags,
+      // TxPowerLevel
+      noTxPowerLevel,
+      // Uri
+      // 'http://' encoded
+      0x02,
+      // 23456789
+      '2', '3', '4', '5', '6', '7', '8', '9',
+      // 10
+      '1', '1',
+      '1', '3',
+      '1', '5',
+      '1', '7',
+      '1'
+  };
+
+  public static final byte[] longInvalidUrlAdbPacketBytes = new byte[]{
+      // URI Service UUID Field
+      (byte) 0x03, (byte) 0x03, (byte) 0xD8,(byte) 0xFE,
+      // base length + uri length
+      (byte) (emptyAdbPacketLength + longButInvalidUrlByteArray.length),
+      // Uri Service data field header
+      0x16, (byte) 0xD8, (byte) 0xFE,
+      // Flags
+      noFlags,
+      // TxPowerLevel
+      noTxPowerLevel,
+      // Uri
+      // 'http://' encoded
+      0x02,
+      // 23456789
+      '2', '3', '4', '5', '6', '7', '8', '9',
+      // 10
+      '1', '1',
+      '1', '3',
+      '1', '5',
+      '1', '7',
+      '1', '9'
   };
 
   public static final byte[] validKey = new byte[128];
