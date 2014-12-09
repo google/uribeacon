@@ -431,4 +431,51 @@ public class ConfigUriBeaconTest extends AndroidTestCase{
         .build();
     assertFalse(beacon.getReset());
   }
+
+  //////////////////////////////////
+  ////// Create Config Beacon //////
+  //////////////////////////////////
+  public void testEmptyArrayCreateConfigUriBeacon() throws URISyntaxException {
+    ConfigUriBeacon beacon = ConfigUriBeacon.createConfigUriBeacon(TestData.emptyTestByteArray);
+    assertEquals(ConfigUriBeacon.NO_URI, beacon.getUriString());
+    assertEquals(ConfigUriBeacon.NO_TX_POWER_LEVEL, beacon.getTxPowerLevel());
+    assertEquals(ConfigUriBeacon.NO_FLAGS, beacon.getFlags());
+  }
+  public void testWithNoUriCreateConfigUriBeacon() throws URISyntaxException {
+    ConfigUriBeacon configUriBeacon = ConfigUriBeacon.createConfigUriBeacon(TestData.emptyAdbPacketBytes);
+    assertEquals(ConfigUriBeacon.NO_URI, configUriBeacon.getUriString());
+    assertEquals(TestData.noTxPowerLevel, configUriBeacon.getTxPowerLevel());
+    assertEquals(TestData.noFlags, configUriBeacon.getFlags());
+    MoreAsserts.assertEquals(TestData.emptyTestByteArray, configUriBeacon.getUriBytes());
+  }
+
+  public void testInvalidUriStringCreateConfigUriBeacon() throws URISyntaxException {
+    try {
+      ConfigUriBeacon.createConfigUriBeacon(TestData.invalidUrlAdbPacketBytes);
+      Assert.fail("Should have failed");
+    } catch (IllegalArgumentException e) {
+      assertEquals("Could not decode URI", e.getMessage());
+    }
+  }
+
+  public void testValidUrlCreateConfigUriBeacon() throws URISyntaxException {
+    ConfigUriBeacon configUriBeacon = ConfigUriBeacon.createConfigUriBeacon(TestData.validUrlAdbPacketBytes);
+    assertEquals(TestData.urlTestString, configUriBeacon.getUriString());
+    MoreAsserts.assertEquals(TestData.urlTestByteArray, configUriBeacon.getUriBytes());
+  }
+
+  public void testValidLongUrlCreateConfigUriBeacon() throws URISyntaxException {
+    ConfigUriBeacon configUriBeacon = ConfigUriBeacon.createConfigUriBeacon(TestData.longValidUrlAdbPacketBytes);
+    assertEquals(TestData.longButValidUrlString, configUriBeacon.getUriString());
+    MoreAsserts.assertEquals(TestData.longButValidUrlByteArray, configUriBeacon.getUriBytes());
+  }
+
+  public void testLongInvalidLongUrlCreateConfigUriBeacon() {
+    try {
+      ConfigUriBeacon.createConfigUriBeacon(TestData.longInvalidUrlAdbPacketBytes);
+      Assert.fail("Should fail");
+    } catch (URISyntaxException e) {
+      assertEquals("Uri size is larger than 18 bytes", e.getReason());
+    }
+  }
 }

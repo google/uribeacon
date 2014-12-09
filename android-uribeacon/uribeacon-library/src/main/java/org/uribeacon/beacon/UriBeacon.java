@@ -185,7 +185,6 @@ public class UriBeacon {
     byte flags = serviceData[currentPos++];
     byte txPowerLevel = serviceData[currentPos++];
     String uri = decodeUri(serviceData, currentPos);
-    //TODO: Use builder instead since builder checks for errors
     return new UriBeacon(flags, txPowerLevel, uri);
   }
 
