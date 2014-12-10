@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Implements Bluetooth LE scan related API on top of {@link android.os.Build.VERSION_CODES#L}
+ * Implements Bluetooth LE scan related API on top of {@link android.os.Build.VERSION_CODES#LOLLIPOP}
  * and later.
  */
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
