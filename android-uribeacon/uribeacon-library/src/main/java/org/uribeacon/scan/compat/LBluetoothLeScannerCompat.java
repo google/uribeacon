@@ -17,11 +17,11 @@
 
 package org.uribeacon.scan.compat;
 
-import org.uribeacon.scan.util.Logger;
-
 import android.annotation.TargetApi;
 import android.bluetooth.BluetoothManager;
 import android.os.Build;
+
+import org.uribeacon.scan.util.Logger;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
  * Implements Bluetooth LE scan related API on top of {@link android.os.Build.VERSION_CODES#L}
  * and later.
  */
-@TargetApi(Build.VERSION_CODES.L)
+@TargetApi(Build.VERSION_CODES.LOLLIPOP)
 class LBluetoothLeScannerCompat extends BluetoothLeScannerCompat {
 
   private final Map<ScanCallback, android.bluetooth.le.ScanCallback> callbacksMap =
