@@ -19,19 +19,12 @@ package org.uribeacon.scan.compat;
 import static android.content.Context.ALARM_SERVICE;
 import static android.content.Context.BLUETOOTH_SERVICE;
 
-import org.uribeacon.scan.util.Logger;
-
 import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.os.Build;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
 import android.support.annotation.Nullable;
 
 /**
@@ -85,7 +78,7 @@ public class BluetoothLeScannerCompatProvider {
       AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
 
       if (bluetoothManager != null) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.L
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
                 && canUseNativeApi
                 && areHardwareFeaturesSupported(bluetoothManager)) {
           scannerInstance = new LBluetoothLeScannerCompat(bluetoothManager);

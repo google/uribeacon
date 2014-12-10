@@ -33,6 +33,7 @@ public class ConfigUriBeacon extends UriBeacon {
   public static final int UINT16_MAX_VALUE = 65535;
   public static final byte TX_POWER_LEVEL_MAX_VALUE = 20;
   public static final byte TX_POWER_LEVEL_MIN_VALUE = -100;
+  public static final int MAX_URI_LENGTH = 18;
 
   private byte[] mKey;
   private boolean mLockState;
