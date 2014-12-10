@@ -439,7 +439,7 @@ public class UriBeacon {
     size += encodedUri.length;
     return size;
   }
-  private static int uriLength(String uriString) {
+  public static int uriLength(String uriString) {
     byte[] encodedUri = encodeUri(uriString);
     if (encodedUri == null) {
       return -1;
