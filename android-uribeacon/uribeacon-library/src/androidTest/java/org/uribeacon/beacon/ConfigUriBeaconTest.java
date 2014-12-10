@@ -478,4 +478,31 @@ public class ConfigUriBeaconTest extends AndroidTestCase{
       assertEquals("Uri size is larger than 18 bytes", e.getReason());
     }
   }
+
+  ////////////////////////
+  ////// Uri Length //////
+  ////////////////////////
+  public void testEmptyStringLength() throws URISyntaxException {
+    assertEquals(TestData.emptyTestString.length(),
+        ConfigUriBeacon.uriLength(TestData.emptyTestString));
+  }
+  //TODO: add test for null
+  public void testInvalidUriStringLength() {
+    assertEquals(-1, ConfigUriBeacon.uriLength(TestData.malformedUrlString));
+  }
+
+  public void testValidUrlStringLength(){
+    assertEquals(TestData.urlTestByteArray.length,
+        ConfigUriBeacon.uriLength(TestData.urlTestString));
+  }
+
+  public void testValidLongUrlStringLength() {
+    assertEquals(TestData.longButValidUrlByteArray.length,
+        ConfigUriBeacon.uriLength(TestData.longButValidUrlString));
+  }
+
+  public void testLongInvalidLongUrlLength() {
+    assertEquals(TestData.longButInvalidUrlByteArray.length,
+        ConfigUriBeacon.uriLength(TestData.longButInvalidUrlString));
+  }
 }
