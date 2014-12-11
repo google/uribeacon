@@ -48,7 +48,7 @@ public class ConfigUriBeaconTest extends AndroidTestCase{
   /////////////////
   public void testWithEmptyUriString() throws URISyntaxException {
     ConfigUriBeacon configUriBeacon =  new ConfigUriBeacon.Builder()
-        .uriString(TestData.emptyTestString)
+        .uri(TestData.emptyTestString)
         .build();
     assertEquals(TestData.emptyTestString, configUriBeacon.getUriString());
     MoreAsserts.assertEquals(TestData.emptyTestByteArray, configUriBeacon.getUriBytes());
@@ -56,7 +56,7 @@ public class ConfigUriBeaconTest extends AndroidTestCase{
 
   public void testWithEmptyUriByteArray() throws URISyntaxException {
     ConfigUriBeacon configUriBeacon = new ConfigUriBeacon.Builder()
-        .uriString(TestData.emptyTestByteArray)
+        .uri(TestData.emptyTestByteArray)
         .build();
     assertEquals(TestData.emptyTestString, configUriBeacon.getUriString());
     MoreAsserts.assertEquals(TestData.emptyTestByteArray, configUriBeacon.getUriBytes());
@@ -65,7 +65,7 @@ public class ConfigUriBeaconTest extends AndroidTestCase{
   public void testInvalidUriString() {
     try {
       new ConfigUriBeacon.Builder()
-          .uriString(TestData.malformedUrlString)
+          .uri(TestData.malformedUrlString)
           .build();
       Assert.fail("Should have failed");
     } catch (URISyntaxException e) {
@@ -76,7 +76,7 @@ public class ConfigUriBeaconTest extends AndroidTestCase{
   public void testInvalidUriByteArray() throws URISyntaxException {
     try {
       new ConfigUriBeacon.Builder()
-          .uriString(TestData.malformedUrlByteArray)
+          .uri(TestData.malformedUrlByteArray)
           .build();
       Assert.fail("Should fail");
     } catch (IllegalArgumentException e) {
@@ -86,7 +86,7 @@ public class ConfigUriBeaconTest extends AndroidTestCase{
 
   public void testValidUrlString() throws URISyntaxException {
     ConfigUriBeacon configUriBeacon = new ConfigUriBeacon.Builder()
-        .uriString(TestData.urlTestString)
+        .uri(TestData.urlTestString)
         .build();
     assertEquals(TestData.urlTestString, configUriBeacon.getUriString());
     MoreAsserts.assertEquals(TestData.urlTestByteArray, configUriBeacon.getUriBytes());
@@ -94,7 +94,7 @@ public class ConfigUriBeaconTest extends AndroidTestCase{
 
   public void testValidUrlByteArray() throws URISyntaxException {
     ConfigUriBeacon configUriBeacon = new ConfigUriBeacon.Builder()
-        .uriString(TestData.urlTestByteArray)
+        .uri(TestData.urlTestByteArray)
         .build();
     assertEquals(TestData.urlTestString, configUriBeacon.getUriString());
     MoreAsserts.assertEquals(TestData.urlTestByteArray, configUriBeacon.getUriBytes());
@@ -102,7 +102,7 @@ public class ConfigUriBeaconTest extends AndroidTestCase{
 
   public void testValidLongUrlString() throws URISyntaxException {
     ConfigUriBeacon configUriBeacon = new ConfigUriBeacon.Builder()
-        .uriString(TestData.longButValidUrlString)
+        .uri(TestData.longButValidUrlString)
         .build();
       assertEquals(TestData.longButValidUrlString, configUriBeacon.getUriString());
       MoreAsserts.assertEquals(TestData.longButValidUrlByteArray, configUriBeacon.getUriBytes());
@@ -110,7 +110,7 @@ public class ConfigUriBeaconTest extends AndroidTestCase{
 
   public void testValidLongUrlByteArray() throws URISyntaxException {
     ConfigUriBeacon configUriBeacon = new ConfigUriBeacon.Builder()
-        .uriString(TestData.longButValidUrlByteArray)
+        .uri(TestData.longButValidUrlByteArray)
         .build();
     assertEquals(TestData.longButValidUrlString, configUriBeacon.getUriString());
     MoreAsserts.assertEquals(TestData.longButValidUrlByteArray, configUriBeacon.getUriBytes());
@@ -119,7 +119,7 @@ public class ConfigUriBeaconTest extends AndroidTestCase{
   public void testLongInvalidUrlString() {
     try {
       new ConfigUriBeacon.Builder()
-          .uriString(TestData.longButInvalidUrlString)
+          .uri(TestData.longButInvalidUrlString)
           .build();
       Assert.fail("Should fail");
     } catch (URISyntaxException e) {
@@ -130,7 +130,7 @@ public class ConfigUriBeaconTest extends AndroidTestCase{
   public void testLongInvalidUrlByteArray() {
     try {
       new ConfigUriBeacon.Builder()
-          .uriString(TestData.longButInvalidUrlByteArray)
+          .uri(TestData.longButInvalidUrlByteArray)
           .build();
       Assert.fail("Should fail");
     } catch (URISyntaxException e) {
@@ -142,7 +142,7 @@ public class ConfigUriBeaconTest extends AndroidTestCase{
   //////////////////
   public void testFalseLock() throws URISyntaxException {
     ConfigUriBeacon configUriBeacon = new ConfigUriBeacon.Builder()
-        .uriString(TestData.emptyTestString)
+        .uri(TestData.emptyTestString)
         .lockState(false)
         .build();
     assertEquals(false, configUriBeacon.getLockState());
@@ -150,7 +150,7 @@ public class ConfigUriBeaconTest extends AndroidTestCase{
 
   public void testTrueLock() throws URISyntaxException {
     ConfigUriBeacon configUriBeacon = new ConfigUriBeacon.Builder()
-        .uriString(TestData.emptyTestString)
+        .uri(TestData.emptyTestString)
         .lockState(true)
         .build();
     assertEquals(true, configUriBeacon.getLockState());
@@ -161,7 +161,7 @@ public class ConfigUriBeaconTest extends AndroidTestCase{
   /////////////////
   public void testCorrectLengthKey() throws URISyntaxException {
     ConfigUriBeacon configUriBeacon = new ConfigUriBeacon.Builder()
-        .uriString(TestData.emptyTestString)
+        .uri(TestData.emptyTestString)
         .key(TestData.validKey)
         .build();
     MoreAsserts.assertEquals(TestData.validKey, configUriBeacon.getKey());
@@ -173,14 +173,14 @@ public class ConfigUriBeaconTest extends AndroidTestCase{
   /////////////////////
   public void testNoFlags() throws URISyntaxException {
     ConfigUriBeacon configUriBeacon = new ConfigUriBeacon.Builder()
-        .uriString(TestData.emptyTestString)
+        .uri(TestData.emptyTestString)
         .build();
     assertEquals(0, configUriBeacon.getFlags());
   }
 
   public void testOneFlag() throws URISyntaxException {
     ConfigUriBeacon configUriBeacon = new ConfigUriBeacon.Builder()
-        .uriString(TestData.emptyTestString)
+        .uri(TestData.emptyTestString)
         .flags((byte) 1)
         .build();
     assertEquals(1, configUriBeacon.getFlags());
@@ -192,7 +192,7 @@ public class ConfigUriBeaconTest extends AndroidTestCase{
   public void testNotSettingTxPowerLevels() throws URISyntaxException {
     try {
       new ConfigUriBeacon.Builder()
-          .uriString(TestData.emptyTestString)
+          .uri(TestData.emptyTestString)
           .beaconPeriod(TestData.validPeriod)
           .txPowerMode(TestData.validTxPowerMode)
           .build();
@@ -205,7 +205,7 @@ public class ConfigUriBeaconTest extends AndroidTestCase{
   public void testEmptyTxPowerLevels() {
     try {
       new ConfigUriBeacon.Builder()
-          .uriString(TestData.emptyTestString)
+          .uri(TestData.emptyTestString)
           .txPowerMode(TestData.validTxPowerMode)
           .beaconPeriod(TestData.validPeriod)
           .advertisedTxPowerLevels(new byte[0])
@@ -219,7 +219,7 @@ public class ConfigUriBeaconTest extends AndroidTestCase{
   public void testShorterTxPowerLevels() {
     try {
       new ConfigUriBeacon.Builder()
-          .uriString(TestData.emptyTestString)
+          .uri(TestData.emptyTestString)
           .advertisedTxPowerLevels(new byte[3])
           .txPowerMode(TestData.validTxPowerMode)
           .beaconPeriod(TestData.validPeriod)
@@ -233,7 +233,7 @@ public class ConfigUriBeaconTest extends AndroidTestCase{
   public void testLongerTxPowerLevels() throws URISyntaxException {
     try {
       new ConfigUriBeacon.Builder()
-          .uriString(TestData.emptyTestString)
+          .uri(TestData.emptyTestString)
           .advertisedTxPowerLevels(new byte[5])
           .txPowerMode(TestData.validTxPowerMode)
           .beaconPeriod(TestData.validPeriod)
@@ -247,7 +247,7 @@ public class ConfigUriBeaconTest extends AndroidTestCase{
   public void testLowTxPowerLevels() {
     try {
       new ConfigUriBeacon.Builder()
-          .uriString(TestData.emptyTestString)
+          .uri(TestData.emptyTestString)
           .advertisedTxPowerLevels(makeTxPowerLevelArray(
               (byte) (ConfigUriBeacon.TX_POWER_LEVEL_MIN_VALUE -1)))
           .txPowerMode(TestData.validTxPowerMode)
@@ -262,7 +262,7 @@ public class ConfigUriBeaconTest extends AndroidTestCase{
   public void testHighTxPowerLevels() {
     try {
       new ConfigUriBeacon.Builder()
-          .uriString(TestData.emptyTestString)
+          .uri(TestData.emptyTestString)
           .advertisedTxPowerLevels(makeTxPowerLevelArray(
               (byte) (ConfigUriBeacon.TX_POWER_LEVEL_MAX_VALUE + 1)))
           .txPowerMode(TestData.validTxPowerMode)
@@ -279,7 +279,7 @@ public class ConfigUriBeaconTest extends AndroidTestCase{
       for (byte i = ConfigUriBeacon.TX_POWER_LEVEL_MIN_VALUE;
            i <= ConfigUriBeacon.TX_POWER_LEVEL_MAX_VALUE; i++) {
         new ConfigUriBeacon.Builder()
-            .uriString(TestData.emptyTestString)
+            .uri(TestData.emptyTestString)
             .advertisedTxPowerLevels(makeTxPowerLevelArray(i))
             .build();
         Assert.fail("Should fail");
@@ -294,7 +294,7 @@ public class ConfigUriBeaconTest extends AndroidTestCase{
          i <= ConfigUriBeacon.TX_POWER_LEVEL_MAX_VALUE; i++) {
       byte[] testTxPowerLevels = makeTxPowerLevelArray(i);
       ConfigUriBeacon beacon = new ConfigUriBeacon.Builder()
-          .uriString(TestData.emptyTestString)
+          .uri(TestData.emptyTestString)
           .advertisedTxPowerLevels(testTxPowerLevels)
           .beaconPeriod(TestData.validPeriod)
           .txPowerMode(TestData.validTxPowerMode)
@@ -309,7 +309,7 @@ public class ConfigUriBeaconTest extends AndroidTestCase{
   public void testNotSetPowerMode() throws URISyntaxException {
     try {
       ConfigUriBeacon beacon =  new ConfigUriBeacon.Builder()
-          .uriString(TestData.emptyTestString)
+          .uri(TestData.emptyTestString)
           .advertisedTxPowerLevels(makeTxPowerLevelArray(TestData.validTxPowerLevels))
           .beaconPeriod(TestData.validPeriod)
           .build();
@@ -322,7 +322,7 @@ public class ConfigUriBeaconTest extends AndroidTestCase{
   public void testSetLowInvalidPowerMode() {
     try {
       new ConfigUriBeacon.Builder()
-          .uriString(TestData.emptyTestString)
+          .uri(TestData.emptyTestString)
           .beaconPeriod(TestData.validPeriod)
           .advertisedTxPowerLevels(makeTxPowerLevelArray(TestData.validTxPowerLevels))
           .txPowerMode((byte) (ConfigUriBeacon.POWER_MODE_NONE - 1))
@@ -336,7 +336,7 @@ public class ConfigUriBeaconTest extends AndroidTestCase{
   public void testSetHighInvalidPowerMode() {
     try {
       new ConfigUriBeacon.Builder()
-          .uriString(TestData.emptyTestString)
+          .uri(TestData.emptyTestString)
           .beaconPeriod(TestData.validPeriod)
           .advertisedTxPowerLevels(makeTxPowerLevelArray(TestData.validTxPowerLevels))
           .txPowerMode((byte) (ConfigUriBeacon.POWER_MODE_HIGH + 1))
@@ -351,7 +351,7 @@ public class ConfigUriBeaconTest extends AndroidTestCase{
     for (byte i = ConfigUriBeacon.POWER_MODE_ULTRA_LOW; i <= ConfigUriBeacon.POWER_MODE_HIGH;
         i++) {
       ConfigUriBeacon configUriBeacon = new ConfigUriBeacon.Builder()
-          .uriString(TestData.emptyTestString)
+          .uri(TestData.emptyTestString)
           .beaconPeriod(TestData.validPeriod)
           .advertisedTxPowerLevels(makeTxPowerLevelArray(TestData.validTxPowerLevels))
           .txPowerMode(i)
@@ -366,7 +366,7 @@ public class ConfigUriBeaconTest extends AndroidTestCase{
   public void testNotSetPeriod() throws URISyntaxException {
     try {
       new ConfigUriBeacon.Builder()
-          .uriString(TestData.emptyTestString)
+          .uri(TestData.emptyTestString)
           .advertisedTxPowerLevels(makeTxPowerLevelArray(TestData.validTxPowerLevels))
           .txPowerMode(TestData.validTxPowerMode)
           .build();
@@ -379,7 +379,7 @@ public class ConfigUriBeaconTest extends AndroidTestCase{
   public void testInvalidLowPeriod() {
     try {
       new ConfigUriBeacon.Builder()
-          .uriString(TestData.emptyTestString)
+          .uri(TestData.emptyTestString)
           .advertisedTxPowerLevels(makeTxPowerLevelArray(TestData.validTxPowerLevels))
           .txPowerMode(TestData.validTxPowerMode)
           .beaconPeriod(ConfigUriBeacon.PERIOD_NONE - 1)
@@ -392,7 +392,7 @@ public class ConfigUriBeaconTest extends AndroidTestCase{
   public void testInvalidHighPeriod() {
     try {
       new ConfigUriBeacon.Builder()
-          .uriString(TestData.emptyTestString)
+          .uri(TestData.emptyTestString)
           .advertisedTxPowerLevels(makeTxPowerLevelArray(TestData.validTxPowerLevels))
           .txPowerMode(TestData.validTxPowerMode)
           .beaconPeriod(ConfigUriBeacon.UINT16_MAX_VALUE)
@@ -406,7 +406,7 @@ public class ConfigUriBeaconTest extends AndroidTestCase{
     for (int i = ConfigUriBeacon.UINT16_MIN_VALUE; i <= ConfigUriBeacon.UINT16_MAX_VALUE;
         i++) {
       ConfigUriBeacon beacon =  new ConfigUriBeacon.Builder()
-          .uriString(TestData.emptyTestString)
+          .uri(TestData.emptyTestString)
           .advertisedTxPowerLevels(makeTxPowerLevelArray(TestData.validTxPowerLevels))
           .txPowerMode(TestData.validTxPowerMode)
           .beaconPeriod(i)
@@ -427,7 +427,7 @@ public class ConfigUriBeaconTest extends AndroidTestCase{
   public void testOnlyFalseReset() throws URISyntaxException {
     ConfigUriBeacon beacon = new ConfigUriBeacon.Builder()
         .reset(false)
-        .uriString(TestData.emptyTestString)
+        .uri(TestData.emptyTestString)
         .build();
     assertFalse(beacon.getReset());
   }

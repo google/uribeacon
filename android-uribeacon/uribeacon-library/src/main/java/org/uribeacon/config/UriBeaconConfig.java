@@ -29,7 +29,8 @@ import org.uribeacon.beacon.ConfigUriBeacon;
 import java.net.URISyntaxException;
 import java.util.UUID;
 
-public class UriBeaconConfig{
+public class UriBeaconConfig {
+
   private static final String TAG = UriBeaconConfig.class.getCanonicalName();
   private Context mContext;
   private BluetoothDevice mDevice;
