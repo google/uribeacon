@@ -29,10 +29,11 @@ import java.net.URISyntaxException;
  * Common base class for configuring the ConfigUriBeacon. Provides simple methods and callbacks for
  * reading and writing the entire ConfigUriBeacon which may involve multiple GATT requests.
  */
-abstract class BaseProtocol extends BluetoothGattCallback{
+abstract class BaseProtocol extends BluetoothGattCallback {
 
   /**
    * Write the ConfigUriBeacon provided to the actual beacon.
+   *
    * @param configUriBeacon ConfigUriBeacon containing all the data of the new beacon.
    */
   public abstract void writeUriBeacon(ConfigUriBeacon configUriBeacon) throws URISyntaxException;

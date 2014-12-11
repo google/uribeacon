@@ -201,10 +201,16 @@ public class UriBeaconScanActivity extends ListActivity implements SwipeRefreshL
     ScanResultAdapter.DeviceSighting sighting = mLeDeviceListAdapter.getItem(position);
     // Only open configuration activity if the selected devices advertises configuration.
     if (mIsConfig) {
-      ConfigActivity.startConfigureActivity(this, sighting.scanResult);
+      startConfigureActivity(sighting.scanResult);
       // On exit from configuration, return to the main scan screen.
       finish();
     }
+  }
+
+  private void startConfigureActivity(ScanResult scanResult) {
+    Intent intent = new Intent(this, ConfigActivity.class);
+    intent.putExtra(ScanResult.class.getCanonicalName(), scanResult);
+    startActivity(intent);
   }
 
   @Override

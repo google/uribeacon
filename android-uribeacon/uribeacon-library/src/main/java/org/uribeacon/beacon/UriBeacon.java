@@ -35,18 +35,18 @@ import java.util.UUID;
 
 public class UriBeacon {
 
-  private static final String TAG = "UriBeacon";
-  private static final int DATA_TYPE_SERVICE_DATA = 0x16;
-
   /**
    * The Service Data UUID is the reserved 16-bit Service Data Code in the form of a globally unique
    * 128-bit UUID.
    */
   public static final ParcelUuid URI_SERVICE_UUID =
       ParcelUuid.fromString("0000FED8-0000-1000-8000-00805F9B34FB");
-
+  public static final byte NO_TX_POWER_LEVEL = -101;
+  public static final byte NO_FLAGS = 0;
+  public static final String NO_URI = "";
+  private static final String TAG = "UriBeacon";
+  private static final int DATA_TYPE_SERVICE_DATA = 0x16;
   private static final byte[] URI_SERVICE_16_BIT_UUID_BYTES = {(byte) 0xd8, (byte) 0xfe};
-
   /**
    * URI Scheme maps a byte code into the scheme and an optional scheme specific prefix.
    */
@@ -57,8 +57,6 @@ public class UriBeacon {
     put((byte) 3, "https://");
     put((byte) 4, "urn:uuid:");    // RFC 2141 and RFC 4122};
   }};
-
-
   /**
    * Expansion strings for "http" and "https" schemes. These contain strings appearing anywhere in a
    * URL. Restricted to Generic TLDs. <p/> Note: this is a scheme specific encoding.
@@ -79,10 +77,6 @@ public class UriBeacon {
     put((byte) 12, ".biz");
     put((byte) 13, ".gov");
   }};
-  private final byte mFlags;
-  private final byte mTxPowerLevel;
-  private final String mUriString;
-
   private static final int FLAGS_FIELD_SIZE = 3;
   private static final int URI_SERVICE_FLAGS_TXPOWER_SIZE = 2;
   private static final byte[] URI_SERVICE_UUID_FIELD = {(byte) 0x03, (byte) 0x03, (byte) 0xD8,
@@ -90,25 +84,149 @@ public class UriBeacon {
   private static final byte[] URI_SERVICE_DATA_FIELD_HEADER = {0x16, (byte) 0xD8, (byte) 0xFE};
   private static final int MAX_ADVERTISING_DATA_BYTES = 31;
   private static final int MAX_URI_LENGTH = 18;
-  public static final byte NO_TX_POWER_LEVEL = -101;
-  public static final byte NO_FLAGS = 0;
-  public static final String NO_URI = "";
+  private final byte mFlags;
+  private final byte mTxPowerLevel;
+  private final String mUriString;
+
+  // Copy constructor
+  UriBeacon(UriBeacon uriBeacon) {
+    mUriString = uriBeacon.getUriString();
+    mFlags = uriBeacon.getFlags();
+    mTxPowerLevel = uriBeacon.getTxPowerLevel();
+  }
+
+  /**
+   * Creates the Uri string with embedded expansion codes.
+   *
+   * @param uri to be encoded
+   * @return the Uri string with expansion codes.
+   */
+  public static byte[] encodeUri(String uri) {
+    if (uri.length() == 0) {
+      return new byte[0];
+    }
+    ByteBuffer bb = ByteBuffer.allocate(uri.length());
+    // UUIDs are ordered as byte array, which means most significant first
+    bb.order(ByteOrder.BIG_ENDIAN);
+    int position = 0;
+
+    // Add the byte code for the scheme or return null if none
+    Byte schemeCode = encodeUriScheme(uri);
+    if (schemeCode == null) {
+      return null;
+    }
+    String scheme = URI_SCHEMES.get(schemeCode);
+    bb.put(schemeCode);
+    position += scheme.length();
+
+    if (URLUtil.isNetworkUrl(scheme)) {
+      return encodeUrl(uri, position, bb);
+    } else if ("urn:uuid:".equals(scheme)) {
+      return encodeUrnUuid(uri, position, bb);
+    }
+    return null;
+  }
+
+  /**
+   * @return The Uri that will be broadcasted in a byte[]
+   */
+  public byte[] getUriBytes() {
+    return encodeUri(mUriString);
+  }
+
+  /**
+   * @return the Uri flags indicating the discoverable mode and capability of the device.
+   */
+  public byte getFlags() {
+    return mFlags;
+  }
+
+  /**
+   * @return the transmission power level of the packet in dBm. This value can be used to calculate
+   * the path loss of a received packet using the following equation: <p/> <code>path loss =
+   * txPowerLevel - RSSI</code>
+   */
+  public byte getTxPowerLevel() {
+    return mTxPowerLevel;
+  }
+
+  /**
+   * @return the Uri text of the packet.
+   */
+  public String getUriString() {
+    return mUriString;
+  }
+
+  /**
+   * Parse scan record bytes to {@link UriBeacon}. <p/> The format is defined in Uri Beacon
+   * Definition.
+   *
+   * @param scanRecordBytes The scan record of Bluetooth LE advertisement and/or scan response.
+   */
+  public static UriBeacon parseFromBytes(byte[] scanRecordBytes) {
+    byte[] serviceData = parseServiceDataFromBytes(scanRecordBytes);
+    // Minimum UriBeacon consists of flags, TxPower
+    if (serviceData == null || serviceData.length < 3) {
+      return null;
+    }
+    int currentPos = 0;
+    byte flags = serviceData[currentPos++];
+    byte txPowerLevel = serviceData[currentPos++];
+    String uri = decodeUri(serviceData, currentPos);
+    return new UriBeacon(flags, txPowerLevel, uri);
+  }
+
+  @Override
+  public String toString() {
+    return String.format(Locale.ENGLISH,
+        "%s@(uri:'%s' txPowerLevel:%d flags:%d)",
+        getClass().getSimpleName(), mUriString, mTxPowerLevel, mFlags);
+  }
+
+  /**
+   * The advertisement data for the UriBeacon as a byte array.
+   *
+   * @return the UriBeacon bytes
+   */
+  public byte[] toByteArray() {
+    int totalUriBytes = totalBytes(mUriString);
+    if (totalUriBytes == 0) {
+      return null;
+    }
+    ByteBuffer buffer = ByteBuffer.allocateDirect(totalUriBytes);
+    buffer.put(URI_SERVICE_UUID_FIELD);
+    byte[] uriBytes;
+    uriBytes = encodeUri(mUriString);
+    byte length = (byte) (URI_SERVICE_DATA_FIELD_HEADER.length +
+        URI_SERVICE_FLAGS_TXPOWER_SIZE + uriBytes.length);
+    buffer.put(length);
+    buffer.put(URI_SERVICE_DATA_FIELD_HEADER);
+    buffer.put(mFlags);
+    buffer.put(mTxPowerLevel);
+    buffer.put(uriBytes);
+    return byteBufferToArray(buffer);
+  }
+
+  /**
+   *
+   * @param uriString
+   * @return
+   */
+  public static int uriLength(String uriString) {
+    byte[] encodedUri = encodeUri(uriString);
+    if (encodedUri == null) {
+      return -1;
+    } else {
+      return encodedUri.length;
+    }
+  }
+
   public static class Builder {
 
-    private byte mFlags = NO_FLAGS;
-    private byte mTxPowerLevel = NO_TX_POWER_LEVEL;
     private String mUriString;
     private byte[] mUriBytes;
-    /**
-     * Add flags to the UriBeacon advertised data.
-     *
-     * @param flags The flags to be advertised.
-     * @return The UriBeacon Builder.
-     */
-    public Builder flags(byte flags) {
-      mFlags = flags;
-      return this;
-    }
+    private byte mFlags = NO_FLAGS;
+    private byte mTxPowerLevel = NO_TX_POWER_LEVEL;
 
     /**
      * Add a Uri to the UriBeacon advertised data.
@@ -120,10 +238,23 @@ public class UriBeacon {
       mUriString = uriString;
       return this;
     }
+
     public Builder uriString(byte[] uriBytes) {
       mUriBytes = uriBytes;
       return this;
     }
+
+    /**
+     * Add flags to the UriBeacon advertised data.
+     *
+     * @param flags The flags to be advertised.
+     * @return The UriBeacon Builder.
+     */
+    public Builder flags(byte flags) {
+      mFlags = flags;
+      return this;
+    }
+
     /**
      * Add a Tx Power Level to the UriBeacon advertised data.
      *
@@ -168,24 +299,10 @@ public class UriBeacon {
     }
   }
 
-
-  /**
-   * Parse scan record bytes to {@link UriBeacon}. <p/> The format is defined in Uri Beacon
-   * Definition.
-   *
-   * @param scanRecordBytes The scan record of Bluetooth LE advertisement and/or scan response.
-   */
-  public static UriBeacon parseFromBytes(byte[] scanRecordBytes) {
-    byte[] serviceData = parseServiceDataFromBytes(scanRecordBytes);
-    // Minimum UriBeacon consists of flags, TxPower
-    if (serviceData == null || serviceData.length < 3) {
-      return null;
-    }
-    int currentPos = 0;
-    byte flags = serviceData[currentPos++];
-    byte txPowerLevel = serviceData[currentPos++];
-    String uri = decodeUri(serviceData, currentPos);
-    return new UriBeacon(flags, txPowerLevel, uri);
+  private UriBeacon(byte flags, byte txPowerLevel, String uriString) {
+    mFlags = flags;
+    mTxPowerLevel = txPowerLevel;
+    mUriString = uriString;
   }
 
   private static String decodeUri(byte[] serviceData, int offset) {
@@ -240,28 +357,8 @@ public class UriBeacon {
     return urnBuilder.toString();
   }
 
-  // Copy constructor
-  UriBeacon(UriBeacon uriBeacon) {
-    mUriString = uriBeacon.getUriString();
-    mFlags = uriBeacon.getFlags();
-    mTxPowerLevel = uriBeacon.getTxPowerLevel();
-  }
-
-  private UriBeacon(byte flags, byte txPowerLevel, String uriString) {
-    mFlags = flags;
-    mTxPowerLevel = txPowerLevel;
-    mUriString = uriString;
-  }
-
   /**
-   * @return The Uri that will be broadcasted in a byte[]
-   */
-  public byte[] getUriBytes() {
-    return encodeUri(mUriString);
-  }
-
-  /**
-   * Finds the longest expansion from the uriString at the current position.
+   * Finds the longest expansion from the uri at the current position.
    *
    * @param uriString the Uri
    * @param pos start position
@@ -282,29 +379,6 @@ public class UriBeacon {
     return expansion;
   }
 
-  /**
-   * Returns the Uri flags indicating the discoverable mode and capability of the device.
-   */
-  public byte getFlags() {
-    return mFlags;
-  }
-
-  /**
-   * Returns the transmission power level of the packet in dBm. This value can be used to calculate
-   * the path loss of a received packet using the following equation: <p/> <code>path loss =
-   * txPowerLevel - RSSI</code>
-   */
-  public byte getTxPowerLevel() {
-    return mTxPowerLevel;
-  }
-
-  /**
-   * Returns the Uri text of the packet.
-   */
-  public String getUriString() {
-    return mUriString;
-  }
-
   private static Byte encodeUriScheme(String uri) {
     String lowerCaseUri = uri.toLowerCase(Locale.ENGLISH);
     for (int i = 0; i < URI_SCHEMES.size(); i++) {
@@ -314,38 +388,6 @@ public class UriBeacon {
       if (lowerCaseUri.startsWith(value)) {
         return (byte) key;
       }
-    }
-    return null;
-  }
-
-  /**
-   * Creates the Uri string with embedded expansion codes.
-   *
-   * @param uri to be encoded
-   * @return the Uri string with expansion codes.
-   */
-  public static byte[] encodeUri(String uri) {
-    if (uri.length() == 0) {
-      return new byte[0];
-    }
-    ByteBuffer bb = ByteBuffer.allocate(uri.length());
-    // UUIDs are ordered as byte array, which means most significant first
-    bb.order(ByteOrder.BIG_ENDIAN);
-    int position = 0;
-
-    // Add the byte code for the scheme or return null if none
-    Byte schemeCode = encodeUriScheme(uri);
-    if (schemeCode == null) {
-      return null;
-    }
-    String scheme = URI_SCHEMES.get(schemeCode);
-    bb.put(schemeCode);
-    position += scheme.length();
-
-    if (URLUtil.isNetworkUrl(scheme)) {
-      return encodeUrl(uri, position, bb);
-    } else if ("urn:uuid:".equals(scheme)) {
-      return encodeUrnUuid(uri, position, bb);
     }
     return null;
   }
@@ -386,37 +428,6 @@ public class UriBeacon {
     return bytes;
   }
 
-  @Override
-  public String toString() {
-    return String.format(Locale.ENGLISH,
-        "%s@(uri:'%s' txPowerLevel:%d flags:%d)",
-        getClass().getSimpleName(), mUriString, mTxPowerLevel, mFlags);
-  }
-
-  /**
-   * The advertisement data for the UriBeacon as a byte array.
-   *
-   * @return the UriBeacon bytes
-   */
-  public byte[] toByteArray() {
-    int totalUriBytes = totalBytes(mUriString);
-    if (totalUriBytes == 0) {
-      return null;
-    }
-    ByteBuffer buffer = ByteBuffer.allocateDirect(totalUriBytes);
-    buffer.put(URI_SERVICE_UUID_FIELD);
-    byte[] uriBytes;
-    uriBytes = encodeUri(mUriString);
-    byte length = (byte) (URI_SERVICE_DATA_FIELD_HEADER.length +
-        URI_SERVICE_FLAGS_TXPOWER_SIZE + uriBytes.length);
-    buffer.put(length);
-    buffer.put(URI_SERVICE_DATA_FIELD_HEADER);
-    buffer.put(mFlags);
-    buffer.put(mTxPowerLevel);
-    buffer.put(uriBytes);
-    return byteBufferToArray(buffer);
-  }
-
   private static byte[] UuidToByteArray(UUID uuid) {
     ByteBuffer bb = ByteBuffer.wrap(new byte[16]);
     bb.putLong(uuid.getMostSignificantBits());
@@ -439,15 +450,7 @@ public class UriBeacon {
     size += encodedUri.length;
     return size;
   }
-  public static int uriLength(String uriString) {
-    byte[] encodedUri = encodeUri(uriString);
-    if (encodedUri == null) {
-      return -1;
-    }
-    else {
-      return encodedUri.length;
-    }
-  }
+
   /**
    * Return the Service Data for Uri Service.
    *
@@ -481,4 +484,5 @@ public class UriBeacon {
     }
     return null;
   }
+
 }
