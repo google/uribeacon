@@ -53,13 +53,13 @@ public class ConfigUriBeacon extends UriBeacon {
       throws URISyntaxException {
     UriBeacon uriBeacon = UriBeacon.parseFromBytes(scanRecordBytes);
     if (uriBeacon == null) {
-      uriBeacon = new UriBeacon.Builder().uri(UriBeacon.NO_URI).build();
+      uriBeacon = new UriBeacon.Builder().uriString(UriBeacon.NO_URI).build();
     }
     if (uriBeacon.getUriString() == null) {
       throw new IllegalArgumentException("Could not decode URI");
     }
     return new ConfigUriBeacon.Builder()
-        .uri(uriBeacon.getUriString())
+        .uriString(uriBeacon.getUriString())
         .txPowerLevel(uriBeacon.getTxPowerLevel())
         .flags(uriBeacon.getFlags())
         .build();
@@ -135,8 +135,8 @@ public class ConfigUriBeacon extends UriBeacon {
     /**
      * {@inheritDoc}
      */
-    public Builder uri(String uriString) {
-      super.uri(uriString);
+    public Builder uriString(String uriString) {
+      super.uriString(uriString);
       // Allow chaining on ConfigUriBeacon by returning this
       return this;
     }
@@ -144,8 +144,8 @@ public class ConfigUriBeacon extends UriBeacon {
     /**
      * {@inheritDoc}
      */
-    public Builder uri(byte[] uriBytes) {
-      super.uri(uriBytes);
+    public Builder uriString(byte[] uriBytes) {
+      super.uriString(uriBytes);
       // Allow chaining on ConfigUriBeacon by returning this
       return this;
     }
@@ -219,7 +219,7 @@ public class ConfigUriBeacon extends UriBeacon {
      */
     public ConfigUriBeacon build() throws URISyntaxException {
       if (mReset) {
-        UriBeacon uriBeacon = new UriBeacon.Builder().uri(NO_URI).build();
+        UriBeacon uriBeacon = new UriBeacon.Builder().uriString(NO_URI).build();
         return new ConfigUriBeacon(uriBeacon, mKey, false, null, POWER_MODE_NONE, PERIOD_NONE,
             mReset);
       }

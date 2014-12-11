@@ -61,7 +61,7 @@ public class ProtocolV1 extends BaseProtocol {
   public void writeUriBeacon(ConfigUriBeacon configUriBeacon) throws URISyntaxException {
     if (mConfigUriBeacon == null) {
       mConfigUriBeacon = new ConfigUriBeacon.Builder()
-          .uri(ConfigUriBeacon.NO_URI)
+          .uriString(ConfigUriBeacon.NO_URI)
           .build();
     }
     ConfigUriBeacon.Builder correctedUriBeaconBuilder = new ConfigUriBeacon.Builder();
@@ -80,7 +80,7 @@ public class ProtocolV1 extends BaseProtocol {
     } else {
       correctedUriBeaconBuilder.txPowerLevel(TX_POWER_LEVEL_DEFAULT);
     }
-    correctedUriBeaconBuilder.uri(configUriBeacon.getUriString());
+    correctedUriBeaconBuilder.uriString(configUriBeacon.getUriString());
     ConfigUriBeacon correctedUriBeacon = correctedUriBeaconBuilder.build();
     mDataWrite = correctedUriBeacon.toByteArray();
     if (mDataWrite.length <= 20) {

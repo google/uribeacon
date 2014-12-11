@@ -275,7 +275,7 @@ public class ConfigActivity extends Activity implements
   private void writeUriBeaconV1() throws URISyntaxException {
     enabledFields(false);
     ConfigUriBeacon configUriBeacon = new ConfigUriBeacon.Builder()
-        .uri(getUri())
+        .uriString(getUri())
         .txPowerLevel(Byte.parseByte(mTxPowerLevel.getText().toString()))
         .flags(hexStringToByte(mFlagsV1.getText().toString()))
         .build();
@@ -287,7 +287,7 @@ public class ConfigActivity extends Activity implements
     ConfigUriBeacon.Builder builder = new ConfigUriBeacon.Builder()
         .key(key)
         .lockState(mLockState.isChecked())
-        .uri(getUri())
+        .uriString(getUri())
         .flags(hexStringToByte(mFlagsV2.getText().toString()))
         .beaconPeriod(Integer.parseInt(mBeaconPeriod.getText().toString()))
         .txPowerMode((byte) mTxPowerMode.getSelectedItemPosition());

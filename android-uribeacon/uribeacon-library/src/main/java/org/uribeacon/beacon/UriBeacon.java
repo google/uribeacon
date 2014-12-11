@@ -234,12 +234,12 @@ public class UriBeacon {
      * @param uriString The Uri to be advertised.
      * @return The UriBeacon Builder.
      */
-    public Builder uri(String uriString) {
+    public Builder uriString(String uriString) {
       mUriString = uriString;
       return this;
     }
 
-    public Builder uri(byte[] uriBytes) {
+    public Builder uriString(byte[] uriBytes) {
       mUriBytes = uriBytes;
       return this;
     }

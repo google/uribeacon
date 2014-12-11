@@ -171,7 +171,7 @@ public class ProtocolV2 extends BaseProtocol {
           //0 unlocked; 1 locked
           mBuilder.lockState(characteristic.getIntValue(LOCK_FORMAT, 0) != 0);
         } else if (DATA.equals(uuid)) {
-          mBuilder.uri(characteristic.getValue());
+          mBuilder.uriString(characteristic.getValue());
         } else if (FLAGS.equals(uuid)) {
           mBuilder.flags(characteristic.getValue()[0]);
         } else if (POWER_LEVELS.equals(uuid)) {
