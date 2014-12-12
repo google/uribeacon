@@ -124,7 +124,7 @@ public class ConfigUriBeaconFragment extends Fragment  implements
 
     setHasOptionsMenu(true);
     // set content view
-    View view = inflater.inflate(R.layout.fragment_config_uri_beacon, container);
+    View view = inflater.inflate(R.layout.fragment_config_uri_beacon, container, false);
 
     initializeTextFields(view);
     view.findViewById(R.id.button_advanced_settings).setOnClickListener(onAdvancedSettingsClicked);
@@ -201,7 +201,7 @@ public class ConfigUriBeaconFragment extends Fragment  implements
   }
 
   @Override
-  public boolean onContextItemSelected(MenuItem item) {
+  public boolean onOptionsItemSelected(MenuItem item) {
     int id = item.getItemId();
     if (id == R.id.menu_save) {
       onSaveClicked();

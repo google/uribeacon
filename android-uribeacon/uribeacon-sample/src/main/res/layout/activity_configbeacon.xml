@@ -7,9 +7,7 @@
               android:orientation="vertical"
               android:gravity="center_vertical"
               tools:context=".MainActivity">
-    <fragment android:id="@+id/config_fragment"
-        android:name="org.uribeacon.widget.ConfigUriBeaconFragment"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        tools:layout="@layout/fragment_config_uri_beacon"/>
+    <FrameLayout android:id="@+id/fragment_container"
+                 android:layout_width="fill_parent"
+                 android:layout_height="wrap_content"/>
 </LinearLayout>
