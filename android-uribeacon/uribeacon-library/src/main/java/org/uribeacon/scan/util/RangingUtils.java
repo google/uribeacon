@@ -68,8 +68,8 @@ public class RangingUtils {
   private static final int FSPL_FREQ = 189;
   private static final int FSPL_LIGHT = -148;
 
-  /* (dBm) PATH_LOSS at 1m for isotropic antenna transmitting BLE */
-  public static final int PATH_LOSS_AT_1M = FSPL_FREQ + FSPL_LIGHT; // const = 41
+  /* (dBm) PATH_LOSS for isotropic antenna transmitting BLE (2.45 GHz) */
+  public static final int FREE_SPACE_PATH_LOSS_CONSTANT_FOR_BLE = FSPL_FREQ + FSPL_LIGHT; // const = 41
 
   /**
    * Different region categories, based on distance range.
@@ -129,7 +129,7 @@ public class RangingUtils {
   public static double distanceFromRssi(int rssi, int txPowerAtSource) {
     int pathLoss = txPowerAtSource - rssi;
     // Distance calculation
-    return Math.pow(10, (pathLoss - PATH_LOSS_AT_1M) / 20.0);
+    return Math.pow(10, (pathLoss - FREE_SPACE_PATH_LOSS_CONSTANT_FOR_BLE) / 20.0);
   }
 
   /**
