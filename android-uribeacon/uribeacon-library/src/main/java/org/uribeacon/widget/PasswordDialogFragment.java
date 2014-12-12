@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.uribeacon.sample;
+package org.uribeacon.widget;
 
 
 import android.app.Activity;
@@ -29,9 +29,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import org.uribeacon.library.R;
+
 
 /**
- * A simple {@link Fragment} subclass.
+ * A simple {@link android.app.Fragment} subclass.
  */
 public class PasswordDialogFragment extends DialogFragment {
 
@@ -44,18 +46,27 @@ public class PasswordDialogFragment extends DialogFragment {
 
   private PasswordDialogListener mListener;
   private boolean mReset;
+
   public PasswordDialogFragment() {
   }
+
+  public static PasswordDialogFragment newInstance(Fragment fragment) {
+    try {
+      PasswordDialogListener listener = (PasswordDialogListener) fragment;
+      PasswordDialogFragment dialog = new PasswordDialogFragment();
+      dialog.mListener = listener;
+      return dialog;
+    } catch (ClassCastException e) {
+      throw new ClassCastException(fragment.toString() + " must implement "
+          + PasswordDialogListener.class.getCanonicalName());
+    }
+  }
+
   @Override
   public void onAttach(Activity activity) {
     super.onAttach(activity);
     mReset = getArguments().getBoolean(RESET);
-    try {
-      mListener = (PasswordDialogListener) activity;
-    } catch (ClassCastException e) {
-      throw new ClassCastException(activity.toString() + " must implement "
-          + PasswordDialogListener.class.getCanonicalName());
-    }
+
   }
 
   @Override

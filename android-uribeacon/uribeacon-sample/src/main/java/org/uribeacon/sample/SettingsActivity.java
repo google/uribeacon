@@ -15,10 +15,7 @@
  */
 package org.uribeacon.sample;
 
-import org.uribeacon.scan.compat.BluetoothLeScannerCompatProvider;
-
 import android.app.Activity;
-import android.bluetooth.BluetoothAdapter;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
