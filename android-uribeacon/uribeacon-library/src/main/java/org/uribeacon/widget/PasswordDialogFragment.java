@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.Fragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -45,18 +46,27 @@ public class PasswordDialogFragment extends DialogFragment {
 
   private PasswordDialogListener mListener;
   private boolean mReset;
+
   public PasswordDialogFragment() {
   }
+
+  public static PasswordDialogFragment newInstance(Fragment fragment) {
+    try {
+      PasswordDialogListener listener = (PasswordDialogListener) fragment;
+      PasswordDialogFragment dialog = new PasswordDialogFragment();
+      dialog.mListener = listener;
+      return dialog;
+    } catch (ClassCastException e) {
+      throw new ClassCastException(fragment.toString() + " must implement "
+          + PasswordDialogListener.class.getCanonicalName());
+    }
+  }
+
   @Override
   public void onAttach(Activity activity) {
     super.onAttach(activity);
     mReset = getArguments().getBoolean(RESET);
-    try {
-      mListener = (PasswordDialogListener) activity;
-    } catch (ClassCastException e) {
-      throw new ClassCastException(activity.toString() + " must implement "
-          + PasswordDialogListener.class.getCanonicalName());
-    }
+
   }
 
   @Override

@@ -50,6 +50,7 @@
         <activity
             android:name="org.uribeacon.sample.ConfigActivity"
             android:label="@string/title_activity_uribeacon_config"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"/>
     </application>
 

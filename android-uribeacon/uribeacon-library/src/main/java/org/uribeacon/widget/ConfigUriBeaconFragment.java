@@ -404,7 +404,7 @@ public class ConfigUriBeaconFragment extends Fragment  implements
   }
 
   private void showPasswordDialog(boolean reset) {
-    DialogFragment dialog = new PasswordDialogFragment();
+    DialogFragment dialog = PasswordDialogFragment.newInstance(this);
     Bundle args = new Bundle();
     args.putBoolean(PasswordDialogFragment.RESET, reset);
     dialog.setArguments(args);
