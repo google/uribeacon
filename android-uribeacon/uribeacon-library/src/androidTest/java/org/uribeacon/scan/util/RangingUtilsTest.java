@@ -18,8 +18,6 @@ package org.uribeacon.scan.util;
 
 import android.test.AndroidTestCase;
 
-import org.uribeacon.scan.util.RangingUtils;
-
 /**
  * Unit tests for the {@link org.uribeacon.scan.util.RangingUtils} class.
  */
@@ -31,25 +29,25 @@ public class RangingUtilsTest extends AndroidTestCase {
   public void testDistanceForRssi() {
     // Distance expected to be 1.0 meters based on an RSSI/TxPower of -41dBm
     // Using params: int rssi (dBm), int calibratedTxPower (dBm)
-    double distance = RangingUtils.distanceFromRssi(-41, -41);
+    double distance = RangingUtils.distanceFromRssi(-41, 0);
     assertEquals(1.0, distance, DELTA);
     
-    double distance2 = RangingUtils.distanceFromRssi(-70, -50);
+    double distance2 = RangingUtils.distanceFromRssi(-70, -9);
     assertEquals(10.0, distance2, DELTA);
     
     // testing that the double values are not casted to integers
-    double distance3 = RangingUtils.distanceFromRssi(-67, -77);
+    double distance3 = RangingUtils.distanceFromRssi(-67, -36);
     assertEquals(0.31622776601683794, distance3, DELTA);
     
-    double distance4 = RangingUtils.distanceFromRssi(-50, -70);
+    double distance4 = RangingUtils.distanceFromRssi(-50, -29);
     assertEquals(0.1, distance4, DELTA);
    }
 
   public void testRssiFromDistance() {
     // RSSI expected at 1 meter based on the calibrated tx field of -41dBm
     // Using params: distance (m), int calibratedTxPower (dBm),
-    int rssi = RangingUtils.rssiFromDistance(1.0, -41);
-    assertEquals(-41, rssi);
+    int rssi = RangingUtils.rssiFromDistance(1.0, 0);
+    assertEquals(0, rssi);
   }
 
 }
