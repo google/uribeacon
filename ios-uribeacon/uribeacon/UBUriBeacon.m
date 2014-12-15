@@ -196,18 +196,17 @@
 #define FSPL_LIGHT -148
 
 /* (dBm) PATH_LOSS at 1m for isotropic antenna transmitting BLE */
-#define PATH_LOSS_AT_1M (FSPL_FREQ + FSPL_LIGHT) // const = 41
+#define FREE_SPACE_PATH_LOSS_CONSTANT_FOR_BLE (FSPL_FREQ + FSPL_LIGHT) // const = 41
 
 // Cutoff distances between different regions.
 #define NEAR_TO_MID_METERS 0.5
 #define MID_TO_FAR_METERS 2.0
 
 - (UBUriBeaconRegion)region {
-  NSInteger calibratedTxPower = [self txPowerLevel];
-  NSInteger txPowerAtSource = calibratedTxPower + PATH_LOSS_AT_1M;
+  NSInteger txPowerAtSource = [self txPowerLevel];
   NSInteger pathLoss = txPowerAtSource - [self RSSI];
   // Distance calculation
-  double distance = pow(10, (pathLoss - PATH_LOSS_AT_1M) / 20.0);
+  double distance = pow(10.0, (pathLoss - FREE_SPACE_PATH_LOSS_CONSTANT_FOR_BLE) / 20.0);
 
   if (distance < 0) {
     return UBUriBeaconRegionUnknown;
