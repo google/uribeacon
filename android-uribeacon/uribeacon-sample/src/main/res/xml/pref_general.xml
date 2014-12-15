@@ -47,12 +47,18 @@
     <PreferenceCategory android:title="@string/pref_title_main_filters">
 
         <CheckBoxPreference
-            android:defaultValue="true"
+            android:defaultValue="false"
             android:key="@string/pref_key_uribeacon"
             android:summaryOff="@string/pref_summary_off_filter_uribeacon"
             android:summaryOn="@string/pref_summary_on_filter_uribeacon"
             android:title="@string/pref_title_filter_uribeacon" />
 
     </PreferenceCategory>
-
+    <PreferenceCategory android:title="@string/pref_title_smooth_factor">
+        <EditTextPreference
+            android:defaultValue="0.5"
+            android:key="@string/pref_key_smooth_factor"
+            android:summary="Smooth Factor for RSSI weighted average"
+            android:title="@string/pref_title_smooth_factor"/>
+    </PreferenceCategory>
 </PreferenceScreen>

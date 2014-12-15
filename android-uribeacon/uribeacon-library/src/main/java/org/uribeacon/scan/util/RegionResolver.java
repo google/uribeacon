@@ -37,6 +37,7 @@ public class RegionResolver {
   private static final int DEFAULT_FAR_HYSTERESIS_LOW = 3;
   private static final int DEFAULT_FAR_HYSTERESIS_HIGH = 2;
   private static final double START_SMOOTHING_METERS = 1.0;
+  private static final double DEFAULT_SMOOTH_FACTOR = 0.5;
 
   private class DeviceSighting {
     private int mPathLoss;
@@ -83,6 +84,7 @@ public class RegionResolver {
   private String mNearestAddress;
   private Integer mNearestPathLoss;
   private boolean mNotifyOnSameNearestDevice;
+  private double mSmoothFactor;
   private Map<String, WeightedAverage> mSmoothedRssi =
       new HashMap<String, WeightedAverage>();
 
@@ -94,10 +96,11 @@ public class RegionResolver {
     mFarHysteresisLow = DEFAULT_FAR_HYSTERESIS_LOW;
     mFarHysteresisHigh = DEFAULT_FAR_HYSTERESIS_HIGH;
     mNotifyOnSameNearestDevice = false;
+    mSmoothFactor = DEFAULT_SMOOTH_FACTOR;
   }
 
   public RegionResolver(int nearestHysteresis, int midHysteresisLow, int midHysteresisHigh,
-      int farHysteresisLow, int farHysteresisHigh) {
+      int farHysteresisLow, int farHysteresisHigh, double smoothFactor) {
     mStabilizedDeviceRegion = new HashMap<String, DeviceSighting>();
     mNearestHysteresis = nearestHysteresis;
     mMidHysteresisLow = midHysteresisLow;
@@ -105,6 +108,7 @@ public class RegionResolver {
     mFarHysteresisLow = farHysteresisLow;
     mFarHysteresisHigh = farHysteresisHigh;
     mNotifyOnSameNearestDevice = false;
+    mSmoothFactor = smoothFactor;
   }
 
   /**
@@ -283,12 +287,16 @@ public class RegionResolver {
 
   private int getSmoothedRssi(String address, int rssi) {
     if (mSmoothedRssi.get(address) == null) {
-      mSmoothedRssi.put(address, new WeightedAverage());
+      mSmoothedRssi.put(address, new WeightedAverage(mSmoothFactor));
     }
     return (int) mSmoothedRssi.get(address).addValue(rssi);
   }
 
   public int getSmoothedRssi(String address) {
     return (int) mSmoothedRssi.get(address).getValue();
+  }
+
+  public void setSmoothFactor(double smoothFactor) {
+    mSmoothFactor = smoothFactor;
   }
 }
