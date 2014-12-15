@@ -75,6 +75,9 @@ class DeviceListAdapter extends ScanResultAdapter {
       displayName = beacon.getUriString();
       txPowerLevel = beacon.getTxPowerLevel();
     }
+    else {
+      txPowerLevel = (byte) scanResult.getScanRecord().getTxPowerLevel();
+    }
     if (displayName == null) {
       displayName = scanResult.getDevice().getName();
     }
