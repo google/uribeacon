@@ -68,8 +68,8 @@ public class RangingUtils {
   private static final int FSPL_FREQ = 189;
   private static final int FSPL_LIGHT = -148;
 
-  /* (dBm) PATH_LOSS at 1m for isotropic antenna transmitting BLE */
-  public static final int PATH_LOSS_AT_1M = FSPL_FREQ + FSPL_LIGHT; // const = 41
+  /* (dBm) PATH_LOSS for isotropic antenna transmitting BLE (2.45 GHz) */
+  public static final int FREE_SPACE_PATH_LOSS_CONSTANT_FOR_BLE = FSPL_FREQ + FSPL_LIGHT; // const = 41
 
   /**
    * Different region categories, based on distance range.
@@ -85,7 +85,8 @@ public class RangingUtils {
   public static final double NEAR_TO_MID_METERS = 0.5;
   public static final double MID_TO_FAR_METERS = 2.0;
 
-  public static final int DEFAULT_TX_POWER_LEVEL = -77;
+  // Approximate value for unknown sources
+  public static final int DEFAULT_TX_POWER_LEVEL = -36;
 
   /**
    * @constructor
@@ -97,11 +98,11 @@ public class RangingUtils {
    * <a href="http://en.wikipedia.org/wiki/Free-space_path_loss">Free-space_path_loss</a>
    * 
    * @param rssi Received Signal Strength Indication (RSSI) in dBm
-   * @param calibratedTxPower the calibrated power of the transmitter (dBm) at 1 meter
+   * @param txPowerAtSource the calibrated power of the transmitter (dBm) at 0 meter
    * @return The calculated path loss.
    */
-  public static int pathLossFromRssi(int rssi, int calibratedTxPower) {
-    return calibratedTxPower + RangingUtils.PATH_LOSS_AT_1M - rssi;
+  public static int pathLossFromRssi(int rssi, int txPowerAtSource) {
+    return txPowerAtSource - rssi;
   }
 
   /**
@@ -109,12 +110,11 @@ public class RangingUtils {
    * href="http://en.wikipedia.org/wiki/Free-space_path_loss">Free-space_path_loss</a>
    *
    * @param distanceInMeters distance in meters (m)
-   * @param calibratedTxPower transmitted power (dBm) calibrated to 1 meter
+   * @param txPowerAtSource transmitted power (dBm) calibrated to 0 meter
    * @return the rssi (dBm) that would be measured at that distance
    */
-  public static int rssiFromDistance(double distanceInMeters, int calibratedTxPower) {
-    double pathLoss = 20 * Math.log10(distanceInMeters) + PATH_LOSS_AT_1M;
-    int txPowerAtSource = calibratedTxPower + PATH_LOSS_AT_1M;
+  public static int rssiFromDistance(double distanceInMeters, int txPowerAtSource) {
+    double pathLoss = 20 * Math.log10(distanceInMeters);
     return (int) (txPowerAtSource - pathLoss);
   }
 
@@ -123,14 +123,13 @@ public class RangingUtils {
    * href="http://en.wikipedia.org/wiki/Free-space_path_loss">Free-space_path_loss</a>
    *
    * @param rssi Received Signal Strength Indication (RSSI) in dBm
-   * @param calibratedTxPower the calibrated power of the transmitter (dBm) at 1 meter
+   * @param txPowerAtSource the calibrated power of the transmitter (dBm) at 0 meter
    * @return the distance at which that rssi value would occur in meters
    */
-  public static double distanceFromRssi(int rssi, int calibratedTxPower) {
-    int txPowerAtSource = calibratedTxPower + PATH_LOSS_AT_1M;
+  public static double distanceFromRssi(int rssi, int txPowerAtSource) {
     int pathLoss = txPowerAtSource - rssi;
     // Distance calculation
-    return Math.pow(10, (pathLoss - PATH_LOSS_AT_1M) / 20.0);
+    return Math.pow(10, (pathLoss - FREE_SPACE_PATH_LOSS_CONSTANT_FOR_BLE) / 20.0);
   }
 
   /**
