@@ -41,7 +41,12 @@
             android:key="@string/pref_key_serial_scan_mode"
             android:summary="@string/pref_val_scan_mode_low_power"
             android:title="@string/pref_title_serial_scan_mode" />
-
+        <EditTextPreference
+            android:defaultValue="10"
+            android:key="@string/pref_key_scan_time"
+            android:summary="@string/pref_summary_scan_time"
+            android:title="@string/pref_title_scan_time"
+            android:inputType="number"/>
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_title_main_filters">
@@ -58,7 +63,8 @@
         <EditTextPreference
             android:defaultValue="0.5"
             android:key="@string/pref_key_smooth_factor"
-            android:summary="Smooth Factor for RSSI weighted average"
-            android:title="@string/pref_title_smooth_factor"/>
+            android:summary="@string/pref_summary_smooth_factor"
+            android:title="@string/pref_title_smooth_factor"
+            android:inputType="numberDecimal"/>
     </PreferenceCategory>
 </PreferenceScreen>

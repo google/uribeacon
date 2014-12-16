@@ -61,7 +61,6 @@ public class UriBeaconScanActivity extends ListActivity implements SwipeRefreshL
   // Keep devices in adapter on screen forever.
   private static final int DEVICE_LIFETIME_SECONDS = Integer.MAX_VALUE;
   private static final Handler mHandler = new Handler();
-  private static final long SCAN_TIME_MILLIS = TimeUnit.SECONDS.toMillis(60);
   private final BluetoothAdapter.LeScanCallback mLeScanCallback = new LeScanCallback();
   private DeviceListAdapter mLeDeviceListAdapter;
   private BluetoothAdapter mBluetoothAdapter;
@@ -69,7 +68,7 @@ public class UriBeaconScanActivity extends ListActivity implements SwipeRefreshL
   private SwipeRefreshLayout mSwipeWidget;
   private boolean mIsConfig;
   private Parcelable[] mScanFilterUuids;
-
+  private long mScanTime;
   // Run when the SCAN_TIME_MILLIS has elapsed.
   private Runnable mScanTimeout = new Runnable() {
     @Override
@@ -107,7 +106,7 @@ public class UriBeaconScanActivity extends ListActivity implements SwipeRefreshL
       if (enable) {
         view.setText(mIsConfig ? R.string.empty_config_start : R.string.empty_scan_start);
         // Stops scanning after the predefined scan time has elapsed.
-        mHandler.postDelayed(mScanTimeout, SCAN_TIME_MILLIS);
+        mHandler.postDelayed(mScanTimeout, mScanTime);
         mLeDeviceListAdapter.clear();
         mBluetoothAdapter.startLeScan(mLeScanCallback);
       } else {
@@ -229,6 +228,9 @@ public class UriBeaconScanActivity extends ListActivity implements SwipeRefreshL
     boolean filterUriBeacon = prefs.getBoolean(keyUriBeacon, false);
     String smoothFactorString = prefs.getString(getString(R.string.pref_key_smooth_factor), "0.5");
     mLeDeviceListAdapter.setSmoothFactor(Double.parseDouble(smoothFactorString));
+    String scanTimeString = prefs.getString(getString(R.string.pref_key_scan_time), "10");
+    mScanTime = TimeUnit.SECONDS.toMillis(Integer.parseInt(scanTimeString));
+
     if (mIsConfig) {
       mScanFilterUuids = configServices;
     } else if (filterUriBeacon) {
