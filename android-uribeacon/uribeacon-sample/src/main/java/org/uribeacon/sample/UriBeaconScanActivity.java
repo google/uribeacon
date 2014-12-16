@@ -61,7 +61,7 @@ public class UriBeaconScanActivity extends ListActivity implements SwipeRefreshL
   // Keep devices in adapter on screen forever.
   private static final int DEVICE_LIFETIME_SECONDS = Integer.MAX_VALUE;
   private static final Handler mHandler = new Handler();
-  private static final long SCAN_TIME_MILLIS = TimeUnit.SECONDS.toMillis(10);
+  private static final long SCAN_TIME_MILLIS = TimeUnit.SECONDS.toMillis(60);
   private final BluetoothAdapter.LeScanCallback mLeScanCallback = new LeScanCallback();
   private DeviceListAdapter mLeDeviceListAdapter;
   private BluetoothAdapter mBluetoothAdapter;
@@ -227,6 +227,8 @@ public class UriBeaconScanActivity extends ListActivity implements SwipeRefreshL
     final String keyUriBeacon = getString(R.string.pref_key_uribeacon);
     final SharedPreferences prefs = getDefaultSharedPreferences(this);
     boolean filterUriBeacon = prefs.getBoolean(keyUriBeacon, false);
+    String smoothFactorString = prefs.getString(getString(R.string.pref_key_smooth_factor), "0.5");
+    mLeDeviceListAdapter.setSmoothFactor(Double.parseDouble(smoothFactorString));
     if (mIsConfig) {
       mScanFilterUuids = configServices;
     } else if (filterUriBeacon) {

@@ -64,7 +64,9 @@ public abstract class ScanResultAdapter extends BaseAdapter {
     mInflater = inflater;
     mHandler = new Handler();
   }
-
+  public void setSmoothFactor(double smoothFactor) {
+    mRegionResolver.setSmoothFactor(smoothFactor);
+  }
   /**
    * Adds the ScanResult to the adapter with an auto-removal after lifetimeSeconds.
    * <p/>

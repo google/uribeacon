@@ -29,8 +29,8 @@ public class WeightedAverage {
   private double mSmoothedValue;
   private boolean mReset;
 
-  public WeightedAverage() {
-    mSmoothFactor = 0.5;
+  public WeightedAverage(double smoothFactor) {
+    mSmoothFactor = smoothFactor;
     mSmoothedValue = 0.0;
     mLastValue = 0.0;
     mReset = true;

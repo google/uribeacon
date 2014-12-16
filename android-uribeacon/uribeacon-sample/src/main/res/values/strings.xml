@@ -31,4 +31,6 @@
     <string name="menu_stop_refresh">Stop Refresh</string>
     <string name="menu_settings">Settings</string>
     <string name="menu_config">Configure UriBeacon</string>
+    <string name="pref_key_smooth_factor">smoth_factor_key</string>
+    <string name="pref_title_smooth_factor">Smooth Factor</string>
 </resources>
