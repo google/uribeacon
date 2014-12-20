@@ -5,6 +5,10 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
+import android.bluetooth.le.AdvertiseCallback;
+import android.bluetooth.le.AdvertiseData;
+import android.bluetooth.le.AdvertiseSettings;
+import android.bluetooth.le.BluetoothLeAdvertiser;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,10 +17,7 @@ import android.os.ParcelUuid;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.bluetooth.le.*;
 import android.widget.Toast;
-
-import java.util.ArrayList;
 
 /**
  * Advertise a URI Beacon with Android L
@@ -55,16 +56,14 @@ public class UriBeaconAdvertiserActivity extends Activity {
         AdvertiseData.Builder builder = new AdvertiseData.Builder();
         builder.setIncludeTxPowerLevel(false); // reserve advertising space for URI
 
-        byte[] beaconData = new byte[9];
+        byte[] beaconData = new byte[7];
         beaconData[0] = (byte) 0xD8; // URI Beacon ID 0xFED8
         beaconData[1] = (byte) 0xFE; // URI Beacon ID 0xFED8
-        beaconData[2] = 0x00; // flags
-        beaconData[3] = 0x20; // transmit power
-        beaconData[4] = 0x00; // http://www.
-        beaconData[5] = 0x65; // e
-        beaconData[6] = 0x66; // f
-        beaconData[7] = 0x66; // f
-        beaconData[8] = 0x08; // .org
+        beaconData[2] = 0x00; // http://www.
+        beaconData[3] = 0x65; // e
+        beaconData[4] = 0x66; // f
+        beaconData[5] = 0x66; // f
+        beaconData[6] = 0x08; // .org
 
         builder.addServiceData(URI_BEACON_UUID, beaconData);
 
