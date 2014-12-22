@@ -16,10 +16,6 @@
 
 package org.uribeacon.scan.compat;
 
-import org.uribeacon.scan.util.Clock;
-import org.uribeacon.scan.util.Logger;
-import org.uribeacon.scan.util.SystemClock;
-
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
@@ -27,6 +23,10 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
+
+import org.uribeacon.scan.util.Clock;
+import org.uribeacon.scan.util.Logger;
+import org.uribeacon.scan.util.SystemClock;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -431,7 +431,7 @@ class JbBluetoothLeScannerCompat extends BluetoothLeScannerCompat {
         alarmIntervalMillis = scanPeriod;
         // Specifies a repeating alarm at the scanPeriod, starting immediately.
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
-            clock.currentTimeMillis(), alarmIntervalMillis,
+            0, alarmIntervalMillis,
             alarmIntent);
         Logger.logInfo("Scan alarm setup complete @ " + System.currentTimeMillis());
       }
