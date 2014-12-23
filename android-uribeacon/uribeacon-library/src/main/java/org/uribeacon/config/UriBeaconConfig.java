@@ -76,8 +76,8 @@ public class UriBeaconConfig {
   public void connectUriBeacon(final BluetoothDevice device) {
     // Bind to LocalService
     Intent intent = new Intent(mContext, GattService.class);
-    mContext.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
     mDevice = device;
+    mContext.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
   }
 
 
