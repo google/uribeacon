@@ -51,8 +51,8 @@ echo "TX_POWER:  $URI_TX_POWER"
 echo "DEVICE:    $BT_DEVICE"
 echo ""
 
-# Convert the text Uri to bytes. Here we always add http:// code 03
-URI_BYTES="03 `echo -n $URI_TEXT | hexdump -v -e '/1 "%02X "'`"
+# Convert the text Uri to bytes. Here we always add http:// code 02
+URI_BYTES="02 `echo -n $URI_TEXT | hexdump -v -e '/1 "%02X "'`"
 
 # Additional advertising payload service data
 AD_FLAGS="02 01 1a"
