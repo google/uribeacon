@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">UriBeacon Validator</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="put_beacon_in_config_mode">Put UriBeacon in Config Mode</string>
+    <string name="title_activity_test">Test</string>
+
+</resources>
