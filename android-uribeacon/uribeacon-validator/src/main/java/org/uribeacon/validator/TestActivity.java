@@ -22,6 +22,8 @@ import android.bluetooth.le.ScanResult;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.widget.Toast;
 
 import org.uribeacon.validator.TestRunner.DataCallback;
 
@@ -33,6 +35,7 @@ public class TestActivity extends Activity {
   private Tests mTests;
   private DataCallback mDataCallback = new DataCallback() {
     ProgressDialog progress;
+
     @Override
     public void dataUpdated() {
       runOnUiThread(new Runnable() {
@@ -61,6 +64,23 @@ public class TestActivity extends Activity {
     @Override
     public void connectedToBeacon() {
       progress.dismiss();
+    }
+
+    @Override
+    public void testsCompleted(final boolean failed) {
+      runOnUiThread(new Runnable() {
+        @Override
+        public void run() {
+          int message;
+          Log.d(TAG, "TEST RESULT: " + failed);
+          if (failed) {
+            message = R.string.test_failed;
+          } else {
+            message = R.string.test_success;
+          }
+          Toast.makeText(TestActivity.this, message, Toast.LENGTH_SHORT).show();
+        }
+      });
     }
   };
   // Recycle view variables

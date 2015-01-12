@@ -54,17 +54,6 @@ public class UriBeaconTestHelper {
           gatt.discoverServices();
         } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
           if (!failed) {
-            // We have to wait before trying to connect
-            // Else the connection is not successful
-            try {
-              Log.d(TAG, "Sleeping");
-              // Only sleep if it's not the first action
-              if (mTestActions.peek().actionType != TestAction.LAST) {
-                TimeUnit.SECONDS.sleep(1);
-              }
-            } catch (InterruptedException e) {
-              e.printStackTrace();
-            }
             mTestActions.remove();
             dispatch(gatt);
           }
@@ -155,14 +144,21 @@ public class UriBeaconTestHelper {
     Log.d(TAG, "Run Called");
     started = true;
     mTestCallback.testStarted();
-    // Keep a copy of the steps to show in the UI
-    if (mTestActions.getFirst().actionType == TestAction.CONNECT) {
-      connectToGatt();
-    }
+    dispatch(null);
   }
 
-  private void connectToGatt() {
+  private void connectToGatt(BluetoothGatt gatt) {
     Log.d(TAG, "Connecting");
+    // Gatt == null is only passed on the first connection
+    if (gatt != null) {
+      try {
+        // We have to wait before trying to connect
+        // Else the connection is not successful
+        TimeUnit.SECONDS.sleep(1);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+    }
     mTestCallback.waitingForConfigMode();
     mResult.getDevice().connectGatt(mContext, false, mGattCallback);
   }
@@ -201,7 +197,7 @@ public class UriBeaconTestHelper {
       finished = true;
       mTestCallback.testCompleted();
     } else if (mTestActions.peek().actionType == TestAction.CONNECT) {
-      connectToGatt();
+      connectToGatt(gatt);
     } else if (mTestActions.peek().actionType == TestAction.ASSERT) {
       readFromGatt(gatt);
     } else if (mTestActions.peek().actionType == TestAction.WRITE) {
@@ -228,7 +224,7 @@ public class UriBeaconTestHelper {
     public void testStarted();
     public void testCompleted();
     public void waitingForConfigMode();
-    void connectedToBeacon();
+    public void connectedToBeacon();
   }
 
   public static class Builder {
@@ -279,6 +275,7 @@ public class UriBeaconTestHelper {
 
     public UriBeaconTestHelper build() {
       mTestActions.add(new TestAction(TestAction.LAST));
+      // Keep a copy of the steps to show in the UI
       LinkedList<TestAction> testSteps = new LinkedList<>(mTestActions);
       return new UriBeaconTestHelper(mName, mContext, mResult, mServiceUuid, mTestCallback,
           mTestActions, testSteps);

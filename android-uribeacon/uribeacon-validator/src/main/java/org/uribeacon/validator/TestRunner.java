@@ -28,6 +28,7 @@ public class TestRunner {
 
   private Tests mTests;
   private boolean mPause;
+  private boolean mFailed = false;
   private UriBeaconTestHelper mLatestTest;
   private ListIterator<UriBeaconTestHelper> mTestIterator;
   private DataCallback mDataCallback;
@@ -40,13 +41,20 @@ public class TestRunner {
     @Override
     public void testCompleted() {
       Log.d(TAG, "Test Completed");
-      mDataCallback.dataUpdated();
-      try {
-        TimeUnit.SECONDS.sleep(1);
-      } catch (InterruptedException e) {
-        e.printStackTrace();
+      Log.d(TAG, "TEST RESULT: " + mLatestTest.isFailed());
+      if (mLatestTest.isFailed()) {
+        mFailed = true;
+        Log.d(TAG, "TEST FAILED");
       }
-      start();
+      mDataCallback.dataUpdated();
+      if (!mPause) {
+        try {
+          TimeUnit.SECONDS.sleep(1);
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+        start();
+      }
     }
 
     @Override
@@ -73,7 +81,7 @@ public class TestRunner {
       mLatestTest = mTestIterator.next();
       mLatestTest.run();
     } else {
-      // done
+      mDataCallback.testsCompleted(mFailed);
     }
   }
 
@@ -83,7 +91,8 @@ public class TestRunner {
 
   public interface DataCallback {
     public void dataUpdated();
-    void waitingForConfigMode();
-    void connectedToBeacon();
+    public void waitingForConfigMode();
+    public void connectedToBeacon();
+    public void testsCompleted(boolean failed);
   }
 }
