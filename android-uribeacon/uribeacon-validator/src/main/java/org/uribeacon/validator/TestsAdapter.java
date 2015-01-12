@@ -1,6 +1,7 @@
 package org.uribeacon.validator;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,8 +62,10 @@ public class TestsAdapter extends RecyclerView.Adapter<TestsAdapter.ViewHolder>{
     if (test.isFailed()) {
       for (int i = 0; i < test.getTestSteps().size(); i++) {
         TestAction action = test.getTestSteps().get(i);
+        Log.d(TAG, "Type: " + action.actionType + " Number: " + i);
         if (action.failed) {
-          holder.mTestResult.setText("#" + i + 1 + ". " + action.reason);
+          Log.d(TAG, "Type: " + action.actionType + " Number: " + i);
+          holder.mTestResult.setText("#" + (i + 1) + ". " + action.reason);
           holder.mTestResult.setVisibility(View.VISIBLE);
           break;
         }
@@ -79,16 +82,6 @@ public class TestsAdapter extends RecyclerView.Adapter<TestsAdapter.ViewHolder>{
     if (test.isFinished()) {
       if (test.isFailed()) {
         holder.mImageView.setImageResource(R.drawable.failed);
-        int testIndex = 1;
-        for (TestAction action : test.getTestSteps()) {
-          if (action.failed) {
-            holder.mTestResult.setText("#" + testIndex + ". " + action.reason);
-            holder.mTestResult.setVisibility(View.VISIBLE);
-            break;
-          } else {
-            testIndex++;
-          }
-        }
       } else {
         holder.mImageView.setImageResource(R.drawable.success);
       }

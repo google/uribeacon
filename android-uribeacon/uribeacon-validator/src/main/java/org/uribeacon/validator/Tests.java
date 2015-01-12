@@ -45,7 +45,7 @@ public class Tests {
   private void initializeTests() {
     tests = new ArrayList<>(Arrays.asList(
         new UriBeaconTestHelper.Builder()
-            .name("Write & Read correct URL")
+            .name("Write & Read URL")
             .setUp(mContext, mResult, ProtocolV2.CONFIG_SERVICE_UUID, mTestCallback)
             .connect()
             .write(DATA, "test".getBytes(), BluetoothGatt.GATT_SUCCESS)
@@ -55,13 +55,11 @@ public class Tests {
             .disconnect()
             .build(),
         new UriBeaconTestHelper.Builder()
-            .name("Write & Read correct URL2")
+            .name("Test that's supposed to fail")
             .setUp(mContext, mResult, ProtocolV2.CONFIG_SERVICE_UUID, mTestCallback)
             .connect()
-            .write(DATA, "te".getBytes(), BluetoothGatt.GATT_SUCCESS)
+            .write(DATA, "01234567890123456789".getBytes(), BluetoothGatt.GATT_SUCCESS)
             .disconnect()
-            .connect()
-            .assertEquals(DATA, "t".getBytes(), BluetoothGatt.GATT_SUCCESS)
             .build()
     ));
   }

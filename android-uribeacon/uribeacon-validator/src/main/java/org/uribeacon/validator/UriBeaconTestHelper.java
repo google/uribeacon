@@ -91,10 +91,11 @@ public class UriBeaconTestHelper {
         BluetoothGattCharacteristic characteristic,
         int status) {
       super.onCharacteristicWrite(gatt, characteristic, status);
-      TestAction writeTest = mTestActions.removeFirst();
+      TestAction writeTest = mTestActions.peek();
       if (writeTest.expectedReturnCode != status) {
-        fail(gatt, "Incorrect status code");
+        fail(gatt, "Incorrect status code: " + status + ". Expected: " + writeTest.expectedReturnCode);
       } else {
+        mTestActions.remove();
         dispatch(gatt);
       }
     }

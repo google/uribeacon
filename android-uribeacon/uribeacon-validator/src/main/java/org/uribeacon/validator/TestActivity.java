@@ -22,6 +22,9 @@ public class TestActivity extends Activity {
       runOnUiThread(new Runnable() {
         @Override
         public void run() {
+          if (progress != null) {
+            progress.dismiss();
+          }
           mAdapter.notifyDataSetChanged();
         }
       });
