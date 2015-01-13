@@ -16,12 +16,12 @@
 
 package org.uribeacon.validator;
 
+import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothProfile;
-import android.bluetooth.le.ScanResult;
 import android.content.Context;
 import android.os.ParcelUuid;
 import android.util.Log;
@@ -41,7 +41,7 @@ public class TestHelper {
   private BluetoothGattService mService;
   private String mName;
   private Context mContext;
-  private ScanResult mResult;
+  private BluetoothDevice mBluetoothDevice;
   private UUID mServiceUuid;
   private BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
     @Override
@@ -112,12 +112,12 @@ public class TestHelper {
 
 
   private TestHelper(
-      String name, Context context, ScanResult result, UUID serviceUuid,
+      String name, Context context, BluetoothDevice bluetoothDevice, UUID serviceUuid,
       TestCallback testCallback, LinkedList<TestAction> testActions,
       LinkedList<TestAction> testSteps) {
     mName = name;
     mContext = context;
-    mResult = result;
+    mBluetoothDevice = bluetoothDevice;
     mServiceUuid = serviceUuid;
     mTestCallback = testCallback;
     mTestActions = testActions;
@@ -160,7 +160,7 @@ public class TestHelper {
       }
     }
     mTestCallback.waitingForConfigMode();
-    mResult.getDevice().connectGatt(mContext, false, mGattCallback);
+    mBluetoothDevice.connectGatt(mContext, false, mGattCallback);
   }
 
   private void readFromGatt(BluetoothGatt gatt) {
@@ -231,7 +231,7 @@ public class TestHelper {
 
     private String mName;
     private Context mContext;
-    private ScanResult mResult;
+    private BluetoothDevice mBluetoothDevice;
     private UUID mServiceUuid;
     private TestCallback mTestCallback;
     private LinkedList<TestAction> mTestActions = new LinkedList<>();
@@ -241,10 +241,10 @@ public class TestHelper {
       return this;
     }
 
-    public Builder setUp(Context context, ScanResult result, ParcelUuid serviceUuid,
+    public Builder setUp(Context context, BluetoothDevice bluetoothDevice, ParcelUuid serviceUuid,
         TestCallback testCallback) {
       mContext = context;
-      mResult = result;
+      mBluetoothDevice = bluetoothDevice;
       mServiceUuid = serviceUuid.getUuid();
       mTestCallback = testCallback;
       return this;
@@ -277,7 +277,7 @@ public class TestHelper {
       mTestActions.add(new TestAction(TestAction.LAST));
       // Keep a copy of the steps to show in the UI
       LinkedList<TestAction> testSteps = new LinkedList<>(mTestActions);
-      return new TestHelper(mName, mContext, mResult, mServiceUuid, mTestCallback,
+      return new TestHelper(mName, mContext, mBluetoothDevice, mServiceUuid, mTestCallback,
           mTestActions, testSteps);
     }
   }

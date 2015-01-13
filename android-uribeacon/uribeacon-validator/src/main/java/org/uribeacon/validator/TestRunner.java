@@ -16,6 +16,7 @@
 
 package org.uribeacon.validator;
 
+import android.bluetooth.BluetoothDevice;
 import android.bluetooth.le.ScanResult;
 import android.content.Context;
 import android.util.Log;
@@ -71,9 +72,9 @@ public class TestRunner {
     }
   };
 
-  public TestRunner(Context context, ScanResult result, DataCallback dataCallback) {
+  public TestRunner(Context context, BluetoothDevice bluetoothDevice, DataCallback dataCallback) {
     mDataCallback = dataCallback;
-    mUriBeaconTests = UriBeaconTests.initializeTests(context, result, mTestCallback);
+    mUriBeaconTests = UriBeaconTests.initializeTests(context, bluetoothDevice, mTestCallback);
     mTestIterator = mUriBeaconTests.listIterator();
   }
 

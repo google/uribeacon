@@ -18,6 +18,7 @@ package org.uribeacon.validator;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
@@ -45,7 +46,7 @@ public class StartActivity extends Activity {
     public void onScanResult(int callbackType, ScanResult result) {
       super.onScanResult(callbackType, result);
       Intent intent = new Intent(StartActivity.this, TestActivity.class);
-      intent.putExtra(ScanResult.class.getCanonicalName(), result);
+      intent.putExtra(BluetoothDevice.class.getCanonicalName(), result.getDevice());
       startActivity(intent);
     }
   };

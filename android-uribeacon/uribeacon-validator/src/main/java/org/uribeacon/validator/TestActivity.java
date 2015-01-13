@@ -18,7 +18,7 @@ package org.uribeacon.validator;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.bluetooth.le.ScanResult;
+import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -91,8 +91,8 @@ public class TestActivity extends Activity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_test);
-    ScanResult result = getIntent().getExtras().getParcelable(ScanResult.class.getCanonicalName());
-    mTestRunner = new TestRunner(this, result, mDataCallback);
+    BluetoothDevice bluetoothDevice = getIntent().getExtras().getParcelable(BluetoothDevice.class.getCanonicalName());
+    mTestRunner = new TestRunner(this, bluetoothDevice, mDataCallback);
     mUriBeaconTests = mTestRunner.getUriBeaconTests();
     mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView_tests);
     mLayoutManager = new LinearLayoutManager(this);

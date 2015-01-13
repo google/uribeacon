@@ -16,11 +16,12 @@
 
 package org.uribeacon.validator;
 
+import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
-import android.bluetooth.le.ScanResult;
 import android.content.Context;
 
 import org.uribeacon.config.ProtocolV2;
+import org.uribeacon.validator.TestHelper.Builder;
 import org.uribeacon.validator.TestHelper.TestCallback;
 
 import java.util.ArrayList;
@@ -30,11 +31,11 @@ public class UriBeaconTests {
 
   private static final String TAG = UriBeaconTests.class.getCanonicalName();
 
-  public static ArrayList<TestHelper> initializeTests(Context context, ScanResult result, TestCallback testCallback) {
+  public static ArrayList<TestHelper> initializeTests(Context context, BluetoothDevice bluetoothDevice, TestCallback testCallback) {
     return new ArrayList<>(Arrays.asList(
-        new TestHelper.Builder()
+        new Builder()
             .name("Write & Read URL")
-            .setUp(context, result, ProtocolV2.CONFIG_SERVICE_UUID, testCallback)
+            .setUp(context, bluetoothDevice, ProtocolV2.CONFIG_SERVICE_UUID, testCallback)
             .connect()
             .write(ProtocolV2.DATA, "test".getBytes(), BluetoothGatt.GATT_SUCCESS)
             .disconnect()
@@ -42,9 +43,9 @@ public class UriBeaconTests {
             .assertEquals(ProtocolV2.DATA, "test".getBytes(), BluetoothGatt.GATT_SUCCESS)
             .disconnect()
             .build(),
-        new TestHelper.Builder()
+        new Builder()
             .name("Test that's supposed to fail")
-            .setUp(context, result, ProtocolV2.CONFIG_SERVICE_UUID, testCallback)
+            .setUp(context, bluetoothDevice, ProtocolV2.CONFIG_SERVICE_UUID, testCallback)
             .connect()
             .write(ProtocolV2.DATA, "01234567890123456789".getBytes(), BluetoothGatt.GATT_SUCCESS)
             .disconnect()
