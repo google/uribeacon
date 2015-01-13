@@ -154,19 +154,6 @@ public class TestHelper {
       }
     }
   };
-
-  private byte getFlags(ScanResult result) {
-    byte[] serviceData = result.getScanRecord().getServiceData(UriBeacon.URI_SERVICE_UUID);
-    return serviceData[0];
-  }
-  private byte getTxPowerLevel(ScanResult result) {
-    byte[] serviceData = result.getScanRecord().getServiceData(UriBeacon.URI_SERVICE_UUID);
-    return serviceData[1];
-  }
-  private byte[] getUri(ScanResult result) {
-    byte[] serviceData = result.getScanRecord().getServiceData(UriBeacon.URI_SERVICE_UUID);
-    return Arrays.copyOfRange(serviceData, 2, serviceData.length);
-  }
   private TestCallback mTestCallback;
   private LinkedList<TestAction> mTestActions;
   private LinkedList<TestAction> mTestSteps;
@@ -292,13 +279,24 @@ public class TestHelper {
     Log.d(TAG, "Started scanning #2");
   }
 
-
   private void stopSearchingForBeacons() {
     getLeScanner().stopScan(mScanCallback);
   }
 
   private BluetoothLeScanner getLeScanner() {
     return mBluetoothAdapter.getBluetoothLeScanner();
+  }
+  private byte getFlags(ScanResult result) {
+    byte[] serviceData = result.getScanRecord().getServiceData(UriBeacon.URI_SERVICE_UUID);
+    return serviceData[0];
+  }
+  private byte getTxPowerLevel(ScanResult result) {
+    byte[] serviceData = result.getScanRecord().getServiceData(UriBeacon.URI_SERVICE_UUID);
+    return serviceData[1];
+  }
+  private byte[] getUri(ScanResult result) {
+    byte[] serviceData = result.getScanRecord().getServiceData(UriBeacon.URI_SERVICE_UUID);
+    return Arrays.copyOfRange(serviceData, 2, serviceData.length);
   }
   private void fail(BluetoothGatt gatt, String reason) {
     failed = true;
