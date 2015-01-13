@@ -26,12 +26,14 @@ import android.widget.Toast;
 
 import org.uribeacon.validator.TestRunner.DataCallback;
 
+import java.util.ArrayList;
+
 
 public class TestActivity extends Activity {
   private static final String TAG = TestActivity.class.getCanonicalName();
 
   private TestRunner mTestRunner;
-  private UriBeaconTests mUriBeaconTests;
+  private ArrayList<TestHelper> mUriBeaconTests;
   private DataCallback mDataCallback = new DataCallback() {
     ProgressDialog progress;
 

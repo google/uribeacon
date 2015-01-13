@@ -48,8 +48,8 @@ public class TestsAdapter extends RecyclerView.Adapter<TestsAdapter.ViewHolder>{
   }
 
   // Provide a suitable constructor (depends on the kind of dataset)
-  public TestsAdapter(UriBeaconTests uriBeaconTests){
-    mDataset = uriBeaconTests.tests;
+  public TestsAdapter(ArrayList<TestHelper> uriBeaconTests){
+    mDataset = uriBeaconTests;
   }
   // Create new views (invoked by the layout manager)
   @Override

@@ -22,6 +22,7 @@ import android.util.Log;
 
 import org.uribeacon.validator.TestHelper.TestCallback;
 
+import java.util.ArrayList;
 import java.util.ListIterator;
 import java.util.concurrent.TimeUnit;
 
@@ -30,7 +31,7 @@ public class TestRunner {
 
   private boolean mPause;
   private boolean mFailed = false;
-  private UriBeaconTests mUriBeaconTests;
+  private ArrayList<TestHelper> mUriBeaconTests;
   private TestHelper mLatestTest;
   private ListIterator<TestHelper> mTestIterator;
   private DataCallback mDataCallback;
@@ -72,8 +73,8 @@ public class TestRunner {
 
   public TestRunner(Context context, ScanResult result, DataCallback dataCallback) {
     mDataCallback = dataCallback;
-    mUriBeaconTests = new UriBeaconTests(context, result, mTestCallback);
-    mTestIterator = mUriBeaconTests.iterator();
+    mUriBeaconTests = UriBeaconTests.initializeTests(context, result, mTestCallback);
+    mTestIterator = mUriBeaconTests.listIterator();
   }
 
   public void start() {
@@ -87,7 +88,7 @@ public class TestRunner {
     }
   }
 
-  public UriBeaconTests getUriBeaconTests() {
+  public ArrayList<TestHelper> getUriBeaconTests() {
     return mUriBeaconTests;
   }
 
