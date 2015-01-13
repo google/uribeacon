@@ -27,7 +27,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 public class TestsAdapter extends RecyclerView.Adapter<TestsAdapter.ViewHolder>{
-  private ArrayList<UriBeaconTestHelper> mDataset;
+  private ArrayList<TestHelper> mDataset;
   private static final String TAG = TestsAdapter.class.getCanonicalName();
   // Provide a reference to the views for each data item
   // Complex data items may need more than one view per item, and
@@ -48,8 +48,8 @@ public class TestsAdapter extends RecyclerView.Adapter<TestsAdapter.ViewHolder>{
   }
 
   // Provide a suitable constructor (depends on the kind of dataset)
-  public TestsAdapter(Tests tests){
-    mDataset = tests.tests;
+  public TestsAdapter(UriBeaconTests uriBeaconTests){
+    mDataset = uriBeaconTests.tests;
   }
   // Create new views (invoked by the layout manager)
   @Override
@@ -68,13 +68,13 @@ public class TestsAdapter extends RecyclerView.Adapter<TestsAdapter.ViewHolder>{
   public void onBindViewHolder(ViewHolder holder, int position) {
     // - get element from your dataset at this position
     // - replace the contents of the view with that element
-    UriBeaconTestHelper test = mDataset.get(position);
+    TestHelper test = mDataset.get(position);
     setIcon(holder, test);
     setErrorMessage(holder, test);
     holder.mTestName.setText(test.getName());
   }
 
-  private void setErrorMessage(ViewHolder holder, UriBeaconTestHelper test) {
+  private void setErrorMessage(ViewHolder holder, TestHelper test) {
     if (test.isFailed()) {
       for (int i = 0; i < test.getTestSteps().size(); i++) {
         TestAction action = test.getTestSteps().get(i);
@@ -89,7 +89,7 @@ public class TestsAdapter extends RecyclerView.Adapter<TestsAdapter.ViewHolder>{
     }
   }
 
-  private void setIcon(ViewHolder holder, UriBeaconTestHelper test) {
+  private void setIcon(ViewHolder holder, TestHelper test) {
     if (test.isStarted()) {
       holder.mImageView.setImageResource(R.drawable.executing);
     } else {

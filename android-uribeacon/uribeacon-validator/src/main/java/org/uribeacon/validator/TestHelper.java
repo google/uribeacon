@@ -31,9 +31,9 @@ import java.util.LinkedList;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-public class UriBeaconTestHelper {
+public class TestHelper {
 
-  private static final String TAG = UriBeaconTestHelper.class.getCanonicalName();
+  private static final String TAG = TestHelper.class.getCanonicalName();
 
   private boolean started = false;
   private boolean failed = false;
@@ -111,7 +111,7 @@ public class UriBeaconTestHelper {
   private LinkedList<TestAction> mTestSteps;
 
 
-  private UriBeaconTestHelper(
+  private TestHelper(
       String name, Context context, ScanResult result, UUID serviceUuid,
       TestCallback testCallback, LinkedList<TestAction> testActions,
       LinkedList<TestAction> testSteps) {
@@ -273,11 +273,11 @@ public class UriBeaconTestHelper {
       return this;
     }
 
-    public UriBeaconTestHelper build() {
+    public TestHelper build() {
       mTestActions.add(new TestAction(TestAction.LAST));
       // Keep a copy of the steps to show in the UI
       LinkedList<TestAction> testSteps = new LinkedList<>(mTestActions);
-      return new UriBeaconTestHelper(mName, mContext, mResult, mServiceUuid, mTestCallback,
+      return new TestHelper(mName, mContext, mResult, mServiceUuid, mTestCallback,
           mTestActions, testSteps);
     }
   }

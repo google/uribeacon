@@ -22,7 +22,6 @@ import android.bluetooth.le.ScanResult;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.widget.Toast;
 
 import org.uribeacon.validator.TestRunner.DataCallback;
@@ -32,7 +31,7 @@ public class TestActivity extends Activity {
   private static final String TAG = TestActivity.class.getCanonicalName();
 
   private TestRunner mTestRunner;
-  private Tests mTests;
+  private UriBeaconTests mUriBeaconTests;
   private DataCallback mDataCallback = new DataCallback() {
     ProgressDialog progress;
 
@@ -72,7 +71,6 @@ public class TestActivity extends Activity {
         @Override
         public void run() {
           int message;
-          Log.d(TAG, "TEST RESULT: " + failed);
           if (failed) {
             message = R.string.test_failed;
           } else {
@@ -92,12 +90,12 @@ public class TestActivity extends Activity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_test);
     ScanResult result = getIntent().getExtras().getParcelable(ScanResult.class.getCanonicalName());
-    mTests = new Tests(this, result);
-    mTestRunner = new TestRunner(mTests, mDataCallback);
+    mTestRunner = new TestRunner(this, result, mDataCallback);
+    mUriBeaconTests = mTestRunner.getUriBeaconTests();
     mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView_tests);
     mLayoutManager = new LinearLayoutManager(this);
     mRecyclerView.setLayoutManager(mLayoutManager);
-    mAdapter = new TestsAdapter(mTests);
+    mAdapter = new TestsAdapter(mUriBeaconTests);
     mRecyclerView.setAdapter(mAdapter);
   }
 

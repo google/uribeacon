@@ -16,9 +16,11 @@
 
 package org.uribeacon.validator;
 
+import android.bluetooth.le.ScanResult;
+import android.content.Context;
 import android.util.Log;
 
-import org.uribeacon.validator.UriBeaconTestHelper.TestCallback;
+import org.uribeacon.validator.TestHelper.TestCallback;
 
 import java.util.ListIterator;
 import java.util.concurrent.TimeUnit;
@@ -26,11 +28,11 @@ import java.util.concurrent.TimeUnit;
 public class TestRunner {
   private static final String TAG = TestRunner.class.getCanonicalName();
 
-  private Tests mTests;
   private boolean mPause;
   private boolean mFailed = false;
-  private UriBeaconTestHelper mLatestTest;
-  private ListIterator<UriBeaconTestHelper> mTestIterator;
+  private UriBeaconTests mUriBeaconTests;
+  private TestHelper mLatestTest;
+  private ListIterator<TestHelper> mTestIterator;
   private DataCallback mDataCallback;
   private TestCallback mTestCallback = new TestCallback() {
     @Override
@@ -67,11 +69,11 @@ public class TestRunner {
       mDataCallback.connectedToBeacon();
     }
   };
-  public TestRunner(Tests tests, DataCallback dataCallback) {
-    mTests = tests;
+
+  public TestRunner(Context context, ScanResult result, DataCallback dataCallback) {
     mDataCallback = dataCallback;
-    tests.setCallback(mTestCallback);
-    mTestIterator = tests.iterator();
+    mUriBeaconTests = new UriBeaconTests(context, result, mTestCallback);
+    mTestIterator = mUriBeaconTests.iterator();
   }
 
   public void start() {
@@ -83,6 +85,10 @@ public class TestRunner {
     } else {
       mDataCallback.testsCompleted(mFailed);
     }
+  }
+
+  public UriBeaconTests getUriBeaconTests() {
+    return mUriBeaconTests;
   }
 
   public void pause() {
