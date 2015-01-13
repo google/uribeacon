@@ -47,8 +47,7 @@ public class TestHelper {
     @Override
     public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
       super.onConnectionStateChange(gatt, status, newState);
-      Log.d(TAG, "Status: " + status);
-      Log.d(TAG, "New State: " + newState);
+      Log.d(TAG, "Status: " + status + "; New State: " + newState);
       if (status == BluetoothGatt.GATT_SUCCESS) {
         if (newState == BluetoothProfile.STATE_CONNECTED) {
           gatt.discoverServices();

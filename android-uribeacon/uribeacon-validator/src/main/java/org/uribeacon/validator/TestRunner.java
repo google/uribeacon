@@ -17,7 +17,6 @@
 package org.uribeacon.validator;
 
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.le.ScanResult;
 import android.content.Context;
 import android.util.Log;
 
@@ -44,11 +43,9 @@ public class TestRunner {
 
     @Override
     public void testCompleted() {
-      Log.d(TAG, "Test Completed");
-      Log.d(TAG, "TEST RESULT: " + mLatestTest.isFailed());
+      Log.d(TAG, "Test Completed. Failed: " + mLatestTest.isFailed());
       if (mLatestTest.isFailed()) {
         mFailed = true;
-        Log.d(TAG, "TEST FAILED");
       }
       mDataCallback.dataUpdated();
       if (!mPause) {
