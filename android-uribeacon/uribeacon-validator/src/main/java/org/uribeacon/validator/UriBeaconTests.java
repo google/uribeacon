@@ -17,7 +17,6 @@
 package org.uribeacon.validator;
 
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothGatt;
 import android.content.Context;
 
 import org.uribeacon.config.ProtocolV2;
@@ -34,21 +33,48 @@ public class UriBeaconTests {
   public static ArrayList<TestHelper> initializeTests(Context context, BluetoothDevice bluetoothDevice, TestCallback testCallback) {
     return new ArrayList<>(Arrays.asList(
         new Builder()
-            .name("Write & Read URL")
+            .name("Set flags to 0")
             .setUp(context, bluetoothDevice, ProtocolV2.CONFIG_SERVICE_UUID, testCallback)
             .connect()
-            .write(ProtocolV2.DATA, "test".getBytes(), BluetoothGatt.GATT_SUCCESS)
+            .write(ProtocolV2.FLAGS, new byte[]{0}, 0)
             .disconnect()
             .connect()
-            .assertEquals(ProtocolV2.DATA, "test".getBytes(), BluetoothGatt.GATT_SUCCESS)
+            .assertEquals(ProtocolV2.FLAGS, new byte[]{0}, 0)
             .disconnect()
+            .assertAdvFlags((byte) 0)
             .build(),
         new Builder()
-            .name("Test that's supposed to fail")
+            .name("Set flags to 10")
             .setUp(context, bluetoothDevice, ProtocolV2.CONFIG_SERVICE_UUID, testCallback)
             .connect()
-            .write(ProtocolV2.DATA, "01234567890123456789".getBytes(), BluetoothGatt.GATT_SUCCESS)
+            .write(ProtocolV2.FLAGS, new byte[]{10}, 0)
             .disconnect()
+            .connect()
+            .assertEquals(ProtocolV2.FLAGS, new byte[]{10}, 0)
+            .disconnect()
+            .assertAdvFlags((byte) 10)
+            .build(),
+        new Builder()
+            .name("Test URI writes correct value")
+            .setUp(context, bluetoothDevice, ProtocolV2.CONFIG_SERVICE_UUID, testCallback)
+            .connect()
+            .write(ProtocolV2.DATA, new byte[]{0, 1, 2, 3}, 0)
+            .disconnect()
+            .connect()
+            .assertEquals(ProtocolV2.DATA, new byte[]{0, 1, 2, 3}, 0)
+            .disconnect()
+            .assertAdvUri(new byte[]{0, 1, 2, 3})
+            .build(),
+        new Builder()
+            .name("Test set tx power")
+            .setUp(context, bluetoothDevice, ProtocolV2.CONFIG_SERVICE_UUID, testCallback)
+            .connect()
+            .write(ProtocolV2.POWER_LEVELS, new byte[]{2, 2, 2, 2}, 0)
+            .disconnect()
+            .connect()
+            .assertEquals(ProtocolV2.POWER_LEVELS, new byte[]{2, 2, 2, 2}, 0)
+            .disconnect()
+            .assertAdvTxPower((byte) 2)
             .build()
     ));
   }

@@ -23,7 +23,10 @@ public class TestAction {
   public final static int WRITE = 1;
   public final static int ASSERT = 2;
   public final static int DISCONNECT = 3;
-  public final static int LAST = 4;
+  public final static int ADV_TX_POWER = 4;
+  public final static int ADV_FLAGS = 5;
+  public final static int ADV_URI = 6;
+  public final static int LAST = 7;
 
 
   public int actionType;
@@ -41,6 +44,11 @@ public class TestAction {
     this.actionType = actionType;
     this.characteristicUuid = characteristicUuid;
     this.expectedReturnCode = expectedReturnCode;
+    this.transmittedValue = transmittedValue;
+  }
+
+  public TestAction(int actionType, byte[] transmittedValue) {
+    this.actionType = actionType;
     this.transmittedValue = transmittedValue;
   }
 }
