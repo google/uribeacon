@@ -88,7 +88,7 @@ public class TestHelper {
       super.onCharacteristicRead(gatt, characteristic, status);
       TestAction readTest = mTestActions.peek();
       if (readTest.expectedReturnCode != status) {
-        fail(gatt, "Incorrect status code");
+        fail(gatt, "Incorrect status code: " + status + ". Expected: " + readTest.expectedReturnCode);
       } else if (!Arrays.equals(readTest.transmittedValue, characteristic.getValue())) {
         if (readTest.transmittedValue.length != characteristic.getValue().length) {
           fail(gatt, "Wrong length. Expected: " + new String(readTest.transmittedValue) + ". But received: " + new String(characteristic.getValue()));
@@ -225,6 +225,7 @@ public class TestHelper {
   private void writeToGatt(BluetoothGatt gatt) {
     Log.d(TAG, "Writting");
     TestAction writeTest = mTestActions.peek();
+    Log.d(TAG, "Value: " + Arrays.toString(writeTest.transmittedValue));
     BluetoothGattCharacteristic characteristic = mService
         .getCharacteristic(writeTest.characteristicUuid);
     // WriteType is WRITE_TYPE_NO_RESPONSE even though the one that requests a response
@@ -382,6 +383,19 @@ public class TestHelper {
       return this;
     }
 
+    public Builder insertActions(Builder builder) {
+      for (TestAction action : builder.mTestActions) {
+        mTestActions.add(action);
+      }
+      return this;
+    }
+
+    public Builder writeAndRead(UUID characteristicUuid, byte[] value) {
+      mTestActions.add(new TestAction(TestAction.WRITE, characteristicUuid, BluetoothGatt.GATT_SUCCESS, value));
+      mTestActions.add(new TestAction(TestAction.ASSERT, characteristicUuid, BluetoothGatt.GATT_SUCCESS, value));
+      return this;
+    }
+    
     public TestHelper build() {
       mTestActions.add(new TestAction(TestAction.LAST));
       // Keep a copy of the steps to show in the UI
