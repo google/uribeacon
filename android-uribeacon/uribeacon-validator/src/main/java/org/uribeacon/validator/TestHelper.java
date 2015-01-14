@@ -390,18 +390,18 @@ public class TestHelper {
       return this;
     }
 
+    public Builder writeAndRead(UUID characteristicUuid, byte[] value) {
+      mTestActions.add(new TestAction(TestAction.WRITE, characteristicUuid, BluetoothGatt.GATT_SUCCESS, value));
+      mTestActions.add(new TestAction(TestAction.ASSERT, characteristicUuid, BluetoothGatt.GATT_SUCCESS, value));
+      return this;
+    }
+    
     public TestHelper build() {
       mTestActions.add(new TestAction(TestAction.LAST));
       // Keep a copy of the steps to show in the UI
       LinkedList<TestAction> testSteps = new LinkedList<>(mTestActions);
       return new TestHelper(mName, mContext, mBluetoothDevice, mServiceUuid, mTestCallback,
           mTestActions, testSteps);
-    }
-
-    public Builder writeAndRead(UUID characteristicUuid, byte[] value) {
-      mTestActions.add(new TestAction(TestAction.WRITE, characteristicUuid, BluetoothGatt.GATT_SUCCESS, value));
-      mTestActions.add(new TestAction(TestAction.ASSERT, characteristicUuid, BluetoothGatt.GATT_SUCCESS, value));
-      return this;
     }
   }
 }
