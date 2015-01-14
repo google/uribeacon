@@ -17,6 +17,7 @@
 package org.uribeacon.validator;
 
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothGatt;
 import android.content.Context;
 
 import org.uribeacon.config.ProtocolV2;
@@ -24,58 +25,45 @@ import org.uribeacon.validator.TestHelper.Builder;
 import org.uribeacon.validator.TestHelper.TestCallback;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class UriBeaconTests {
 
   private static final String TAG = UriBeaconTests.class.getCanonicalName();
-
   public static ArrayList<TestHelper> initializeTests(Context context, BluetoothDevice bluetoothDevice, TestCallback testCallback) {
-    return new ArrayList<>(Arrays.asList(
+
+    ArrayList<TestHelper> tests = new ArrayList<>();
+    tests.add(
         new Builder()
-            .name("Set flags to 0")
+            .name("Write Short Key")
             .setUp(context, bluetoothDevice, ProtocolV2.CONFIG_SERVICE_UUID, testCallback)
             .connect()
-            .write(ProtocolV2.FLAGS, new byte[]{0}, 0)
+            .write(ProtocolV2.LOCK, TestData.SHORT_LOCK_KEY, BluetoothGatt.GATT_INVALID_ATTRIBUTE_LENGTH)
+            .insertActions(lockUnlockCheck())
+            .insertActions(writeAndReadAllValueCharacteristics())
             .disconnect()
             .connect()
-            .assertEquals(ProtocolV2.FLAGS, new byte[]{0}, 0)
+            .insertActions(writeAndReadAllValueCharacteristics())
             .disconnect()
-            .assertAdvFlags((byte) 0)
-            .build(),
-        new Builder()
-            .name("Set flags to 10")
-            .setUp(context, bluetoothDevice, ProtocolV2.CONFIG_SERVICE_UUID, testCallback)
-            .connect()
-            .write(ProtocolV2.FLAGS, new byte[]{10}, 0)
-            .disconnect()
-            .connect()
-            .assertEquals(ProtocolV2.FLAGS, new byte[]{10}, 0)
-            .disconnect()
-            .assertAdvFlags((byte) 10)
-            .build(),
-        new Builder()
-            .name("Test URI writes correct value")
-            .setUp(context, bluetoothDevice, ProtocolV2.CONFIG_SERVICE_UUID, testCallback)
-            .connect()
-            .write(ProtocolV2.DATA, new byte[]{0, 1, 2, 3}, 0)
-            .disconnect()
-            .connect()
-            .assertEquals(ProtocolV2.DATA, new byte[]{0, 1, 2, 3}, 0)
-            .disconnect()
-            .assertAdvUri(new byte[]{0, 1, 2, 3})
-            .build(),
-        new Builder()
-            .name("Test set tx power")
-            .setUp(context, bluetoothDevice, ProtocolV2.CONFIG_SERVICE_UUID, testCallback)
-            .connect()
-            .write(ProtocolV2.POWER_LEVELS, new byte[]{2, 2, 2, 2}, 0)
-            .disconnect()
-            .connect()
-            .assertEquals(ProtocolV2.POWER_LEVELS, new byte[]{2, 2, 2, 2}, 0)
-            .disconnect()
-            .assertAdvTxPower((byte) 2)
             .build()
-    ));
+    );
+    return tests;
+  }
+
+  private static Builder writeAndReadAllValueCharacteristics() {
+    return new Builder()
+        .writeAndRead(ProtocolV2.DATA, TestData.BASIC_GENERAL_DATA)
+        .writeAndRead(ProtocolV2.FLAGS, TestData.BASIC_GENERAL_DATA)
+        .writeAndRead(ProtocolV2.POWER_LEVELS, TestData.BASIC_TX_POWER)
+        .writeAndRead(ProtocolV2.POWER_MODE, TestData.BASIC_GENERAL_DATA)
+        .writeAndRead(ProtocolV2.PERIOD, TestData.BASIC_PERIOD);
+  }
+
+  private static Builder lockUnlockCheck() {
+    return new Builder()
+        .assertEquals(ProtocolV2.LOCK_STATE, TestData.UNLOCKED_STATE, BluetoothGatt.GATT_SUCCESS)
+        .write(ProtocolV2.LOCK, TestData.BASIC_LOCK_KEY, BluetoothGatt.GATT_SUCCESS)
+        .assertEquals(ProtocolV2.LOCK_STATE, TestData.LOCKED_STATE, BluetoothGatt.GATT_SUCCESS)
+        .write(ProtocolV2.UNLOCK, TestData.BASIC_LOCK_KEY, BluetoothGatt.GATT_SUCCESS)
+        .assertEquals(ProtocolV2.LOCK_STATE, TestData.UNLOCKED_STATE, BluetoothGatt.GATT_SUCCESS);
   }
 }
