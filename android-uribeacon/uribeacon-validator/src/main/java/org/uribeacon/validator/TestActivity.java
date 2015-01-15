@@ -58,6 +58,8 @@ public class TestActivity extends Activity {
           progress = new ProgressDialog(TestActivity.this);
           progress.setMessage("Press Button on UriBeacon");
           progress.show();
+          progress.setCancelable(false);
+          progress.setCanceledOnTouchOutside(false);
         }
       });
     }
