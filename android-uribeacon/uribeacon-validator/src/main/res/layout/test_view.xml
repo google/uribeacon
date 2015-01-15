@@ -18,9 +18,11 @@
               android:layout_height="72dp"
               android:background="?android:attr/selectableItemBackground">
     <RelativeLayout android:layout_width="56dp" android:layout_height="fill_parent">
+        <!-- if executing_animated is not set as src then the animation only works for the first icon (╯°□°) ╯︵ ┻━┻ -->
         <ImageView
                 android:id="@+id/imageView_testIcon"
                 android:layout_width="wrap_content"
+                android:src="@drawable/executing_animated"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_alignParentStart="true"/>

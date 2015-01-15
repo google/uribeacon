@@ -18,6 +18,8 @@ package org.uribeacon.validator;
 
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import org.uribeacon.validator.TestHelper.TestCallback;
@@ -35,6 +37,7 @@ public class TestRunner {
   private TestHelper mLatestTest;
   private ListIterator<TestHelper> mTestIterator;
   private DataCallback mDataCallback;
+  private Handler mHandler;
   private TestCallback mTestCallback = new TestCallback() {
     @Override
     public void testStarted() {
@@ -49,12 +52,12 @@ public class TestRunner {
       }
       mDataCallback.dataUpdated();
       if (!mPause) {
-        try {
-          TimeUnit.SECONDS.sleep(1);
-        } catch (InterruptedException e) {
-          e.printStackTrace();
-        }
-        start();
+        mHandler.postDelayed(new Runnable() {
+          @Override
+          public void run() {
+            start();
+          }
+        }, TimeUnit.SECONDS.toMillis(1));
       }
     }
 
@@ -73,6 +76,7 @@ public class TestRunner {
     mDataCallback = dataCallback;
     mUriBeaconTests = UriBeaconTests.initializeTests(context, bluetoothDevice, mTestCallback);
     mTestIterator = mUriBeaconTests.listIterator();
+    mHandler = new Handler(Looper.myLooper());
   }
 
   public void start() {
