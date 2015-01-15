@@ -57,14 +57,31 @@ public class UriBeaconTests {
   ///////////////////
   private static ArrayList<TestHelper> basicTests(Context context, BluetoothDevice bluetoothDevice,
       TestCallback testCallback) {
+
     ArrayList<TestHelper> basicTests = new ArrayList<>();
+    basicTests.add(
+        new Builder()
+        .name("Write and read mandatory Characteristics")
+        .setUp(context, bluetoothDevice, ProtocolV2.CONFIG_SERVICE_UUID, testCallback)
+        .connect()
+        .insertActions(writeAndReadMandatoryCharacteristics())
+        .disconnect()
+        .build()
+    );
     basicTests.add(
         new Builder()
             .name("Has valid Advertisement Packet")
             .setUp(context, bluetoothDevice, ProtocolV2.CONFIG_SERVICE_UUID, testCallback)
-            .connect()
-            .disconnect()
             .checkAdvPacket()
+            .build()
+    );
+    basicTests.add(
+        new Builder()
+            .name("Values that are written are advertised")
+            .setUp(context, bluetoothDevice, ProtocolV2.CONFIG_SERVICE_UUID, testCallback)
+            .assertAdvFlags(TestData.BASIC_GENERAL_DATA[0])
+            .assertAdvTxPower(TestData.BASIC_TX_POWER[1])
+            .assertAdvUri(TestData.BASIC_GENERAL_DATA)
             .build()
     );
     return basicTests;
@@ -262,11 +279,21 @@ public class UriBeaconTests {
 
   private static Builder writeAllCharacteristics(int expectedReturnCode) {
     return new Builder()
+        .write(ProtocolV2.RESET, TestData.BASIC_GENERAL_DATA, expectedReturnCode)
         .write(ProtocolV2.DATA, TestData.BASIC_GENERAL_DATA, expectedReturnCode)
         .write(ProtocolV2.FLAGS, TestData.BASIC_GENERAL_DATA, expectedReturnCode)
         .write(ProtocolV2.POWER_LEVELS, TestData.BASIC_TX_POWER, expectedReturnCode)
         .write(ProtocolV2.POWER_MODE, TestData.BASIC_GENERAL_DATA, expectedReturnCode)
-        .write(ProtocolV2.PERIOD, TestData.BASIC_PERIOD, expectedReturnCode)
-        .write(ProtocolV2.RESET, TestData.BASIC_GENERAL_DATA, expectedReturnCode);
+        .write(ProtocolV2.PERIOD, TestData.BASIC_PERIOD, expectedReturnCode);
+  }
+  private static Builder writeAndReadMandatoryCharacteristics() {
+    return new Builder()
+        .write(ProtocolV2.RESET, TestData.BASIC_GENERAL_DATA, BluetoothGatt.GATT_SUCCESS)
+        .assertEquals(ProtocolV2.LOCK_STATE, TestData.UNLOCKED_STATE, BluetoothGatt.GATT_SUCCESS)
+        .writeAndRead(ProtocolV2.DATA, TestData.BASIC_GENERAL_DATA)
+        .writeAndRead(ProtocolV2.FLAGS, TestData.BASIC_GENERAL_DATA)
+        .writeAndRead(ProtocolV2.POWER_LEVELS, TestData.BASIC_TX_POWER)
+        .writeAndRead(ProtocolV2.POWER_MODE, TestData.BASIC_GENERAL_DATA)
+        .writeAndRead(ProtocolV2.PERIOD, TestData.BASIC_PERIOD);
   }
 }
