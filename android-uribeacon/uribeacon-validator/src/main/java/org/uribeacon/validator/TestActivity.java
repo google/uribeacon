@@ -32,6 +32,7 @@ import java.util.ArrayList;
 public class TestActivity extends Activity {
   private static final String TAG = TestActivity.class.getCanonicalName();
 
+  public static final String OPTIONAL_IMPLEMENTED = "optional.implemented";
   private TestRunner mTestRunner;
   private ArrayList<TestHelper> mUriBeaconTests;
   private DataCallback mDataCallback = new DataCallback() {
@@ -92,7 +93,8 @@ public class TestActivity extends Activity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_test);
     BluetoothDevice bluetoothDevice = getIntent().getExtras().getParcelable(BluetoothDevice.class.getCanonicalName());
-    mTestRunner = new TestRunner(this, bluetoothDevice, mDataCallback);
+    boolean optionalImplemented = getIntent().getExtras().getBoolean(OPTIONAL_IMPLEMENTED);
+    mTestRunner = new TestRunner(this, bluetoothDevice, mDataCallback, optionalImplemented);
     mUriBeaconTests = mTestRunner.getUriBeaconTests();
     mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView_tests);
     mLayoutManager = new LinearLayoutManager(this);

@@ -72,9 +72,9 @@ public class TestRunner {
     }
   };
 
-  public TestRunner(Context context, BluetoothDevice bluetoothDevice, DataCallback dataCallback) {
+  public TestRunner(Context context, BluetoothDevice bluetoothDevice, DataCallback dataCallback, boolean optionalImplemented) {
     mDataCallback = dataCallback;
-    mUriBeaconTests = UriBeaconTests.initializeTests(context, bluetoothDevice, mTestCallback);
+    mUriBeaconTests = UriBeaconTests.initializeTests(context, bluetoothDevice, mTestCallback, optionalImplemented);
     mTestIterator = mUriBeaconTests.listIterator();
     mHandler = new Handler(Looper.myLooper());
   }

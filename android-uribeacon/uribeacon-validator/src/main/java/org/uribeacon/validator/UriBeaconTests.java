@@ -30,16 +30,18 @@ import java.util.ArrayList;
 public class UriBeaconTests {
 
   private static final String TAG = UriBeaconTests.class.getCanonicalName();
-  public static ArrayList<TestHelper> initializeTests(Context context, BluetoothDevice bluetoothDevice, TestCallback testCallback) {
+  public static ArrayList<TestHelper> initializeTests(Context context, BluetoothDevice bluetoothDevice, TestCallback testCallback, boolean optional) {
 
     ArrayList<TestHelper> tests = new ArrayList<>();
 
     tests.addAll(basicTests(context, bluetoothDevice, testCallback));
     tests.addAll(dataTests(context, bluetoothDevice, testCallback));
     tests.addAll(flagsTests(context, bluetoothDevice, testCallback));
-    tests.addAll(lockStateTests(context, bluetoothDevice, testCallback));
-    tests.addAll(lockTests(context, bluetoothDevice, testCallback));
-    // TODO: unlock tests
+    if (optional) {
+      tests.addAll(lockStateTests(context, bluetoothDevice, testCallback));
+      tests.addAll(lockTests(context, bluetoothDevice, testCallback));
+      // TODO: unlock tests
+    }
     tests.add(
         new Builder()
             .setUp(context, bluetoothDevice, ProtocolV2.CONFIG_SERVICE_UUID, testCallback)

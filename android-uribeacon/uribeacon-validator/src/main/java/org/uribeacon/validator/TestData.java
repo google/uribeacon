@@ -10,5 +10,6 @@ public class TestData {
   public static byte[] BASIC_GENERAL_DATA = new byte[]{1};
   public static byte[] LONG_URI = new byte[]{19};
   public static byte[] BASIC_TX_POWER = new byte[]{0, 0, 0, 0};
-  public static byte[] BASIC_PERIOD = new byte[]{0x03, (byte) 0xE8};
+  // period = 1000
+  public static byte[] BASIC_PERIOD = new byte[]{(byte) 0xE8, 0x03};
 }
