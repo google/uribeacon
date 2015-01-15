@@ -30,6 +30,8 @@ import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.ParcelUuid;
 import android.util.Log;
 
@@ -49,6 +51,7 @@ public class TestHelper {
   private boolean started = false;
   private boolean failed = false;
   private boolean finished = false;
+  private long SCAN_TIMEOUT = TimeUnit.SECONDS.toMillis(5);
   private BluetoothGattService mService;
   private String mName;
   private Context mContext;
@@ -69,7 +72,7 @@ public class TestHelper {
           }
         }
       } else {
-        fail(gatt, "Failed");
+        fail(gatt, "Failed. Status: " + status + ". New State: " + newState);
       }
     }
 
@@ -120,11 +123,18 @@ public class TestHelper {
     @Override
     public void onScanResult(int callbackType, ScanResult result) {
       super.onScanResult(callbackType, result);
+      mHandler.removeCallbacksAndMessages(null);
       stopSearchingForBeacons();
       Log.d(TAG, "Found beacon");
       TestAction action = mTestActions.peek();
-
-      if (action.actionType == TestAction.ADV_FLAGS) {
+      if (action.actionType == TestAction.ADV_PACKET) {
+        if (getAdvPacket(result).length < 2) {
+          fail(null, "Invalid Adv Packet");
+        } else {
+          mTestActions.remove();
+          dispatch(null);
+        }
+      } else if (action.actionType == TestAction.ADV_FLAGS) {
         byte flags = getFlags(result);
         byte expectedFlags = action.transmittedValue[0];
         if (expectedFlags != flags) {
@@ -158,6 +168,7 @@ public class TestHelper {
   private LinkedList<TestAction> mTestActions;
   private LinkedList<TestAction> mTestSteps;
   private BluetoothAdapter mBluetoothAdapter;
+  private Handler mHandler;
 
   private TestHelper(
       String name, Context context, BluetoothDevice bluetoothDevice, UUID serviceUuid,
@@ -173,6 +184,7 @@ public class TestHelper {
     final BluetoothManager bluetoothManager =
         (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
     mBluetoothAdapter = bluetoothManager.getAdapter();
+    mHandler = new Handler(Looper.myLooper());
   }
 
   public String getName() {
@@ -192,7 +204,7 @@ public class TestHelper {
   }
 
   public void run() {
-    Log.d(TAG, "Run Called");
+    Log.d(TAG, "Run Called for: " + getName());
     started = true;
     mTestCallback.testStarted();
     dispatch(null);
@@ -225,7 +237,6 @@ public class TestHelper {
   private void writeToGatt(BluetoothGatt gatt) {
     Log.d(TAG, "Writting");
     TestAction writeTest = mTestActions.peek();
-    Log.d(TAG, "Value: " + Arrays.toString(writeTest.transmittedValue));
     BluetoothGattCharacteristic characteristic = mService
         .getCharacteristic(writeTest.characteristicUuid);
     // WriteType is WRITE_TYPE_NO_RESPONSE even though the one that requests a response
@@ -262,6 +273,8 @@ public class TestHelper {
       lookForAdv();
     } else if (mTestActions.peek().actionType == TestAction.ADV_URI) {
       lookForAdv();
+    } else if (mTestActions.peek().actionType == TestAction.ADV_PACKET) {
+      lookForAdv();
     }
   }
 
@@ -277,7 +290,13 @@ public class TestHelper {
         .build();
     filters.add(filter);
     getLeScanner().startScan(filters, settings, mScanCallback);
-    Log.d(TAG, "Started scanning #2");
+    mHandler.postDelayed(new Runnable() {
+      @Override
+      public void run() {
+        stopSearchingForBeacons();
+        fail(null, "Could not find adv packet");
+      }
+    }, SCAN_TIMEOUT);
   }
 
   private void stopSearchingForBeacons() {
@@ -299,7 +318,11 @@ public class TestHelper {
     byte[] serviceData = result.getScanRecord().getServiceData(UriBeacon.URI_SERVICE_UUID);
     return Arrays.copyOfRange(serviceData, 2, serviceData.length);
   }
+  private byte[] getAdvPacket(ScanResult result) {
+    return result.getScanRecord().getServiceData(UriBeacon.URI_SERVICE_UUID);
+  }
   private void fail(BluetoothGatt gatt, String reason) {
+    Log.d(TAG, "Failing because: " + reason);
     failed = true;
     mTestActions.peek().failed = true;
     mTestActions.peek().reason = reason;
@@ -383,6 +406,11 @@ public class TestHelper {
       return this;
     }
 
+    public Builder checkAdvPacket() {
+      mTestActions.add(new TestAction(TestAction.ADV_PACKET));
+      return this;
+    }
+
     public Builder insertActions(Builder builder) {
       for (TestAction action : builder.mTestActions) {
         mTestActions.add(action);
@@ -395,7 +423,7 @@ public class TestHelper {
       mTestActions.add(new TestAction(TestAction.ASSERT, characteristicUuid, BluetoothGatt.GATT_SUCCESS, value));
       return this;
     }
-    
+
     public TestHelper build() {
       mTestActions.add(new TestAction(TestAction.LAST));
       // Keep a copy of the steps to show in the UI

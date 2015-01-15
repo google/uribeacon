@@ -16,8 +16,8 @@
 
 package org.uribeacon.validator;
 
+import android.graphics.drawable.AnimatedVectorDrawable;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,18 +69,16 @@ public class TestsAdapter extends RecyclerView.Adapter<TestsAdapter.ViewHolder>{
     // - get element from your dataset at this position
     // - replace the contents of the view with that element
     TestHelper test = mDataset.get(position);
-    setIcon(holder, test);
-    setErrorMessage(holder, test);
     holder.mTestName.setText(test.getName());
+    setIcon(holder.mImageView, test);
+    setErrorMessage(holder, test);
   }
 
   private void setErrorMessage(ViewHolder holder, TestHelper test) {
     if (test.isFailed()) {
       for (int i = 0; i < test.getTestSteps().size(); i++) {
         TestAction action = test.getTestSteps().get(i);
-        Log.d(TAG, "Type: " + action.actionType + " Number: " + i);
         if (action.failed) {
-          Log.d(TAG, "Type: " + action.actionType + " Number: " + i);
           holder.mTestResult.setText("#" + (i + 1) + ". " + action.reason);
           holder.mTestResult.setVisibility(View.VISIBLE);
           break;
@@ -89,21 +87,18 @@ public class TestsAdapter extends RecyclerView.Adapter<TestsAdapter.ViewHolder>{
     }
   }
 
-  private void setIcon(ViewHolder holder, TestHelper test) {
-    if (test.isStarted()) {
-      holder.mImageView.setImageResource(R.drawable.executing);
+  private void setIcon(ImageView imageView, TestHelper test) {
+    if (!test.isStarted()) {
+      imageView.setImageResource(R.drawable.not_started);
+    } else if (!test.isFinished()) {
+      imageView.setImageResource(R.drawable.executing_animated);
+      ((AnimatedVectorDrawable) imageView.getDrawable()).start();
+    } else if (!test.isFailed()) {
+      imageView.setImageResource(R.drawable.success);
     } else {
-      holder.mImageView.setImageResource(R.drawable.not_started);
-    }
-    if (test.isFinished()) {
-      if (test.isFailed()) {
-        holder.mImageView.setImageResource(R.drawable.failed);
-      } else {
-        holder.mImageView.setImageResource(R.drawable.success);
-      }
+      imageView.setImageResource(R.drawable.failed);
     }
   }
-
   // Return the size of your dataset (invoked by the layout manager)
   @Override
   public int getItemCount() {

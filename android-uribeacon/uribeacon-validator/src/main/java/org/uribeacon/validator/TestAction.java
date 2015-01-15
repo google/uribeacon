@@ -26,7 +26,8 @@ public class TestAction {
   public final static int ADV_TX_POWER = 4;
   public final static int ADV_FLAGS = 5;
   public final static int ADV_URI = 6;
-  public final static int LAST = 7;
+  public final static int ADV_PACKET = 7;
+  public final static int LAST = 8;
 
 
   public int actionType;
