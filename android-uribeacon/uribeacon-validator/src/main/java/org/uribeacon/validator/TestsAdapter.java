@@ -22,6 +22,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -37,13 +39,17 @@ public class TestsAdapter extends RecyclerView.Adapter<TestsAdapter.ViewHolder>{
     public TextView mTestName;
     public TextView mTestResult;
     public ImageView mImageView;
-
+    public TextView mTestDetails;
+    public LinearLayout mLayout;
+    private boolean expanded;
     public ViewHolder(View v) {
       super(v);
+      mLayout = (LinearLayout) v;
+      expanded = false;
       mTestName = (TextView) v.findViewById(R.id.test_name);
       mTestResult = (TextView) v.findViewById(R.id.test_reason);
       mImageView = (ImageView) v.findViewById(R.id.imageView_testIcon);
-
+      mTestDetails = (TextView) v.findViewById(R.id.test_detailed_view);
     }
   }
 
@@ -58,7 +64,7 @@ public class TestsAdapter extends RecyclerView.Adapter<TestsAdapter.ViewHolder>{
     // create a new view
     View v = LayoutInflater.from(parent.getContext())
         .inflate(R.layout.test_view, parent, false);
-    // set <></>he view's size, margins, paddings and layout parameters
+
     ViewHolder vh = new ViewHolder(v);
     return vh;
   }
@@ -72,18 +78,71 @@ public class TestsAdapter extends RecyclerView.Adapter<TestsAdapter.ViewHolder>{
     holder.mTestName.setText(test.getName());
     setIcon(holder.mImageView, test);
     setErrorMessage(holder, test);
+    if (test.isFailed()) {
+      setOnClickListener(holder);
+    }
+  }
+
+  private void setOnClickListener(final ViewHolder holder) {
+    holder.mLayout.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View item) {
+        if (holder.expanded) {
+          holder.expanded = false;
+          holder.mTestDetails.setVisibility(View.GONE);
+          holder.mTestResult.setVisibility(View.VISIBLE);
+          item.getLayoutParams().height = (int) item.getResources().getDimension(R.dimen.list_item_height);
+        } else {
+          holder.expanded = true;
+          holder.mTestDetails.setVisibility(View.VISIBLE);
+          holder.mTestResult.setVisibility(View.GONE);
+          item.getLayoutParams().height = LayoutParams.WRAP_CONTENT;
+        }
+      }
+    });
   }
 
   private void setErrorMessage(ViewHolder holder, TestHelper test) {
     if (test.isFailed()) {
+      TextView details = holder.mTestDetails;
+      String sDetails = "Steps:";
       for (int i = 0; i < test.getTestSteps().size(); i++) {
         TestAction action = test.getTestSteps().get(i);
+        sDetails += "\n\t" + (i + 1) + ". ";
+        switch (action.actionType) {
+          case TestAction.CONNECT:
+            sDetails += "Connect";
+            break;
+          case TestAction.WRITE:
+            sDetails += "Write";
+            break;
+          case TestAction.ASSERT:
+            sDetails += "Assert";
+            break;
+          case TestAction.DISCONNECT:
+            sDetails += "Disconnect";
+            break;
+          case TestAction.ADV_FLAGS:
+            sDetails += "Adv Flags";
+            break;
+          case TestAction.ADV_TX_POWER:
+            sDetails += "Adv Tx Power";
+            break;
+          case TestAction.ADV_URI:
+            sDetails += "Adv URI";
+            break;
+          case TestAction.ADV_PACKET:
+            sDetails += "Adv Packet";
+            break;
+        }
         if (action.failed) {
-          holder.mTestResult.setText("#" + (i + 1) + ". " + action.reason);
+          sDetails += ":\n\t\t" + action.reason + "\n\t...";
+          holder.mTestResult.setText((i + 1) + ". " + action.reason);
           holder.mTestResult.setVisibility(View.VISIBLE);
           break;
         }
       }
+      details.setText(sDetails);
     }
   }
 
