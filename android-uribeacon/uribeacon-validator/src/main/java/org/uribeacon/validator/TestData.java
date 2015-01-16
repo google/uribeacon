@@ -4,6 +4,14 @@ public class TestData {
 
   public static byte[] SHORT_LOCK_KEY = new byte[15];
   public static byte[] BASIC_LOCK_KEY = new byte[16];
+  public static byte[] WRONG_LOCK_KEY = createWrongKey();
+
+  private static byte[] createWrongKey() {
+    byte[] wrongKey = new byte[16];
+    wrongKey[0] = 1;
+    return wrongKey;
+  }
+
   public static byte[] LONG_LOCK_KEY = new byte[17];
   public static byte[] UNLOCKED_STATE = new byte[]{0};
   public static byte[] LOCKED_STATE = new byte[]{1};
