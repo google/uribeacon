@@ -17,6 +17,7 @@
 package org.uribeacon.validator;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
@@ -26,6 +27,7 @@ import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -41,12 +43,14 @@ public class StartActivity extends Activity {
   private static final String TAG = StartActivity.class.getCanonicalName();
   private static final int REQUEST_ENABLE_BT = 1;
   private BluetoothAdapter mBluetoothAdapter;
+  private boolean optionalImplemented;
   private ScanCallback mScanCallback = new ScanCallback() {
     @Override
     public void onScanResult(int callbackType, ScanResult result) {
       super.onScanResult(callbackType, result);
       Intent intent = new Intent(StartActivity.this, TestActivity.class);
       intent.putExtra(BluetoothDevice.class.getCanonicalName(), result.getDevice());
+      intent.putExtra(TestActivity.OPTIONAL_IMPLEMENTED, optionalImplemented);
       startActivity(intent);
     }
   };
@@ -71,8 +75,30 @@ public class StartActivity extends Activity {
       Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
       startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
     } else {
-      startSearchingForBeacons();
+      showAlertDialog();
     }
+  }
+
+  private void showAlertDialog() {
+    new AlertDialog.Builder(this)
+        .setMessage(getString(R.string.lock_unlock_implemented))
+        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialog, int which) {
+            optionalImplemented = true;
+            startSearchingForBeacons();
+          }
+        })
+        .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialog, int which) {
+            optionalImplemented = false;
+            startSearchingForBeacons();
+          }
+        })
+        .setCancelable(false)
+        .create()
+        .show();
   }
 
   @Override
