@@ -54,6 +54,7 @@ public class StartActivity extends Activity {
       startActivity(intent);
     }
   };
+
   /////////////////////////////
   //// Lifecycle Callbacks ////
   /////////////////////////////
@@ -77,28 +78,6 @@ public class StartActivity extends Activity {
     } else {
       showAlertDialog();
     }
-  }
-
-  private void showAlertDialog() {
-    new AlertDialog.Builder(this)
-        .setMessage(getString(R.string.lock_unlock_implemented))
-        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialog, int which) {
-            optionalImplemented = true;
-            startSearchingForBeacons();
-          }
-        })
-        .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialog, int which) {
-            optionalImplemented = false;
-            startSearchingForBeacons();
-          }
-        })
-        .setCancelable(false)
-        .create()
-        .show();
   }
 
   @Override
@@ -127,5 +106,27 @@ public class StartActivity extends Activity {
 
   private BluetoothLeScanner getLeScanner() {
     return mBluetoothAdapter.getBluetoothLeScanner();
+  }
+
+  private void showAlertDialog() {
+    new AlertDialog.Builder(this)
+        .setMessage(getString(R.string.lock_unlock_implemented))
+        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialog, int which) {
+            optionalImplemented = true;
+            startSearchingForBeacons();
+          }
+        })
+        .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialog, int which) {
+            optionalImplemented = false;
+            startSearchingForBeacons();
+          }
+        })
+        .setCancelable(false)
+        .create()
+        .show();
   }
 }

@@ -30,9 +30,9 @@ import java.util.ArrayList;
 
 
 public class TestActivity extends Activity {
-  private static final String TAG = TestActivity.class.getCanonicalName();
 
   public static final String OPTIONAL_IMPLEMENTED = "optional.implemented";
+  private static final String TAG = TestActivity.class.getCanonicalName();
   private TestRunner mTestRunner;
   private ArrayList<TestHelper> mUriBeaconTests;
   private DataCallback mDataCallback = new DataCallback() {
@@ -90,11 +90,13 @@ public class TestActivity extends Activity {
   private RecyclerView mRecyclerView;
   private RecyclerView.Adapter mAdapter;
   private RecyclerView.LayoutManager mLayoutManager;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_test);
-    BluetoothDevice bluetoothDevice = getIntent().getExtras().getParcelable(BluetoothDevice.class.getCanonicalName());
+    BluetoothDevice bluetoothDevice = getIntent().getExtras()
+        .getParcelable(BluetoothDevice.class.getCanonicalName());
     boolean optionalImplemented = getIntent().getExtras().getBoolean(OPTIONAL_IMPLEMENTED);
     mTestRunner = new TestRunner(this, bluetoothDevice, mDataCallback, optionalImplemented);
     mUriBeaconTests = mTestRunner.getUriBeaconTests();

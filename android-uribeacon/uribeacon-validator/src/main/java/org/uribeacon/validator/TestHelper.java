@@ -47,78 +47,6 @@ import java.util.concurrent.TimeUnit;
 public class TestHelper {
 
   private static final String TAG = TestHelper.class.getCanonicalName();
-
-  private boolean started = false;
-  private boolean failed = false;
-  private boolean finished = false;
-  private long SCAN_TIMEOUT = TimeUnit.SECONDS.toMillis(5);
-  private BluetoothGattService mService;
-  private String mName;
-  private Context mContext;
-  private BluetoothDevice mBluetoothDevice;
-  private UUID mServiceUuid;
-  private BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
-    @Override
-    public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
-      super.onConnectionStateChange(gatt, status, newState);
-      Log.d(TAG, "Status: " + status + "; New State: " + newState);
-      if (status == BluetoothGatt.GATT_SUCCESS) {
-        if (newState == BluetoothProfile.STATE_CONNECTED) {
-          gatt.discoverServices();
-        } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-          if (!failed) {
-            mTestActions.remove();
-            dispatch(gatt);
-          }
-        }
-      } else {
-        fail(gatt, "Failed. Status: " + status + ". New State: " + newState);
-      }
-    }
-
-    @Override
-    public void onServicesDiscovered(BluetoothGatt gatt, int status) {
-      super.onServicesDiscovered(gatt, status);
-      mService = gatt.getService(mServiceUuid);
-      mTestActions.remove();
-      mTestCallback.connectedToBeacon();
-      dispatch(gatt);
-    }
-
-    @Override
-    public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic,
-        int status) {
-      super.onCharacteristicRead(gatt, characteristic, status);
-      TestAction readTest = mTestActions.peek();
-      if (readTest.expectedReturnCode != status) {
-        fail(gatt, "Incorrect status code: " + status + ". Expected: " + readTest.expectedReturnCode);
-      } else if (!Arrays.equals(readTest.transmittedValue, characteristic.getValue())) {
-        if (readTest.transmittedValue.length != characteristic.getValue().length) {
-          fail(gatt, "Wrong length. Expected: " + new String(readTest.transmittedValue) + ". But received: " + new String(characteristic.getValue()));
-        } else {
-          fail(gatt, "Result not the same. Expected: " + new String(readTest.transmittedValue) + ". But received: " + new String(characteristic.getValue()));
-        }
-      } else {
-        mTestActions.remove();
-        dispatch(gatt);
-      }
-    }
-
-    @Override
-    public void onCharacteristicWrite(BluetoothGatt gatt,
-        BluetoothGattCharacteristic characteristic,
-        int status) {
-      super.onCharacteristicWrite(gatt, characteristic, status);
-      TestAction writeTest = mTestActions.peek();
-      if (writeTest.expectedReturnCode != status) {
-        fail(gatt, "Incorrect status code: " + status + ". Expected: " + writeTest.expectedReturnCode);
-      } else {
-        mTestActions.remove();
-        dispatch(gatt);
-      }
-    }
-
-  };
   private ScanCallback mScanCallback = new ScanCallback() {
     @Override
     public void onScanResult(int callbackType, ScanResult result) {
@@ -163,6 +91,81 @@ public class TestHelper {
         }
       }
     }
+  };
+  private boolean started = false;
+  private boolean failed = false;
+  private boolean finished = false;
+  private long SCAN_TIMEOUT = TimeUnit.SECONDS.toMillis(5);
+  private BluetoothGattService mService;
+  private String mName;
+  private Context mContext;
+  private BluetoothDevice mBluetoothDevice;
+  private UUID mServiceUuid;
+  private BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
+    @Override
+    public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
+      super.onConnectionStateChange(gatt, status, newState);
+      Log.d(TAG, "Status: " + status + "; New State: " + newState);
+      if (status == BluetoothGatt.GATT_SUCCESS) {
+        if (newState == BluetoothProfile.STATE_CONNECTED) {
+          gatt.discoverServices();
+        } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+          if (!failed) {
+            mTestActions.remove();
+            dispatch(gatt);
+          }
+        }
+      } else {
+        fail(gatt, "Failed. Status: " + status + ". New State: " + newState);
+      }
+    }
+
+    @Override
+    public void onServicesDiscovered(BluetoothGatt gatt, int status) {
+      super.onServicesDiscovered(gatt, status);
+      mService = gatt.getService(mServiceUuid);
+      mTestActions.remove();
+      mTestCallback.connectedToBeacon();
+      dispatch(gatt);
+    }
+
+    @Override
+    public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic,
+        int status) {
+      super.onCharacteristicRead(gatt, characteristic, status);
+      TestAction readTest = mTestActions.peek();
+      if (readTest.expectedReturnCode != status) {
+        fail(gatt,
+            "Incorrect status code: " + status + ". Expected: " + readTest.expectedReturnCode);
+      } else if (!Arrays.equals(readTest.transmittedValue, characteristic.getValue())) {
+        if (readTest.transmittedValue.length != characteristic.getValue().length) {
+          fail(gatt, "Wrong length. Expected: " + new String(readTest.transmittedValue)
+              + ". But received: " + new String(characteristic.getValue()));
+        } else {
+          fail(gatt, "Result not the same. Expected: " + new String(readTest.transmittedValue)
+              + ". But received: " + new String(characteristic.getValue()));
+        }
+      } else {
+        mTestActions.remove();
+        dispatch(gatt);
+      }
+    }
+
+    @Override
+    public void onCharacteristicWrite(BluetoothGatt gatt,
+        BluetoothGattCharacteristic characteristic,
+        int status) {
+      super.onCharacteristicWrite(gatt, characteristic, status);
+      TestAction writeTest = mTestActions.peek();
+      if (writeTest.expectedReturnCode != status) {
+        fail(gatt,
+            "Incorrect status code: " + status + ". Expected: " + writeTest.expectedReturnCode);
+      } else {
+        mTestActions.remove();
+        dispatch(gatt);
+      }
+    }
+
   };
   private TestCallback mTestCallback;
   private LinkedList<TestAction> mTestActions;
@@ -306,21 +309,26 @@ public class TestHelper {
   private BluetoothLeScanner getLeScanner() {
     return mBluetoothAdapter.getBluetoothLeScanner();
   }
+
   private byte getFlags(ScanResult result) {
     byte[] serviceData = result.getScanRecord().getServiceData(UriBeacon.URI_SERVICE_UUID);
     return serviceData[0];
   }
+
   private byte getTxPowerLevel(ScanResult result) {
     byte[] serviceData = result.getScanRecord().getServiceData(UriBeacon.URI_SERVICE_UUID);
     return serviceData[1];
   }
+
   private byte[] getUri(ScanResult result) {
     byte[] serviceData = result.getScanRecord().getServiceData(UriBeacon.URI_SERVICE_UUID);
     return Arrays.copyOfRange(serviceData, 2, serviceData.length);
   }
+
   private byte[] getAdvPacket(ScanResult result) {
     return result.getScanRecord().getServiceData(UriBeacon.URI_SERVICE_UUID);
   }
+
   private void fail(BluetoothGatt gatt, String reason) {
     Log.d(TAG, "Failing because: " + reason);
     failed = true;
@@ -338,9 +346,13 @@ public class TestHelper {
   }
 
   public interface TestCallback {
+
     public void testStarted();
+
     public void testCompleted();
+
     public void waitingForConfigMode();
+
     public void connectedToBeacon();
   }
 
@@ -419,8 +431,10 @@ public class TestHelper {
     }
 
     public Builder writeAndRead(UUID characteristicUuid, byte[] value) {
-      mTestActions.add(new TestAction(TestAction.WRITE, characteristicUuid, BluetoothGatt.GATT_SUCCESS, value));
-      mTestActions.add(new TestAction(TestAction.ASSERT, characteristicUuid, BluetoothGatt.GATT_SUCCESS, value));
+      mTestActions.add(
+          new TestAction(TestAction.WRITE, characteristicUuid, BluetoothGatt.GATT_SUCCESS, value));
+      mTestActions.add(
+          new TestAction(TestAction.ASSERT, characteristicUuid, BluetoothGatt.GATT_SUCCESS, value));
       return this;
     }
 

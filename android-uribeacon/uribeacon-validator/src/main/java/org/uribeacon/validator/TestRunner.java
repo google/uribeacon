@@ -29,15 +29,11 @@ import java.util.ListIterator;
 import java.util.concurrent.TimeUnit;
 
 public class TestRunner {
+
   private static final String TAG = TestRunner.class.getCanonicalName();
 
   private boolean mPause;
   private boolean mFailed = false;
-  private ArrayList<TestHelper> mUriBeaconTests;
-  private TestHelper mLatestTest;
-  private ListIterator<TestHelper> mTestIterator;
-  private DataCallback mDataCallback;
-  private Handler mHandler;
   private TestCallback mTestCallback = new TestCallback() {
     @Override
     public void testStarted() {
@@ -71,10 +67,17 @@ public class TestRunner {
       mDataCallback.connectedToBeacon();
     }
   };
+  private ArrayList<TestHelper> mUriBeaconTests;
+  private TestHelper mLatestTest;
+  private ListIterator<TestHelper> mTestIterator;
+  private DataCallback mDataCallback;
+  private Handler mHandler;
 
-  public TestRunner(Context context, BluetoothDevice bluetoothDevice, DataCallback dataCallback, boolean optionalImplemented) {
+  public TestRunner(Context context, BluetoothDevice bluetoothDevice, DataCallback dataCallback,
+      boolean optionalImplemented) {
     mDataCallback = dataCallback;
-    mUriBeaconTests = UriBeaconTests.initializeTests(context, bluetoothDevice, mTestCallback, optionalImplemented);
+    mUriBeaconTests = UriBeaconTests
+        .initializeTests(context, bluetoothDevice, mTestCallback, optionalImplemented);
     mTestIterator = mUriBeaconTests.listIterator();
     mHandler = new Handler(Looper.myLooper());
   }
@@ -99,9 +102,13 @@ public class TestRunner {
   }
 
   public interface DataCallback {
+
     public void dataUpdated();
+
     public void waitingForConfigMode();
+
     public void connectedToBeacon();
+
     public void testsCompleted(boolean failed);
   }
 }

@@ -28,35 +28,16 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class TestsAdapter extends RecyclerView.Adapter<TestsAdapter.ViewHolder>{
-  private ArrayList<TestHelper> mDataset;
+public class TestsAdapter extends RecyclerView.Adapter<TestsAdapter.ViewHolder> {
+
   private static final String TAG = TestsAdapter.class.getCanonicalName();
-  // Provide a reference to the views for each data item
-  // Complex data items may need more than one view per item, and
-  // you provide access to all the views for a data item in a view holder
-  public static class ViewHolder extends RecyclerView.ViewHolder {
-    // each data item is just a string in this case
-    public TextView mTestName;
-    public TextView mTestResult;
-    public ImageView mImageView;
-    public TextView mTestDetails;
-    public LinearLayout mLayout;
-    private boolean expanded;
-    public ViewHolder(View v) {
-      super(v);
-      mLayout = (LinearLayout) v;
-      expanded = false;
-      mTestName = (TextView) v.findViewById(R.id.test_name);
-      mTestResult = (TextView) v.findViewById(R.id.test_reason);
-      mImageView = (ImageView) v.findViewById(R.id.imageView_testIcon);
-      mTestDetails = (TextView) v.findViewById(R.id.test_detailed_view);
-    }
-  }
+  private ArrayList<TestHelper> mDataset;
 
   // Provide a suitable constructor (depends on the kind of dataset)
-  public TestsAdapter(ArrayList<TestHelper> uriBeaconTests){
+  public TestsAdapter(ArrayList<TestHelper> uriBeaconTests) {
     mDataset = uriBeaconTests;
   }
+
   // Create new views (invoked by the layout manager)
   @Override
   public TestsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
@@ -91,7 +72,8 @@ public class TestsAdapter extends RecyclerView.Adapter<TestsAdapter.ViewHolder>{
           holder.expanded = false;
           holder.mTestDetails.setVisibility(View.GONE);
           holder.mTestResult.setVisibility(View.VISIBLE);
-          item.getLayoutParams().height = (int) item.getResources().getDimension(R.dimen.list_item_height);
+          item.getLayoutParams().height = (int) item.getResources()
+              .getDimension(R.dimen.list_item_height);
         } else {
           holder.expanded = true;
           holder.mTestDetails.setVisibility(View.VISIBLE);
@@ -158,9 +140,34 @@ public class TestsAdapter extends RecyclerView.Adapter<TestsAdapter.ViewHolder>{
       imageView.setImageResource(R.drawable.failed);
     }
   }
+
   // Return the size of your dataset (invoked by the layout manager)
   @Override
   public int getItemCount() {
     return mDataset.size();
+  }
+
+  // Provide a reference to the views for each data item
+  // Complex data items may need more than one view per item, and
+  // you provide access to all the views for a data item in a view holder
+  public static class ViewHolder extends RecyclerView.ViewHolder {
+
+    // each data item is just a string in this case
+    public TextView mTestName;
+    public TextView mTestResult;
+    public ImageView mImageView;
+    public TextView mTestDetails;
+    public LinearLayout mLayout;
+    private boolean expanded;
+
+    public ViewHolder(View v) {
+      super(v);
+      mLayout = (LinearLayout) v;
+      expanded = false;
+      mTestName = (TextView) v.findViewById(R.id.test_name);
+      mTestResult = (TextView) v.findViewById(R.id.test_reason);
+      mImageView = (ImageView) v.findViewById(R.id.imageView_testIcon);
+      mTestDetails = (TextView) v.findViewById(R.id.test_detailed_view);
+    }
   }
 }
