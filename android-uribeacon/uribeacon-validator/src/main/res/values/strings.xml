@@ -27,5 +27,6 @@
     <string name="tests">Tests</string>
     <string name="basic_tests">Basic Tests</string>
     <string name="spec_tests">Spec Tests</string>
+    <string name="lock_implemented">Lock Implemented</string>
 
 </resources>

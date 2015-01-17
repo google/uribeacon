@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
+import android.view.MenuInflater;
 
 import org.uribeacon.validator.TestTypesAdapter.StartTestType;
 
@@ -37,6 +39,14 @@ public class MainActivity extends Activity {
     mAdapter = new TestTypesAdapter(getTestsInfo(), mStartTestType);
     mRecyclerView.setAdapter(mAdapter);
 
+  }
+
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    // Inflate the menu items for use in the action bar
+    MenuInflater inflater = getMenuInflater();
+    inflater.inflate(R.menu.main_activity_actions, menu);
+    return super.onCreateOptionsMenu(menu);
   }
 
   private TestInfo[] getTestsInfo() {
