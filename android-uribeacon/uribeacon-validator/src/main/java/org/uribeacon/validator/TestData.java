@@ -16,8 +16,17 @@ public class TestData {
   public static byte[] UNLOCKED_STATE = new byte[]{0};
   public static byte[] LOCKED_STATE = new byte[]{1};
   public static byte[] BASIC_GENERAL_DATA = new byte[]{1};
-  public static byte[] LONG_URI = new byte[]{19};
-  public static byte[] BASIC_TX_POWER = new byte[]{0, 0, 0, 0};
+  public static byte[] LONG_FLAGS = new byte[2];
+  public static byte[] LONG_URI = new byte[19];
+  public static byte[] SHORT_TX_POWER_LEVELS = new byte[3];
+  public static byte[] BASIC_TX_POWER_LEVELS = new byte[4];
+  public static byte[] LONG_TX_POWER_LEVELS = new byte[5];
+  public static byte[] SHORT_POWER_MODE = new byte[0];
+  public static byte[] LONG_POWER_MODE = new byte[2];
+  public static byte[] SHORT_PERIOD = new byte[1];
   // period = 999
   public static byte[] BASIC_PERIOD = new byte[]{(byte) 0xE7, 0x03};
+  public static byte[] LONG_PERIOD = new byte[3];
+  public static byte[] SHORT_RESET = new byte[0];
+  public static byte[] LONG_RESET = new byte[2];
 }

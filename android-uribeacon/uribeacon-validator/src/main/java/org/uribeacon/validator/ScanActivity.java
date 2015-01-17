@@ -38,19 +38,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class StartActivity extends Activity {
+public class ScanActivity extends Activity {
 
-  private static final String TAG = StartActivity.class.getCanonicalName();
+  private static final String TAG = ScanActivity.class.getCanonicalName();
   private static final int REQUEST_ENABLE_BT = 1;
   private BluetoothAdapter mBluetoothAdapter;
+  private String testType;
   private boolean optionalImplemented;
   private ScanCallback mScanCallback = new ScanCallback() {
     @Override
     public void onScanResult(int callbackType, ScanResult result) {
       super.onScanResult(callbackType, result);
-      Intent intent = new Intent(StartActivity.this, TestActivity.class);
+      Intent intent = new Intent(ScanActivity.this, TestActivity.class);
       intent.putExtra(BluetoothDevice.class.getCanonicalName(), result.getDevice());
       intent.putExtra(TestActivity.OPTIONAL_IMPLEMENTED, optionalImplemented);
+      intent.putExtra(MainActivity.TEST_TYPE, testType);
       startActivity(intent);
     }
   };
@@ -61,6 +63,7 @@ public class StartActivity extends Activity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    testType = getIntent().getStringExtra(MainActivity.TEST_TYPE);
     setContentView(R.layout.activity_start);
   }
 
