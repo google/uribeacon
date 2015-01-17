@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/action_search"
+    <item android:id="@+id/action_lock"
           android:title="@string/lock_implemented"
           android:actionLayout="@layout/lock_switch"
           android:showAsAction="ifRoom" />

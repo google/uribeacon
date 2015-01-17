@@ -16,7 +16,7 @@
         android:width="30dp"
         android:viewportHeight="24"
         android:viewportWidth="24">
-    <path android:fillColor="#FFF"
+    <path android:fillColor="?android:attr/textColorPrimary"
           android:pathData="M 12,1 C 5.928,1 1,5.928 1,12 1,18.072 5.928,23 12,23 18.072,23 23,18.072 23,12 23,5.928 18.072,1 12,1 z"/>
     <path android:fillColor="?android:attr/colorAccent"
           android:pathData="M 12,0.5 C 5.6574686,0.5 0.5,5.6574686 0.5,12 0.5,18.342531 5.6574686,23.5 12,23.5 18.342531,23.5 23.5,18.342531 23.5,12 23.5,5.6574686 18.342531,0.5 12,0.5 z m 0,1 C 17.801469,1.5 22.5,6.1985314 22.5,12 22.5,17.801469 17.801469,22.5 12,22.5 6.1985314,22.5 1.5,17.801469 1.5,12 1.5,6.1985314 6.1985314,1.5 12,1.5 z"/>

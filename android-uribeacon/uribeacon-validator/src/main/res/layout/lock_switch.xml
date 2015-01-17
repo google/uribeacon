@@ -3,11 +3,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent">
     <Switch
+            android:id="@+id/switch_lock_implemented"
             android:layout_marginEnd="16dp"
             android:thumb="@drawable/lock_selector"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:checked="false" android:id="@+id/switch1"
             android:layout_centerVertical="true"
             android:layout_centerHorizontal="true"/>
 </RelativeLayout>

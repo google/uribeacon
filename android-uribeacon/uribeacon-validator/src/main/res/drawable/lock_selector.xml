@@ -6,5 +6,5 @@
         android:state_checked="true"/>
     <item
         android:drawable="@drawable/lock_unavailable"
-        android:state_activated="false"/>
+        android:state_checked="false"/>
 </selector>

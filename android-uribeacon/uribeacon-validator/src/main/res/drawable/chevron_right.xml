@@ -17,6 +17,6 @@
         android:viewportHeight="48"
         android:viewportWidth="48">
     <path
-            android:fillColor="?android:attr/colorPrimary"
+            android:fillColor="?android:attr/colorAccent"
             android:pathData="M20 12l-2.83 2.83 9.17 9.17-9.17 9.17 2.83 2.83 12-12z"/>
 </vector>
