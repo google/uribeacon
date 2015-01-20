@@ -67,10 +67,10 @@ public class BasicUriBeaconTests {
     return new Builder()
         .write(ProtocolV2.RESET, TestData.BASIC_GENERAL_DATA, BluetoothGatt.GATT_SUCCESS)
         .assertEquals(ProtocolV2.LOCK_STATE, TestData.UNLOCKED_STATE, BluetoothGatt.GATT_SUCCESS)
-        .writeAndRead(ProtocolV2.DATA, TestData.BASIC_GENERAL_DATA)
-        .writeAndRead(ProtocolV2.FLAGS, TestData.BASIC_GENERAL_DATA)
-        .writeAndRead(ProtocolV2.POWER_LEVELS, TestData.BASIC_TX_POWER_LEVELS)
-        .writeAndRead(ProtocolV2.POWER_MODE, TestData.BASIC_GENERAL_DATA)
-        .writeAndRead(ProtocolV2.PERIOD, TestData.BASIC_PERIOD);
+        .writeAndRead(ProtocolV2.DATA, TestData.MULTIPLE_GENERAL_DATA)
+        .writeAndRead(ProtocolV2.FLAGS, TestData.MULTIPLE_GENERAL_DATA)
+        .writeAndRead(ProtocolV2.POWER_LEVELS, TestData.MULTIPLE_TX_POWER_LEVELS)
+        .writeAndRead(ProtocolV2.POWER_MODE, TestData.MULTIPLE_GENERAL_DATA)
+        .writeAndRead(ProtocolV2.PERIOD, TestData.MULTIPLE_BASIC_PERIOD);
   }
 }
