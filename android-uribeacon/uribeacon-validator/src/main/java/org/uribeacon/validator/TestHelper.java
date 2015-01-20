@@ -389,7 +389,6 @@ public class TestHelper {
           new TestAction(TestAction.WRITE, characteristicUuid, expectedReturnCode, value));
       return this;
     }
-
     public Builder disconnect() {
       mTestActions.add(new TestAction(TestAction.DISCONNECT));
       return this;
@@ -430,14 +429,22 @@ public class TestHelper {
       return this;
     }
 
-    public Builder writeAndRead(UUID characteristicUuid, byte[] value) {
-      mTestActions.add(
-          new TestAction(TestAction.WRITE, characteristicUuid, BluetoothGatt.GATT_SUCCESS, value));
-      mTestActions.add(
-          new TestAction(TestAction.ASSERT, characteristicUuid, BluetoothGatt.GATT_SUCCESS, value));
+    public Builder writeAndRead(UUID characteristicUuid, byte[][] values) {
+      for (byte[] value : values) {
+        writeAndRead(characteristicUuid, value);
+      }
       return this;
     }
 
+    public Builder writeAndRead(UUID characteristicUuid, byte[] value) {
+      mTestActions.add(
+          new TestAction(TestAction.WRITE, characteristicUuid, BluetoothGatt.GATT_SUCCESS,
+              value));
+      mTestActions.add(
+          new TestAction(TestAction.ASSERT, characteristicUuid, BluetoothGatt.GATT_SUCCESS,
+              value));
+      return this;
+    }
     public TestHelper build() {
       mTestActions.add(new TestAction(TestAction.LAST));
       // Keep a copy of the steps to show in the UI
