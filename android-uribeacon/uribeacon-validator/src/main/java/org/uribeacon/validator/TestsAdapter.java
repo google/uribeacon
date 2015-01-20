@@ -58,9 +58,14 @@ public class TestsAdapter extends RecyclerView.Adapter<TestsAdapter.ViewHolder> 
     TestHelper test = mDataset.get(position);
     holder.mTestName.setText(test.getName());
     setIcon(holder.mImageView, test);
-    setErrorMessage(holder, test);
     if (test.isFailed()) {
+      setErrorMessage(holder, test);
       setOnClickListener(holder);
+    } else {
+      holder.mTestResult.setVisibility(View.GONE);
+      holder.mTestDetails.setVisibility(View.GONE);
+      holder.mLayout.setOnClickListener(null);
+      holder.mLayout.setClickable(false);
     }
   }
 
