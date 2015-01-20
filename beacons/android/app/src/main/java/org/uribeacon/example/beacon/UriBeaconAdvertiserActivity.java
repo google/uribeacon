@@ -57,8 +57,8 @@ public class UriBeaconAdvertiserActivity extends Activity {
         builder.setIncludeTxPowerLevel(false); // reserve advertising space for URI
 
         byte[] beaconData = new byte[7];
-        beaconData[0] = (byte) 0xD8; // URI Beacon ID 0xFED8
-        beaconData[1] = (byte) 0xFE; // URI Beacon ID 0xFED8
+        beaconData[0] = 0x00; // flags
+        beaconData[1] = 0x20; // transmit power
         beaconData[2] = 0x00; // http://www.
         beaconData[3] = 0x65; // e
         beaconData[4] = 0x66; // f
