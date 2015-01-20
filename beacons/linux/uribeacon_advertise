@@ -18,7 +18,7 @@
 
 # Default values for UriBeacon fields
 
-URI_TX_POWER="20"
+URI_TX_POWER=0
 URI_TEXT="goo.gl/JXiEID"
 URI_FLAGS="00"
 BT_DEVICE="hci0"
@@ -51,15 +51,15 @@ echo "TX_POWER:  $URI_TX_POWER"
 echo "DEVICE:    $BT_DEVICE"
 echo ""
 
-# Convert the text Uri to bytes. Here we always add http:// code 03
-URI_BYTES="03 `echo -n $URI_TEXT | hexdump -v -e '/1 "%02X "'`"
+# Convert the text Uri to bytes. Here we always add http:// code 02
+URI_BYTES="02 `echo -n $URI_TEXT | hexdump -v -e '/1 "%02X "'`"
 
 # Additional advertising payload service data
 AD_FLAGS="02 01 1a"
 AD_SERVICE_UUID="03 03 d8 fe"
 
 # Build advertisement payload
-AD_SERVICE_DATA_BODY="16 d8 fe $URI_FLAGS $URI_TX_POWER $URI_BYTES"
+AD_SERVICE_DATA_BODY="16 d8 fe $URI_FLAGS `printf "%x" $URI_TX_POWER | rev | cut -c-2 | rev` $URI_BYTES"
 AD_SERVICE_DATA_LEN=$(printf '%x' $(echo -n $AD_SERVICE_DATA_BODY | wc -w))
 AD_SERVICE_DATA="$AD_SERVICE_DATA_LEN $AD_SERVICE_DATA_BODY"
 
