@@ -58,7 +58,7 @@ public class UriBeaconAdvertiserActivity extends Activity {
 
         byte[] beaconData = new byte[7];
         beaconData[0] = 0x00; // flags
-        beaconData[1] = 0x20; // transmit power
+        beaconData[1] = (byte) 0xBA; // transmit power
         beaconData[2] = 0x00; // http://www.
         beaconData[3] = 0x65; // e
         beaconData[4] = 0x66; // f
