@@ -21,20 +21,24 @@
 URI_TX_POWER="20"
 URI_TEXT="goo.gl/JXiEID"
 URI_FLAGS="00"
+BT_DEVICE="hci0"
 
-while getopts ":f:u:t:" optname; do
+while getopts ":f:u:t:i:" optname; do
   case "$optname" in
       t)
           URI_TX_POWER=$OPTARG
           ;;
       f)
-	  URI_FLAGS=$OPTARG
+	      URI_FLAGS=$OPTARG
           ;;
       u)
           URI_TEXT=$OPTARG
           ;;
+      i)
+          BT_DEVICE=$OPTARG
+          ;;
       ?)
-	  echo "Usage: $0 [-f <00|01>] [-u <url-without-http://>] [-t <20|nn>]" 1>&2;
+	  echo "Usage: $0 [-f <00|01>] [-u <url-without-http://>] [-t <20|nn>] [-i <dev>]" 1>&2;
 	  exit;
           ;;
   esac
@@ -44,6 +48,7 @@ echo "Transmitting UriBeacon with the following fields:"
 echo "URI:       http://$URI_TEXT"
 echo "FLAGS:     $URI_FLAGS"
 echo "TX_POWER:  $URI_TX_POWER"
+echo "DEVICE:    $BT_DEVICE"
 echo ""
 
 # Convert the text Uri to bytes. Here we always add http:// code 03
@@ -78,10 +83,10 @@ AD_CMD_LENGTH=$(printf "%x" $(echo -n $AD_DATA | wc -w))
 AD_CMD_DATA=$(zero_pad "$AD_DATA")
 
 # Command Bluetooth device up
-sudo hciconfig hci0 up
+sudo hciconfig $BT_DEVICE up
 # Stop LE advertising
-sudo hciconfig hci0 noleadv
+sudo hciconfig $BT_DEVICE noleadv
 # Set Advertising Data
-sudo hcitool -i hci0 cmd 0x08 0x0008 $AD_CMD_LENGTH $AD_CMD_DATA
+sudo hcitool -i $BT_DEVICE cmd 0x08 0x0008 $AD_CMD_LENGTH $AD_CMD_DATA
 # Start LE advertising
-sudo hciconfig hci0 leadv
+sudo hciconfig $BT_DEVICE leadv

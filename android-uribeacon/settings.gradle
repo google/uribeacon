@@ -1,1 +1,1 @@
-include ':uribeacon-library', ':uribeacon-sample', ':blescan'
+include ':uribeacon-library', ':uribeacon-sample', ':blescan', ':uribeacon-validator'

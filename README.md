@@ -25,7 +25,7 @@ any nearby smart device. By leveraging the Open Web it enables a
 own Web presence. Our design is:
 
 1. Compliant with Bluetooth 4.0 Advertising messages.
-2. Compatable with iOS and Android low power scanning modes.
+2. Compatible with iOS and Android low power scanning modes.
 3. Independent of any particular hardware, user-agent, service or mobile platform.
 4. Openly licensed under Apache 2.0 and as such free of restrictive and proprietary terms.
 

@@ -35,15 +35,15 @@ public class ProtocolV2 extends BaseProtocol {
   public static final ParcelUuid CONFIG_SERVICE_UUID = ParcelUuid.fromString(
       "ee0c2080-8786-40ba-ab96-99b91ac981d8");
   private static final String TAG = ProtocolV2.class.getCanonicalName();
-  private static final UUID LOCK_STATE = UUID.fromString("ee0c2081-8786-40ba-ab96-99b91ac981d8");
-  private static final UUID LOCK = UUID.fromString("ee0c2082-8786-40ba-ab96-99b91ac981d8");
-  private static final UUID UNLOCK = UUID.fromString("ee0c2083-8786-40ba-ab96-99b91ac981d8");
-  private static final UUID DATA = UUID.fromString("ee0c2084-8786-40ba-ab96-99b91ac981d8");
-  private static final UUID FLAGS = UUID.fromString("ee0c2085-8786-40ba-ab96-99b91ac981d8");
-  private static final UUID POWER_LEVELS = UUID.fromString("ee0c2086-8786-40ba-ab96-99b91ac981d8");
-  private static final UUID POWER_MODE = UUID.fromString("ee0c2087-8786-40ba-ab96-99b91ac981d8");
-  private static final UUID PERIOD = UUID.fromString("ee0c2088-8786-40ba-ab96-99b91ac981d8");
-  private static final UUID RESET = UUID.fromString("ee0c2089-8786-40ba-ab96-99b91ac981d8");
+  public static final UUID LOCK_STATE = UUID.fromString("ee0c2081-8786-40ba-ab96-99b91ac981d8");
+  public static final UUID LOCK = UUID.fromString("ee0c2082-8786-40ba-ab96-99b91ac981d8");
+  public static final UUID UNLOCK = UUID.fromString("ee0c2083-8786-40ba-ab96-99b91ac981d8");
+  public static final UUID DATA = UUID.fromString("ee0c2084-8786-40ba-ab96-99b91ac981d8");
+  public static final UUID FLAGS = UUID.fromString("ee0c2085-8786-40ba-ab96-99b91ac981d8");
+  public static final UUID POWER_LEVELS = UUID.fromString("ee0c2086-8786-40ba-ab96-99b91ac981d8");
+  public static final UUID POWER_MODE = UUID.fromString("ee0c2087-8786-40ba-ab96-99b91ac981d8");
+  public static final UUID PERIOD = UUID.fromString("ee0c2088-8786-40ba-ab96-99b91ac981d8");
+  public static final UUID RESET = UUID.fromString("ee0c2089-8786-40ba-ab96-99b91ac981d8");
   private static final int LOCK_FORMAT = BluetoothGattCharacteristic.FORMAT_UINT8;
   private static final int PERIOD_FORMAT = BluetoothGattCharacteristic.FORMAT_UINT16;
 
