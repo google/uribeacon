@@ -97,8 +97,9 @@ public class TestActivity extends Activity {
     setContentView(R.layout.activity_test);
     BluetoothDevice bluetoothDevice = getIntent().getExtras()
         .getParcelable(BluetoothDevice.class.getCanonicalName());
-    boolean optionalImplemented = getIntent().getExtras().getBoolean(OPTIONAL_IMPLEMENTED);
-    mTestRunner = new TestRunner(this, bluetoothDevice, mDataCallback, optionalImplemented);
+    boolean optionalImplemented = getIntent().getBooleanExtra(MainActivity.LOCK_IMPLEMENTED, false);
+    String testType = getIntent().getStringExtra(MainActivity.TEST_TYPE);
+    mTestRunner = new TestRunner(this, bluetoothDevice, mDataCallback, testType, optionalImplemented);
     mUriBeaconTests = mTestRunner.getUriBeaconTests();
     mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView_tests);
     mLayoutManager = new LinearLayoutManager(this);

@@ -74,10 +74,13 @@ public class TestRunner {
   private Handler mHandler;
 
   public TestRunner(Context context, BluetoothDevice bluetoothDevice, DataCallback dataCallback,
-      boolean optionalImplemented) {
+      String testType, boolean optionalImplemented) {
     mDataCallback = dataCallback;
-    mUriBeaconTests = UriBeaconTests
-        .initializeTests(context, bluetoothDevice, mTestCallback, optionalImplemented);
+    if (BasicUriBeaconTests.class.getName().equals(testType)) {
+      mUriBeaconTests = BasicUriBeaconTests.initializeTests(context, bluetoothDevice, mTestCallback, optionalImplemented);
+    } else {
+      mUriBeaconTests = SpecUriBeaconTests.initializeTests(context, bluetoothDevice, mTestCallback, optionalImplemented);
+    }
     mTestIterator = mUriBeaconTests.listIterator();
     mHandler = new Handler(Looper.myLooper());
   }

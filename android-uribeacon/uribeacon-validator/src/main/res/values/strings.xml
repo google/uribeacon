@@ -23,5 +23,10 @@
     <string name="lock_unlock_implemented">Is lock/unlock implemented?</string>
     <string name="no">No</string>
     <string name="yes">Yes</string>
+    <string name="title_activity_main">UriBeacon Validator</string>
+    <string name="tests">Tests</string>
+    <string name="basic_tests">Basic Tests</string>
+    <string name="spec_tests">Spec Tests</string>
+    <string name="lock_implemented">Lock Implemented</string>
 
 </resources>
