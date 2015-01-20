@@ -90,48 +90,47 @@ public class TestsAdapter extends RecyclerView.Adapter<TestsAdapter.ViewHolder> 
   }
 
   private void setErrorMessage(ViewHolder holder, TestHelper test) {
-    if (test.isFailed()) {
-      TextView details = holder.mTestDetails;
-      String sDetails = "Steps:";
-      for (int i = 0; i < test.getTestSteps().size(); i++) {
-        TestAction action = test.getTestSteps().get(i);
-        sDetails += "\n\t" + (i + 1) + ". ";
-        switch (action.actionType) {
-          case TestAction.CONNECT:
-            sDetails += "Connect";
-            break;
-          case TestAction.WRITE:
-            sDetails += "Write";
-            break;
-          case TestAction.ASSERT:
-            sDetails += "Assert";
-            break;
-          case TestAction.DISCONNECT:
-            sDetails += "Disconnect";
-            break;
-          case TestAction.ADV_FLAGS:
-            sDetails += "Adv Flags";
-            break;
-          case TestAction.ADV_TX_POWER:
-            sDetails += "Adv Tx Power";
-            break;
-          case TestAction.ADV_URI:
-            sDetails += "Adv URI";
-            break;
-          case TestAction.ADV_PACKET:
-            sDetails += "Adv Packet";
-            break;
-        }
-        if (action.failed) {
-          sDetails += ":\n\t\t" + action.reason + "\n\t...";
-          holder.mTestResult.setText((i + 1) + ". " + action.reason);
-          holder.mTestResult.setVisibility(View.VISIBLE);
+    TextView details = holder.mTestDetails;
+    String sDetails = "Steps:";
+    for (int i = 0; i < test.getTestSteps().size(); i++) {
+      TestAction action = test.getTestSteps().get(i);
+      sDetails += "\n\t" + (i + 1) + ". ";
+      switch (action.actionType) {
+        case TestAction.CONNECT:
+          sDetails += "Connect";
           break;
-        }
+        case TestAction.WRITE:
+          sDetails += "Write";
+          break;
+        case TestAction.ASSERT:
+          sDetails += "Assert";
+          break;
+        case TestAction.DISCONNECT:
+          sDetails += "Disconnect";
+          break;
+        case TestAction.ADV_FLAGS:
+          sDetails += "Adv Flags";
+          break;
+        case TestAction.ADV_TX_POWER:
+          sDetails += "Adv Tx Power";
+          break;
+        case TestAction.ADV_URI:
+          sDetails += "Adv URI";
+          break;
+        case TestAction.ADV_PACKET:
+          sDetails += "Adv Packet";
+          break;
       }
-      details.setText(sDetails);
+      if (action.failed) {
+        sDetails += ":\n\t\t" + action.reason + "\n\t...";
+        holder.mTestResult.setText((i + 1) + ". " + action.reason);
+        holder.mTestResult.setVisibility(View.VISIBLE);
+        break;
+      }
     }
+    details.setText(sDetails);
   }
+
 
   private void setIcon(ImageView imageView, TestHelper test) {
     if (!test.isStarted()) {
