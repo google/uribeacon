@@ -56,7 +56,7 @@ public class TestActivity extends Activity {
         @Override
         public void run() {
           progress = new ProgressDialog(TestActivity.this);
-          progress.setMessage("Press Button on UriBeacon");
+          progress.setMessage(getString(R.string.put_beacon_in_config_mode));
           progress.show();
           progress.setCancelable(false);
           progress.setCanceledOnTouchOutside(false);
