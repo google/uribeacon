@@ -49,20 +49,14 @@
         <receiver android:name="org.uribeacon.scan.compat.ScanWakefulBroadcastReceiver" />
 
         <activity
-            android:name=".ScanActivity"
-            android:configChanges="orientation|keyboardHidden"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait" >
-        </activity>
-        <activity
             android:name=".TestActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/title_activity_test"
-            android:parentActivityName=".ScanActivity"
+            android:parentActivityName=".MainActivity"
             android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ScanActivity" />
+                android:value=".MainActivity" />
         </activity>
         <activity
             android:name=".MainActivity"

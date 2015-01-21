@@ -1,6 +1,5 @@
 package org.uribeacon.validator;
 
-import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.content.Context;
 
@@ -13,8 +12,7 @@ import java.util.ArrayList;
 
 public class SpecUriBeaconTests {
   public static final String TEST_NAME = "Spec Tests";
-  public static ArrayList<TestHelper> initializeTests(Context context,
-      BluetoothDevice bluetoothDevice, TestCallback testCallback, boolean optional) {
+  public static ArrayList<TestHelper> initializeTests(Context context, TestCallback testCallback, boolean optional) {
     ArrayList<Builder> specUriBeaconTestsBuilder = new ArrayList<>();
 
     specUriBeaconTestsBuilder.add(
@@ -109,7 +107,7 @@ public class SpecUriBeaconTests {
     ArrayList<TestHelper> specUriBeaconTests = new ArrayList<>();
     for (Builder builder : specUriBeaconTestsBuilder) {
       specUriBeaconTests.add(builder
-          .setUp(context, bluetoothDevice, ProtocolV2.CONFIG_SERVICE_UUID, testCallback)
+          .setUp(context, ProtocolV2.CONFIG_SERVICE_UUID, testCallback)
           .build());
     }
     return specUriBeaconTests;

@@ -36,6 +36,7 @@ import android.os.ParcelUuid;
 import android.util.Log;
 
 import org.uribeacon.beacon.UriBeacon;
+import org.uribeacon.config.ProtocolV2;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,44 +52,12 @@ public class TestHelper {
     @Override
     public void onScanResult(int callbackType, ScanResult result) {
       super.onScanResult(callbackType, result);
-      mHandler.removeCallbacksAndMessages(null);
-      stopSearchingForBeacons();
-      Log.d(TAG, "Found beacon");
-      TestAction action = mTestActions.peek();
-      if (action.actionType == TestAction.ADV_PACKET) {
-        if (getAdvPacket(result).length < 2) {
-          fail(null, "Invalid Adv Packet");
-        } else {
-          mTestActions.remove();
-          dispatch(null);
-        }
-      } else if (action.actionType == TestAction.ADV_FLAGS) {
-        byte flags = getFlags(result);
-        byte expectedFlags = action.transmittedValue[0];
-        if (expectedFlags != flags) {
-          fail(null, "Received: " + flags + ". Expected: " + expectedFlags);
-        } else {
-          mTestActions.remove();
-          dispatch(null);
-        }
-      } else if (action.actionType == TestAction.ADV_TX_POWER) {
-        byte txPowerLevel = getTxPowerLevel(result);
-        byte expectedTxPowerLevel = action.transmittedValue[0];
-        if (expectedTxPowerLevel != txPowerLevel) {
-          fail(null, "Received: " + txPowerLevel + ". Expected: " + expectedTxPowerLevel);
-        } else {
-          mTestActions.remove();
-          dispatch(null);
-        }
-      } else if (action.actionType == TestAction.ADV_URI) {
-        byte[] uri = getUri(result);
-        if (!Arrays.equals(action.transmittedValue, uri)) {
-          fail(null, "Received: " + Arrays.toString(uri)
-              + ". Expected: " + Arrays.toString(action.transmittedValue));
-        } else {
-          mTestActions.remove();
-          dispatch(null);
-        }
+      // First time we see the beacon
+      if (mBluetoothDevice == null) {
+        mBluetoothDevice = result.getDevice();
+        mBluetoothDevice.connectGatt(mContext, false, mGattCallback);
+      } else {
+        checkPacket(result);
       }
     }
   };
@@ -174,12 +143,11 @@ public class TestHelper {
   private Handler mHandler;
 
   private TestHelper(
-      String name, Context context, BluetoothDevice bluetoothDevice, UUID serviceUuid,
+      String name, Context context, UUID serviceUuid,
       TestCallback testCallback, LinkedList<TestAction> testActions,
       LinkedList<TestAction> testSteps) {
     mName = name;
     mContext = context;
-    mBluetoothDevice = bluetoothDevice;
     mServiceUuid = serviceUuid;
     mTestCallback = testCallback;
     mTestActions = testActions;
@@ -206,9 +174,10 @@ public class TestHelper {
     return started;
   }
 
-  public void run() {
+  public void run(BluetoothDevice bluetoothDevice) {
     Log.d(TAG, "Run Called for: " + getName());
     started = true;
+    mBluetoothDevice = bluetoothDevice;
     mTestCallback.testStarted();
     dispatch(null);
   }
@@ -226,7 +195,12 @@ public class TestHelper {
       }
     }
     mTestCallback.waitingForConfigMode();
-    mBluetoothDevice.connectGatt(mContext, false, mGattCallback);
+    // First time the device
+    if (mBluetoothDevice == null) {
+      scanForBeacon();
+    } else {
+      mBluetoothDevice.connectGatt(mContext, false, mGattCallback);
+    }
   }
 
   private void readFromGatt(BluetoothGatt gatt) {
@@ -261,7 +235,7 @@ public class TestHelper {
     Log.d(TAG, "Dispatching");
     if (mTestActions.peek().actionType == TestAction.LAST) {
       finished = true;
-      mTestCallback.testCompleted();
+      mTestCallback.testCompleted(mBluetoothDevice);
     } else if (mTestActions.peek().actionType == TestAction.CONNECT) {
       connectToGatt(gatt);
     } else if (mTestActions.peek().actionType == TestAction.ASSERT) {
@@ -279,6 +253,20 @@ public class TestHelper {
     } else if (mTestActions.peek().actionType == TestAction.ADV_PACKET) {
       lookForAdv();
     }
+  }
+
+  private void scanForBeacon() {
+    ScanSettings settings = new ScanSettings.Builder()
+        .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+        .build();
+    List<ScanFilter> filters = new ArrayList<>();
+
+    ScanFilter filter = new ScanFilter.Builder()
+        .setServiceUuid(ProtocolV2.CONFIG_SERVICE_UUID)
+        .build();
+    filters.add(filter);
+    getLeScanner().startScan(filters, settings, mScanCallback);
+    Log.d(TAG, "Looking for new beacons");
   }
 
   private void lookForAdv() {
@@ -305,7 +293,47 @@ public class TestHelper {
   private void stopSearchingForBeacons() {
     getLeScanner().stopScan(mScanCallback);
   }
-
+  private void checkPacket(ScanResult result) {
+    mHandler.removeCallbacksAndMessages(null);
+    stopSearchingForBeacons();
+    Log.d(TAG, "Found beacon");
+    TestAction action = mTestActions.peek();
+    if (action.actionType == TestAction.ADV_PACKET) {
+      if (getAdvPacket(result).length < 2) {
+        fail(null, "Invalid Adv Packet");
+      } else {
+        mTestActions.remove();
+        dispatch(null);
+      }
+    } else if (action.actionType == TestAction.ADV_FLAGS) {
+      byte flags = getFlags(result);
+      byte expectedFlags = action.transmittedValue[0];
+      if (expectedFlags != flags) {
+        fail(null, "Received: " + flags + ". Expected: " + expectedFlags);
+      } else {
+        mTestActions.remove();
+        dispatch(null);
+      }
+    } else if (action.actionType == TestAction.ADV_TX_POWER) {
+      byte txPowerLevel = getTxPowerLevel(result);
+      byte expectedTxPowerLevel = action.transmittedValue[0];
+      if (expectedTxPowerLevel != txPowerLevel) {
+        fail(null, "Received: " + txPowerLevel + ". Expected: " + expectedTxPowerLevel);
+      } else {
+        mTestActions.remove();
+        dispatch(null);
+      }
+    } else if (action.actionType == TestAction.ADV_URI) {
+      byte[] uri = getUri(result);
+      if (!Arrays.equals(action.transmittedValue, uri)) {
+        fail(null, "Received: " + Arrays.toString(uri)
+            + ". Expected: " + Arrays.toString(action.transmittedValue));
+      } else {
+        mTestActions.remove();
+        dispatch(null);
+      }
+    }
+  }
   private BluetoothLeScanner getLeScanner() {
     return mBluetoothAdapter.getBluetoothLeScanner();
   }
@@ -335,7 +363,7 @@ public class TestHelper {
     mTestActions.peek().failed = true;
     mTestActions.peek().reason = reason;
     finished = true;
-    mTestCallback.testCompleted();
+    mTestCallback.testCompleted(mBluetoothDevice);
     if (gatt != null) {
       disconnectFromGatt(gatt);
     }
@@ -349,7 +377,7 @@ public class TestHelper {
 
     public void testStarted();
 
-    public void testCompleted();
+    public void testCompleted(BluetoothDevice deviceBeingTested);
 
     public void waitingForConfigMode();
 
@@ -360,7 +388,6 @@ public class TestHelper {
 
     private String mName;
     private Context mContext;
-    private BluetoothDevice mBluetoothDevice;
     private UUID mServiceUuid;
     private TestCallback mTestCallback;
     private LinkedList<TestAction> mTestActions = new LinkedList<>();
@@ -370,10 +397,9 @@ public class TestHelper {
       return this;
     }
 
-    public Builder setUp(Context context, BluetoothDevice bluetoothDevice, ParcelUuid serviceUuid,
+    public Builder setUp(Context context, ParcelUuid serviceUuid,
         TestCallback testCallback) {
       mContext = context;
-      mBluetoothDevice = bluetoothDevice;
       mServiceUuid = serviceUuid.getUuid();
       mTestCallback = testCallback;
       return this;
@@ -449,7 +475,7 @@ public class TestHelper {
       mTestActions.add(new TestAction(TestAction.LAST));
       // Keep a copy of the steps to show in the UI
       LinkedList<TestAction> testSteps = new LinkedList<>(mTestActions);
-      return new TestHelper(mName, mContext, mBluetoothDevice, mServiceUuid, mTestCallback,
+      return new TestHelper(mName, mContext, mServiceUuid, mTestCallback,
           mTestActions, testSteps);
     }
   }

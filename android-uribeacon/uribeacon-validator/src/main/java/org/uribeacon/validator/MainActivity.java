@@ -27,7 +27,7 @@ public class MainActivity extends Activity {
   private StartTestType mStartTestType = new StartTestType() {
     @Override
     public void startTestType(String type) {
-      Intent intent = new Intent(MainActivity.this, ScanActivity.class);
+      Intent intent = new Intent(MainActivity.this, TestActivity.class);
       intent.putExtra(MainActivity.TEST_TYPE, type);
       intent.putExtra(MainActivity.LOCK_IMPLEMENTED, lockImplemented);
       startActivity(intent);

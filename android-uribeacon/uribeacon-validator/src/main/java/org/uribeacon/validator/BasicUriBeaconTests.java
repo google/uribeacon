@@ -13,8 +13,7 @@ import java.util.ArrayList;
 
 public class BasicUriBeaconTests {
   public static final String TEST_NAME = "Basic Tests";
-  public static ArrayList<TestHelper> initializeTests(Context context,
-      BluetoothDevice bluetoothDevice, TestCallback testCallback, boolean optional) {
+  public static ArrayList<TestHelper> initializeTests(Context context, TestCallback testCallback, boolean optional) {
     ArrayList<Builder> basicTestsBuilder = new ArrayList<>();
     basicTestsBuilder.add(
         new Builder()
@@ -58,7 +57,7 @@ public class BasicUriBeaconTests {
     ArrayList<TestHelper> basicTests = new ArrayList<>();
     for(Builder builder : basicTestsBuilder) {
       basicTests.add(builder
-          .setUp(context, bluetoothDevice, ProtocolV2.CONFIG_SERVICE_UUID, testCallback)
+          .setUp(context, ProtocolV2.CONFIG_SERVICE_UUID, testCallback)
           .build());
     }
     return basicTests;
