@@ -41,7 +41,7 @@ public class TestRunner {
     }
 
     @Override
-    public void testCompleted() {
+    public void testCompleted(final BluetoothDevice bluetoothDevice) {
       Log.d(TAG, "Test Completed. Failed: " + mLatestTest.isFailed());
       if (mLatestTest.isFailed()) {
         mFailed = true;
@@ -51,7 +51,7 @@ public class TestRunner {
         mHandler.postDelayed(new Runnable() {
           @Override
           public void run() {
-            start();
+            start(bluetoothDevice);
           }
         }, TimeUnit.SECONDS.toMillis(1));
       }
@@ -73,24 +73,24 @@ public class TestRunner {
   private DataCallback mDataCallback;
   private Handler mHandler;
 
-  public TestRunner(Context context, BluetoothDevice bluetoothDevice, DataCallback dataCallback,
+  public TestRunner(Context context, DataCallback dataCallback,
       String testType, boolean optionalImplemented) {
     mDataCallback = dataCallback;
     if (BasicUriBeaconTests.class.getName().equals(testType)) {
-      mUriBeaconTests = BasicUriBeaconTests.initializeTests(context, bluetoothDevice, mTestCallback, optionalImplemented);
+      mUriBeaconTests = BasicUriBeaconTests.initializeTests(context, mTestCallback, optionalImplemented);
     } else {
-      mUriBeaconTests = SpecUriBeaconTests.initializeTests(context, bluetoothDevice, mTestCallback, optionalImplemented);
+      mUriBeaconTests = SpecUriBeaconTests.initializeTests(context, mTestCallback, optionalImplemented);
     }
     mTestIterator = mUriBeaconTests.listIterator();
     mHandler = new Handler(Looper.myLooper());
   }
 
-  public void start() {
+  public void start(BluetoothDevice bluetoothDevice) {
     Log.d(TAG, "Starting tests");
     mPause = false;
     if (mTestIterator.hasNext()) {
       mLatestTest = mTestIterator.next();
-      mLatestTest.run();
+      mLatestTest.run(bluetoothDevice);
     } else {
       mDataCallback.testsCompleted(mFailed);
     }
