@@ -108,7 +108,7 @@ public class TestActivity extends Activity {
   @Override
   protected void onResume() {
     super.onResume();
-    mTestRunner.start(null);
+    mTestRunner.start(null, null);
   }
 
   @Override
