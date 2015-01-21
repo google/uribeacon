@@ -17,6 +17,9 @@
 package org.uribeacon.validator;
 
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothGatt;
+import android.bluetooth.BluetoothGattCallback;
+import android.bluetooth.BluetoothGattCharacteristic;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
@@ -41,7 +44,7 @@ public class TestRunner {
     }
 
     @Override
-    public void testCompleted(final BluetoothDevice bluetoothDevice) {
+    public void testCompleted(final BluetoothDevice bluetoothDevice, final BluetoothGatt gatt) {
       Log.d(TAG, "Test Completed. Failed: " + mLatestTest.isFailed());
       if (mLatestTest.isFailed()) {
         mFailed = true;
@@ -51,7 +54,7 @@ public class TestRunner {
         mHandler.postDelayed(new Runnable() {
           @Override
           public void run() {
-            start(bluetoothDevice);
+            start(bluetoothDevice, gatt);
           }
         }, TimeUnit.SECONDS.toMillis(1));
       }
@@ -85,16 +88,43 @@ public class TestRunner {
     mHandler = new Handler(Looper.myLooper());
   }
 
-  public void start(BluetoothDevice bluetoothDevice) {
+  public void start(BluetoothDevice bluetoothDevice, BluetoothGatt gatt) {
     Log.d(TAG, "Starting tests");
     mPause = false;
     if (mTestIterator.hasNext()) {
       mLatestTest = mTestIterator.next();
-      mLatestTest.run(bluetoothDevice);
+      mLatestTest.run(bluetoothDevice, gatt, superBluetoothScanCallback);
     } else {
       mDataCallback.testsCompleted(mFailed);
     }
   }
+  // To keep the connection to the beacon alive the same gatt object
+  // must be passed around. But since gatt is attached to a callback a single super callback
+  // is needed for all tests to share.
+  private BluetoothGattCallback superBluetoothScanCallback = new BluetoothGattCallback() {
+    @Override
+    public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
+      mLatestTest.mGattCallback.onConnectionStateChange(gatt, status, newState);
+    }
+
+    @Override
+    public void onServicesDiscovered(BluetoothGatt gatt, int status) {
+      mLatestTest.mGattCallback.onServicesDiscovered(gatt, status);
+    }
+
+    @Override
+    public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic,
+        int status) {
+      mLatestTest.mGattCallback.onCharacteristicRead(gatt, characteristic, status);
+    }
+
+    @Override
+    public void onCharacteristicWrite(BluetoothGatt gatt,
+        BluetoothGattCharacteristic characteristic,
+        int status) {
+      mLatestTest.mGattCallback.onCharacteristicWrite(gatt, characteristic, status);
+    }
+  };
 
   public ArrayList<TestHelper> getUriBeaconTests() {
     return mUriBeaconTests;

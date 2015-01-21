@@ -53,9 +53,10 @@ public class TestHelper {
     public void onScanResult(int callbackType, ScanResult result) {
       super.onScanResult(callbackType, result);
       // First time we see the beacon
+      Log.d(TAG, "On scan Result");
       if (mBluetoothDevice == null) {
         mBluetoothDevice = result.getDevice();
-        mBluetoothDevice.connectGatt(mContext, false, mGattCallback);
+        mBluetoothDevice.connectGatt(mContext, false, mOutSideGattCallback);
       } else {
         checkPacket(result);
       }
@@ -64,13 +65,15 @@ public class TestHelper {
   private boolean started = false;
   private boolean failed = false;
   private boolean finished = false;
+  private boolean disconnected = false;
   private long SCAN_TIMEOUT = TimeUnit.SECONDS.toMillis(5);
   private BluetoothGattService mService;
   private String mName;
   private Context mContext;
   private BluetoothDevice mBluetoothDevice;
   private UUID mServiceUuid;
-  private BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
+  public BluetoothGattCallback mOutSideGattCallback;
+  public BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
     @Override
     public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
       super.onConnectionStateChange(gatt, status, newState);
@@ -81,6 +84,7 @@ public class TestHelper {
         } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
           if (!failed) {
             mTestActions.remove();
+            disconnected = true;
             dispatch(gatt);
           }
         }
@@ -92,6 +96,7 @@ public class TestHelper {
     @Override
     public void onServicesDiscovered(BluetoothGatt gatt, int status) {
       super.onServicesDiscovered(gatt, status);
+      Log.d(TAG, "On services discovered");
       mService = gatt.getService(mServiceUuid);
       mTestActions.remove();
       mTestCallback.connectedToBeacon();
@@ -102,6 +107,7 @@ public class TestHelper {
     public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic,
         int status) {
       super.onCharacteristicRead(gatt, characteristic, status);
+      Log.d(TAG, "On characteristic read");
       TestAction readTest = mTestActions.peek();
       if (readTest.expectedReturnCode != status) {
         fail(gatt,
@@ -125,6 +131,7 @@ public class TestHelper {
         BluetoothGattCharacteristic characteristic,
         int status) {
       super.onCharacteristicWrite(gatt, characteristic, status);
+      Log.d(TAG, "On write");
       TestAction writeTest = mTestActions.peek();
       if (writeTest.expectedReturnCode != status) {
         fail(gatt,
@@ -174,19 +181,24 @@ public class TestHelper {
     return started;
   }
 
-  public void run(BluetoothDevice bluetoothDevice) {
+  public void run(BluetoothDevice bluetoothDevice, BluetoothGatt gatt, BluetoothGattCallback outsideCallback) {
     Log.d(TAG, "Run Called for: " + getName());
     started = true;
     mBluetoothDevice = bluetoothDevice;
+    if (gatt != null) {
+      mService = gatt.getService(mServiceUuid);
+    }
     mTestCallback.testStarted();
-    dispatch(null);
+    mOutSideGattCallback = outsideCallback;
+    dispatch(gatt);
   }
 
-  private void connectToGatt(BluetoothGatt gatt) {
+  private void connectToGatt() {
     Log.d(TAG, "Connecting");
     // Gatt == null is only passed on the first connection
-    if (gatt != null) {
+    if (disconnected) {
       try {
+        disconnected = false;
         // We have to wait before trying to connect
         // Else the connection is not successful
         TimeUnit.SECONDS.sleep(1);
@@ -199,7 +211,7 @@ public class TestHelper {
     if (mBluetoothDevice == null) {
       scanForBeacon();
     } else {
-      mBluetoothDevice.connectGatt(mContext, false, mGattCallback);
+      mBluetoothDevice.connectGatt(mContext, false, mOutSideGattCallback);
     }
   }
 
@@ -235,9 +247,9 @@ public class TestHelper {
     Log.d(TAG, "Dispatching");
     if (mTestActions.peek().actionType == TestAction.LAST) {
       finished = true;
-      mTestCallback.testCompleted(mBluetoothDevice);
+      mTestCallback.testCompleted(mBluetoothDevice, gatt);
     } else if (mTestActions.peek().actionType == TestAction.CONNECT) {
-      connectToGatt(gatt);
+      connectToGatt();
     } else if (mTestActions.peek().actionType == TestAction.ASSERT) {
       readFromGatt(gatt);
     } else if (mTestActions.peek().actionType == TestAction.WRITE) {
@@ -363,10 +375,7 @@ public class TestHelper {
     mTestActions.peek().failed = true;
     mTestActions.peek().reason = reason;
     finished = true;
-    mTestCallback.testCompleted(mBluetoothDevice);
-    if (gatt != null) {
-      disconnectFromGatt(gatt);
-    }
+    mTestCallback.testCompleted(mBluetoothDevice, gatt);
   }
 
   public boolean isFinished() {
@@ -377,7 +386,7 @@ public class TestHelper {
 
     public void testStarted();
 
-    public void testCompleted(BluetoothDevice deviceBeingTested);
+    public void testCompleted(BluetoothDevice deviceBeingTested, BluetoothGatt gatt);
 
     public void waitingForConfigMode();
 

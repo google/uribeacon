@@ -1,6 +1,5 @@
 package org.uribeacon.validator;
 
-import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.content.Context;
 
