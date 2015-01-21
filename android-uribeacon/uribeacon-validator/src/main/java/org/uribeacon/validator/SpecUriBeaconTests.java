@@ -51,7 +51,7 @@ public class SpecUriBeaconTests {
 
     specUriBeaconTestsBuilder.add(
         new Builder()
-            .name("Power Mode")
+            .name("Short Power Mode")
             .write(ProtocolV2.POWER_MODE, TestData.SHORT_POWER_MODE,
                 BluetoothGatt.GATT_INVALID_ATTRIBUTE_LENGTH)
     );
