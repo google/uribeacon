@@ -50,6 +50,8 @@ and sample code for advertisers and scanners:
 We will also be providing instructions on how to assemble and
 program standalone UriBeacon tags.
 
+The releases tab contains the [UriBeacon Developer Tools](https://github.com/google/uribeacon/releases).
+
 ## What is a Uri?
 
 One can classify URIs as Locators (URLs), or Names (URNs), or both.
