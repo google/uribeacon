@@ -18,6 +18,7 @@ public class TestData {
   public static byte[] BASIC_GENERAL_DATA = new byte[]{1};
   public static byte[] BASIC_GENERAL_DATA_2 = new byte[]{2};
   public static byte[][] MULTIPLE_GENERAL_DATA = new byte[][]{BASIC_GENERAL_DATA_2, BASIC_GENERAL_DATA};
+  public static byte[] SHORT_FLAGS = new byte[]{};
   public static byte[] LONG_FLAGS = new byte[2];
   public static byte[] LONG_URI = new byte[19];
   public static byte[] SHORT_TX_POWER_LEVELS = new byte[3];
