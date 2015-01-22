@@ -18,6 +18,8 @@ package org.uribeacon.validator;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -30,7 +32,6 @@ import java.util.ArrayList;
 
 public class TestActivity extends Activity {
 
-  public static final String OPTIONAL_IMPLEMENTED = "optional.implemented";
   private static final String TAG = TestActivity.class.getCanonicalName();
   private TestRunner mTestRunner;
   private ArrayList<TestHelper> mUriBeaconTests;
@@ -58,8 +59,13 @@ public class TestActivity extends Activity {
           progress = new ProgressDialog(TestActivity.this);
           progress.setMessage(getString(R.string.put_beacon_in_config_mode));
           progress.show();
-          progress.setCancelable(false);
           progress.setCanceledOnTouchOutside(false);
+          progress.setOnCancelListener(new OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+              mTestRunner.stop();
+            }
+          });
         }
       });
     }
@@ -113,10 +119,9 @@ public class TestActivity extends Activity {
   }
 
   @Override
-  protected void onPause() {
-    super.onPause();
-    mTestRunner.pause();
+  protected void onDestroy() {
+    super.onDestroy();
+    mTestRunner.stop();
   }
-
 }
 

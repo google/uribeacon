@@ -35,7 +35,7 @@ public class TestRunner {
 
   private static final String TAG = TestRunner.class.getCanonicalName();
 
-  private boolean mPause;
+  private boolean mStoped;
   private boolean mFailed = false;
   private TestCallback mTestCallback = new TestCallback() {
     @Override
@@ -50,13 +50,18 @@ public class TestRunner {
         mFailed = true;
       }
       mDataCallback.dataUpdated();
-      if (!mPause) {
+      if (!mStoped) {
         mHandler.postDelayed(new Runnable() {
           @Override
           public void run() {
             start(bluetoothDevice, gatt);
           }
         }, TimeUnit.SECONDS.toMillis(1));
+      } else {
+        if (gatt != null){
+          gatt.disconnect();
+        }
+        mHandler.removeCallbacksAndMessages(null);
       }
     }
 
@@ -78,6 +83,7 @@ public class TestRunner {
 
   public TestRunner(Context context, DataCallback dataCallback,
       String testType, boolean optionalImplemented) {
+    mStoped = false;
     mDataCallback = dataCallback;
     if (BasicUriBeaconTests.class.getName().equals(testType)) {
       mUriBeaconTests = BasicUriBeaconTests.initializeTests(context, mTestCallback, optionalImplemented);
@@ -90,7 +96,6 @@ public class TestRunner {
 
   public void start(BluetoothDevice bluetoothDevice, BluetoothGatt gatt) {
     Log.d(TAG, "Starting tests");
-    mPause = false;
     if (mTestIterator.hasNext()) {
       mLatestTest = mTestIterator.next();
       mLatestTest.run(bluetoothDevice, gatt, superBluetoothScanCallback);
@@ -98,6 +103,7 @@ public class TestRunner {
       mDataCallback.testsCompleted(mFailed);
     }
   }
+
   // To keep the connection to the beacon alive the same gatt object
   // must be passed around. But since gatt is attached to a callback a single super callback
   // is needed for all tests to share.
@@ -130,8 +136,9 @@ public class TestRunner {
     return mUriBeaconTests;
   }
 
-  public void pause() {
-    mPause = true;
+  public void stop() {
+    mStoped = true;
+    mLatestTest.stopTest();
   }
 
   public interface DataCallback {
