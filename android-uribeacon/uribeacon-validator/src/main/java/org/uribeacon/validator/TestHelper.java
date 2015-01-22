@@ -66,6 +66,7 @@ public class TestHelper {
   private boolean failed = false;
   private boolean finished = false;
   private boolean disconnected = false;
+  private BluetoothGatt mGatt;
   private long SCAN_TIMEOUT = TimeUnit.SECONDS.toMillis(5);
   private BluetoothGattService mService;
   private String mName;
@@ -78,18 +79,19 @@ public class TestHelper {
     public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
       super.onConnectionStateChange(gatt, status, newState);
       Log.d(TAG, "Status: " + status + "; New State: " + newState);
+      mGatt = gatt;
       if (status == BluetoothGatt.GATT_SUCCESS) {
         if (newState == BluetoothProfile.STATE_CONNECTED) {
-          gatt.discoverServices();
+          mGatt.discoverServices();
         } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
           if (!failed) {
             mTestActions.remove();
             disconnected = true;
-            dispatch(gatt);
+            dispatch();
           }
         }
       } else {
-        fail(gatt, "Failed. Status: " + status + ". New State: " + newState);
+        fail("Failed. Status: " + status + ". New State: " + newState);
       }
     }
 
@@ -97,10 +99,11 @@ public class TestHelper {
     public void onServicesDiscovered(BluetoothGatt gatt, int status) {
       super.onServicesDiscovered(gatt, status);
       Log.d(TAG, "On services discovered");
-      mService = gatt.getService(mServiceUuid);
+      mGatt = gatt;
+      mService = mGatt.getService(mServiceUuid);
       mTestActions.remove();
       mTestCallback.connectedToBeacon();
-      dispatch(gatt);
+      dispatch();
     }
 
     @Override
@@ -108,21 +111,21 @@ public class TestHelper {
         int status) {
       super.onCharacteristicRead(gatt, characteristic, status);
       Log.d(TAG, "On characteristic read");
+      mGatt = gatt;
       TestAction readTest = mTestActions.peek();
       if (readTest.expectedReturnCode != status) {
-        fail(gatt,
-            "Incorrect status code: " + status + ". Expected: " + readTest.expectedReturnCode);
+        fail("Incorrect status code: " + status + ". Expected: " + readTest.expectedReturnCode);
       } else if (!Arrays.equals(readTest.transmittedValue, characteristic.getValue())) {
         if (readTest.transmittedValue.length != characteristic.getValue().length) {
-          fail(gatt, "Wrong length. Expected: " + new String(readTest.transmittedValue)
+          fail("Wrong length. Expected: " + new String(readTest.transmittedValue)
               + ". But received: " + new String(characteristic.getValue()));
         } else {
-          fail(gatt, "Result not the same. Expected: " + new String(readTest.transmittedValue)
+          fail("Result not the same. Expected: " + new String(readTest.transmittedValue)
               + ". But received: " + new String(characteristic.getValue()));
         }
       } else {
         mTestActions.remove();
-        dispatch(gatt);
+        dispatch();
       }
     }
 
@@ -132,13 +135,13 @@ public class TestHelper {
         int status) {
       super.onCharacteristicWrite(gatt, characteristic, status);
       Log.d(TAG, "On write");
+      mGatt = gatt;
       TestAction writeTest = mTestActions.peek();
       if (writeTest.expectedReturnCode != status) {
-        fail(gatt,
-            "Incorrect status code: " + status + ". Expected: " + writeTest.expectedReturnCode);
+        fail("Incorrect status code: " + status + ". Expected: " + writeTest.expectedReturnCode);
       } else {
         mTestActions.remove();
-        dispatch(gatt);
+        dispatch();
       }
     }
 
@@ -185,17 +188,18 @@ public class TestHelper {
     Log.d(TAG, "Run Called for: " + getName());
     started = true;
     mBluetoothDevice = bluetoothDevice;
-    if (gatt != null) {
+    mGatt = gatt;
+    if (mGatt != null) {
       mService = gatt.getService(mServiceUuid);
     }
     mTestCallback.testStarted();
     mOutSideGattCallback = outsideCallback;
-    dispatch(gatt);
+    dispatch();
   }
 
   private void connectToGatt() {
     Log.d(TAG, "Connecting");
-    // Gatt == null is only passed on the first connection
+
     if (disconnected) {
       try {
         disconnected = false;
@@ -215,15 +219,15 @@ public class TestHelper {
     }
   }
 
-  private void readFromGatt(BluetoothGatt gatt) {
+  private void readFromGatt() {
     Log.d(TAG, "reading");
     TestAction readTest = mTestActions.peek();
     BluetoothGattCharacteristic characteristic = mService
         .getCharacteristic(readTest.characteristicUuid);
-    gatt.readCharacteristic(characteristic);
+    mGatt.readCharacteristic(characteristic);
   }
 
-  private void writeToGatt(BluetoothGatt gatt) {
+  private void writeToGatt() {
     Log.d(TAG, "Writting");
     TestAction writeTest = mTestActions.peek();
     BluetoothGattCharacteristic characteristic = mService
@@ -235,27 +239,27 @@ public class TestHelper {
       characteristic.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT);
     }
     characteristic.setValue(writeTest.transmittedValue);
-    gatt.writeCharacteristic(characteristic);
+    mGatt.writeCharacteristic(characteristic);
   }
 
-  private void disconnectFromGatt(BluetoothGatt gatt) {
+  private void disconnectFromGatt() {
     Log.d(TAG, "Disconnecting");
-    gatt.disconnect();
+    mGatt.disconnect();
   }
 
-  private void dispatch(BluetoothGatt gatt) {
+  private void dispatch() {
     Log.d(TAG, "Dispatching");
     if (mTestActions.peek().actionType == TestAction.LAST) {
       finished = true;
-      mTestCallback.testCompleted(mBluetoothDevice, gatt);
+      mTestCallback.testCompleted(mBluetoothDevice, mGatt);
     } else if (mTestActions.peek().actionType == TestAction.CONNECT) {
       connectToGatt();
     } else if (mTestActions.peek().actionType == TestAction.ASSERT) {
-      readFromGatt(gatt);
+      readFromGatt();
     } else if (mTestActions.peek().actionType == TestAction.WRITE) {
-      writeToGatt(gatt);
+      writeToGatt();
     } else if (mTestActions.peek().actionType == TestAction.DISCONNECT) {
-      disconnectFromGatt(gatt);
+      disconnectFromGatt();
     } else if (mTestActions.peek().actionType == TestAction.ADV_FLAGS) {
       lookForAdv();
     } else if (mTestActions.peek().actionType == TestAction.ADV_TX_POWER) {
@@ -297,7 +301,7 @@ public class TestHelper {
       @Override
       public void run() {
         stopSearchingForBeacons();
-        fail(null, "Could not find adv packet");
+        fail("Could not find adv packet");
       }
     }, SCAN_TIMEOUT);
   }
@@ -312,37 +316,37 @@ public class TestHelper {
     TestAction action = mTestActions.peek();
     if (action.actionType == TestAction.ADV_PACKET) {
       if (getAdvPacket(result).length < 2) {
-        fail(null, "Invalid Adv Packet");
+        fail("Invalid Adv Packet");
       } else {
         mTestActions.remove();
-        dispatch(null);
+        dispatch();
       }
     } else if (action.actionType == TestAction.ADV_FLAGS) {
       byte flags = getFlags(result);
       byte expectedFlags = action.transmittedValue[0];
       if (expectedFlags != flags) {
-        fail(null, "Received: " + flags + ". Expected: " + expectedFlags);
+        fail("Received: " + flags + ". Expected: " + expectedFlags);
       } else {
         mTestActions.remove();
-        dispatch(null);
+        dispatch();
       }
     } else if (action.actionType == TestAction.ADV_TX_POWER) {
       byte txPowerLevel = getTxPowerLevel(result);
       byte expectedTxPowerLevel = action.transmittedValue[0];
       if (expectedTxPowerLevel != txPowerLevel) {
-        fail(null, "Received: " + txPowerLevel + ". Expected: " + expectedTxPowerLevel);
+        fail("Received: " + txPowerLevel + ". Expected: " + expectedTxPowerLevel);
       } else {
         mTestActions.remove();
-        dispatch(null);
+        dispatch();
       }
     } else if (action.actionType == TestAction.ADV_URI) {
       byte[] uri = getUri(result);
       if (!Arrays.equals(action.transmittedValue, uri)) {
-        fail(null, "Received: " + Arrays.toString(uri)
+        fail("Received: " + Arrays.toString(uri)
             + ". Expected: " + Arrays.toString(action.transmittedValue));
       } else {
         mTestActions.remove();
-        dispatch(null);
+        dispatch();
       }
     }
   }
@@ -369,17 +373,25 @@ public class TestHelper {
     return result.getScanRecord().getServiceData(UriBeacon.URI_SERVICE_UUID);
   }
 
-  private void fail(BluetoothGatt gatt, String reason) {
+  private void fail(String reason) {
     Log.d(TAG, "Failing because: " + reason);
     failed = true;
     mTestActions.peek().failed = true;
     mTestActions.peek().reason = reason;
     finished = true;
-    mTestCallback.testCompleted(mBluetoothDevice, gatt);
+    mTestCallback.testCompleted(mBluetoothDevice, mGatt);
   }
 
   public boolean isFinished() {
     return finished;
+  }
+
+  public void stopTest() {
+    if (mGatt != null) {
+      disconnectFromGatt();
+    }
+    stopSearchingForBeacons();
+    fail("Stopped by user");
   }
 
   public interface TestCallback {

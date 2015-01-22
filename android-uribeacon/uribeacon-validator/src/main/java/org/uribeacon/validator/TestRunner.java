@@ -133,6 +133,7 @@ public class TestRunner {
 
   public void stop() {
     mStoped = true;
+    mLatestTest.stopTest();
   }
 
   public interface DataCallback {
