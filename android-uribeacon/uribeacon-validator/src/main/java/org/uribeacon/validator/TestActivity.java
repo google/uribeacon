@@ -30,7 +30,6 @@ import java.util.ArrayList;
 
 public class TestActivity extends Activity {
 
-  public static final String OPTIONAL_IMPLEMENTED = "optional.implemented";
   private static final String TAG = TestActivity.class.getCanonicalName();
   private TestRunner mTestRunner;
   private ArrayList<TestHelper> mUriBeaconTests;
@@ -112,10 +111,9 @@ public class TestActivity extends Activity {
   }
 
   @Override
-  protected void onPause() {
-    super.onPause();
-    mTestRunner.pause();
+  protected void onDestroy() {
+    super.onDestroy();
+    mTestRunner.stop();
   }
-
 }
 
