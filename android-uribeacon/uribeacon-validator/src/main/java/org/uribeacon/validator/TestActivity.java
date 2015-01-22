@@ -100,6 +100,7 @@ public class TestActivity extends Activity {
     mUriBeaconTests = mTestRunner.getUriBeaconTests();
     mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView_tests);
     mLayoutManager = new LinearLayoutManager(this);
+    mRecyclerView.setHasFixedSize(true);
     mRecyclerView.setLayoutManager(mLayoutManager);
     mAdapter = new TestsAdapter(mUriBeaconTests);
     mRecyclerView.setAdapter(mAdapter);

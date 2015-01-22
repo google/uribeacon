@@ -113,11 +113,21 @@ public class BasicUriBeaconTests {
     );
     basicTestsBuilder.add(
         new Builder()
-            .name("Try to unlock with wrong key")
+            .name("Locking...")
             .write(ProtocolV2.LOCK, TestData.BASIC_LOCK_KEY, BluetoothGatt.GATT_SUCCESS)
+            .assertEquals(ProtocolV2.LOCK_STATE, TestData.LOCKED_STATE, BluetoothGatt.GATT_SUCCESS)
+    );
+    basicTestsBuilder.add(
+        new Builder()
+            .name("Try to unlock with wrong key")
             .write(ProtocolV2.UNLOCK, TestData.WRONG_LOCK_KEY,
                 ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION)
+    );
+    basicTestsBuilder.add(
+        new Builder()
+            .name("Unlocking...")
             .write(ProtocolV2.UNLOCK, TestData.BASIC_LOCK_KEY, BluetoothGatt.GATT_SUCCESS)
+            .assertEquals(ProtocolV2.LOCK_STATE, TestData.UNLOCKED_STATE, BluetoothGatt.GATT_SUCCESS)
     );
   }
 }
