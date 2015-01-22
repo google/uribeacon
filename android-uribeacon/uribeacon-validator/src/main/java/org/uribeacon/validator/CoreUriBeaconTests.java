@@ -10,9 +10,12 @@ import org.uribeacon.validator.TestHelper.TestCallback;
 
 import java.util.ArrayList;
 
-public class BasicUriBeaconTests {
-  public static final String TEST_NAME = "Basic Tests";
-  public static ArrayList<TestHelper> initializeTests(Context context, TestCallback testCallback, boolean optional) {
+class CoreUriBeaconTests {
+
+  public static final String TEST_NAME = "Core UriBeacon Tests";
+
+  public static ArrayList<TestHelper> initializeTests(Context context, TestCallback testCallback,
+      boolean optional) {
     ArrayList<Builder> basicTestsBuilder = new ArrayList<>();
     basicTestsBuilder.add(
         new Builder()
@@ -80,9 +83,10 @@ public class BasicUriBeaconTests {
     return setUpTests(basicTestsBuilder, context, testCallback);
   }
 
-  private static ArrayList<TestHelper> setUpTests(ArrayList<Builder> basicTestsBuilder, Context context, TestCallback testCallback) {
+  private static ArrayList<TestHelper> setUpTests(ArrayList<Builder> basicTestsBuilder,
+      Context context, TestCallback testCallback) {
     ArrayList<TestHelper> basicTests = new ArrayList<>();
-    for(Builder builder : basicTestsBuilder) {
+    for (Builder builder : basicTestsBuilder) {
       basicTests.add(builder
           .setUp(context, ProtocolV2.CONFIG_SERVICE_UUID, testCallback)
           .build());
@@ -127,7 +131,8 @@ public class BasicUriBeaconTests {
         new Builder()
             .name("Unlocking...")
             .write(ProtocolV2.UNLOCK, TestData.BASIC_LOCK_KEY, BluetoothGatt.GATT_SUCCESS)
-            .assertEquals(ProtocolV2.LOCK_STATE, TestData.UNLOCKED_STATE, BluetoothGatt.GATT_SUCCESS)
+            .assertEquals(ProtocolV2.LOCK_STATE, TestData.UNLOCKED_STATE,
+                BluetoothGatt.GATT_SUCCESS)
     );
   }
 }

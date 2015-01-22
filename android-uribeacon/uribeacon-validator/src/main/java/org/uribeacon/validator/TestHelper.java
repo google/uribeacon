@@ -48,7 +48,7 @@ import java.util.concurrent.TimeUnit;
 public class TestHelper {
 
   private static final String TAG = TestHelper.class.getCanonicalName();
-  private ScanCallback mScanCallback = new ScanCallback() {
+  private final ScanCallback mScanCallback = new ScanCallback() {
     @Override
     public void onScanResult(int callbackType, ScanResult result) {
       super.onScanResult(callbackType, result);
@@ -67,14 +67,14 @@ public class TestHelper {
   private boolean finished = false;
   private boolean disconnected = false;
   private BluetoothGatt mGatt;
-  private long SCAN_TIMEOUT = TimeUnit.SECONDS.toMillis(5);
+  private final long SCAN_TIMEOUT = TimeUnit.SECONDS.toMillis(5);
   private BluetoothGattService mService;
-  private String mName;
-  private Context mContext;
+  private final String mName;
+  private final Context mContext;
   private BluetoothDevice mBluetoothDevice;
-  private UUID mServiceUuid;
-  public BluetoothGattCallback mOutSideGattCallback;
-  public BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
+  private final UUID mServiceUuid;
+  private BluetoothGattCallback mOutSideGattCallback;
+  public final BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
     @Override
     public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
       super.onConnectionStateChange(gatt, status, newState);
@@ -146,11 +146,11 @@ public class TestHelper {
     }
 
   };
-  private TestCallback mTestCallback;
-  private LinkedList<TestAction> mTestActions;
-  private LinkedList<TestAction> mTestSteps;
-  private BluetoothAdapter mBluetoothAdapter;
-  private Handler mHandler;
+  private final TestCallback mTestCallback;
+  private final LinkedList<TestAction> mTestActions;
+  private final LinkedList<TestAction> mTestSteps;
+  private final BluetoothAdapter mBluetoothAdapter;
+  private final Handler mHandler;
   private boolean stopped;
 
   private TestHelper(
@@ -186,7 +186,8 @@ public class TestHelper {
     return started;
   }
 
-  public void run(BluetoothDevice bluetoothDevice, BluetoothGatt gatt, BluetoothGattCallback outsideCallback) {
+  public void run(BluetoothDevice bluetoothDevice, BluetoothGatt gatt,
+      BluetoothGattCallback outsideCallback) {
     Log.d(TAG, "Run Called for: " + getName());
     started = true;
     mBluetoothDevice = bluetoothDevice;
@@ -230,7 +231,7 @@ public class TestHelper {
   }
 
   private void writeToGatt() {
-    Log.d(TAG, "Writting");
+    Log.d(TAG, "Writing");
     TestAction writeTest = mTestActions.peek();
     BluetoothGattCharacteristic characteristic = mService
         .getCharacteristic(writeTest.characteristicUuid);
@@ -317,6 +318,7 @@ public class TestHelper {
   private void stopSearchingForBeacons() {
     getLeScanner().stopScan(mScanCallback);
   }
+
   private void checkPacket(ScanResult result) {
     mHandler.removeCallbacksAndMessages(null);
     stopSearchingForBeacons();
@@ -358,6 +360,7 @@ public class TestHelper {
       }
     }
   }
+
   private BluetoothLeScanner getLeScanner() {
     return mBluetoothAdapter.getBluetoothLeScanner();
   }
@@ -417,7 +420,7 @@ public class TestHelper {
     private Context mContext;
     private UUID mServiceUuid;
     private TestCallback mTestCallback;
-    private LinkedList<TestAction> mTestActions = new LinkedList<>();
+    private final LinkedList<TestAction> mTestActions = new LinkedList<>();
 
     public Builder name(String s) {
       mName = s;
@@ -442,6 +445,7 @@ public class TestHelper {
           new TestAction(TestAction.WRITE, characteristicUuid, expectedReturnCode, value));
       return this;
     }
+
     public Builder disconnect() {
       mTestActions.add(new TestAction(TestAction.DISCONNECT));
       return this;
@@ -498,6 +502,7 @@ public class TestHelper {
               value));
       return this;
     }
+
     public TestHelper build() {
       mTestActions.add(new TestAction(TestAction.LAST));
       // Keep a copy of the steps to show in the UI

@@ -9,12 +9,16 @@ import android.widget.TextView;
 
 import org.uribeacon.validator.MainActivity.TestInfo;
 
-public class TestTypesAdapter extends RecyclerView.Adapter<TestTypesAdapter.ViewHolder>{
-  private TestInfo[] mDataset;
-  private StartTestType mCallback;
+public class TestTypesAdapter extends RecyclerView.Adapter<TestTypesAdapter.ViewHolder> {
+
+  private final TestInfo[] mDataset;
+  private final StartTestType mCallback;
+
   public static class ViewHolder extends RecyclerView.ViewHolder {
-    public TextView mTextView;
-    public View mLayout;
+
+    public final TextView mTextView;
+    public final View mLayout;
+
     public ViewHolder(View v) {
       super(v);
       mLayout = v;
@@ -33,8 +37,7 @@ public class TestTypesAdapter extends RecyclerView.Adapter<TestTypesAdapter.View
     View v = LayoutInflater.from(parent.getContext())
         .inflate(R.layout.type_view, parent, false);
 
-    ViewHolder vh = new ViewHolder(v);
-    return vh;
+    return new ViewHolder(v);
   }
 
   // Replace the contest of a view
@@ -55,6 +58,7 @@ public class TestTypesAdapter extends RecyclerView.Adapter<TestTypesAdapter.View
   }
 
   public interface StartTestType {
+
     public void startTestType(String type);
   }
 }

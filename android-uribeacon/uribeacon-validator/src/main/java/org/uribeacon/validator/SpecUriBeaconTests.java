@@ -10,14 +10,17 @@ import org.uribeacon.validator.TestHelper.TestCallback;
 
 import java.util.ArrayList;
 
-public class SpecUriBeaconTests {
-  public static final String TEST_NAME = "Spec Tests";
-  public static ArrayList<TestHelper> initializeTests(Context context, TestCallback testCallback, boolean optional) {
+class SpecUriBeaconTests {
+
+  public static final String TEST_NAME = "Spec UriBeacon Tests";
+
+  public static ArrayList<TestHelper> initializeTests(Context context, TestCallback testCallback,
+      boolean optional) {
     ArrayList<Builder> specUriBeaconTestsBuilder = new ArrayList<>();
     specUriBeaconTestsBuilder.add(
         new Builder()
-        .name("Connecting...")
-        .connect()
+            .name("Connecting...")
+            .connect()
     );
     specUriBeaconTestsBuilder.add(
         new Builder()
@@ -105,7 +108,8 @@ public class SpecUriBeaconTests {
           new Builder()
               .name("Locking beacon...")
               .write(ProtocolV2.LOCK, TestData.BASIC_LOCK_KEY, BluetoothGatt.GATT_SUCCESS)
-              .assertEquals(ProtocolV2.LOCK_STATE, TestData.LOCKED_STATE, BluetoothGatt.GATT_SUCCESS)
+              .assertEquals(ProtocolV2.LOCK_STATE, TestData.LOCKED_STATE,
+                  BluetoothGatt.GATT_SUCCESS)
       );
       specUriBeaconTestsBuilder.add(
           new Builder()
@@ -129,7 +133,8 @@ public class SpecUriBeaconTests {
           new Builder()
               .name("Unlocking beacon...")
               .write(ProtocolV2.UNLOCK, TestData.BASIC_LOCK_KEY, BluetoothGatt.GATT_SUCCESS)
-              .assertEquals(ProtocolV2.LOCK_STATE, TestData.UNLOCKED_STATE, BluetoothGatt.GATT_SUCCESS)
+              .assertEquals(ProtocolV2.LOCK_STATE, TestData.UNLOCKED_STATE,
+                  BluetoothGatt.GATT_SUCCESS)
       );
       specUriBeaconTestsBuilder.add(
           new Builder()
@@ -145,126 +150,147 @@ public class SpecUriBeaconTests {
       specUriBeaconTestsBuilder.add(
           new Builder()
               .name("Try Unlock with Long Key")
-              .write(ProtocolV2.UNLOCK, TestData.LONG_LOCK_KEY, BluetoothGatt.GATT_INVALID_ATTRIBUTE_LENGTH)
+              .write(ProtocolV2.UNLOCK, TestData.LONG_LOCK_KEY,
+                  BluetoothGatt.GATT_INVALID_ATTRIBUTE_LENGTH)
       );
       specUriBeaconTestsBuilder.add(
           new Builder()
               .name("Locking beacon...")
               .write(ProtocolV2.LOCK, TestData.BASIC_LOCK_KEY, BluetoothGatt.GATT_SUCCESS)
-              .assertEquals(ProtocolV2.LOCK_STATE, TestData.LOCKED_STATE, BluetoothGatt.GATT_SUCCESS)
+              .assertEquals(ProtocolV2.LOCK_STATE, TestData.LOCKED_STATE,
+                  BluetoothGatt.GATT_SUCCESS)
       );
       specUriBeaconTestsBuilder.add(
           new Builder()
               .name("Try to Unlock with Short Key")
-              .write(ProtocolV2.UNLOCK, TestData.SHORT_LOCK_KEY, BluetoothGatt.GATT_INVALID_ATTRIBUTE_LENGTH)
+              .write(ProtocolV2.UNLOCK, TestData.SHORT_LOCK_KEY,
+                  BluetoothGatt.GATT_INVALID_ATTRIBUTE_LENGTH)
       );
       specUriBeaconTestsBuilder.add(
           new Builder()
               .name("Try Unlock with Long Key")
-              .write(ProtocolV2.UNLOCK, TestData.LONG_LOCK_KEY, BluetoothGatt.GATT_INVALID_ATTRIBUTE_LENGTH)
+              .write(ProtocolV2.UNLOCK, TestData.LONG_LOCK_KEY,
+                  BluetoothGatt.GATT_INVALID_ATTRIBUTE_LENGTH)
       );
       specUriBeaconTestsBuilder.add(
           new Builder()
               .name("Unlocking...")
               .write(ProtocolV2.UNLOCK, TestData.BASIC_LOCK_KEY, BluetoothGatt.GATT_SUCCESS)
-              .assertEquals(ProtocolV2.LOCK_STATE, TestData.UNLOCKED_STATE, BluetoothGatt.GATT_SUCCESS)
+              .assertEquals(ProtocolV2.LOCK_STATE, TestData.UNLOCKED_STATE,
+                  BluetoothGatt.GATT_SUCCESS)
       );
       specUriBeaconTestsBuilder.add(
           new Builder()
               .name("Locking...")
               .write(ProtocolV2.LOCK, TestData.BASIC_LOCK_KEY, BluetoothGatt.GATT_SUCCESS)
-              .assertEquals(ProtocolV2.LOCK_STATE, TestData.LOCKED_STATE, BluetoothGatt.GATT_SUCCESS)
+              .assertEquals(ProtocolV2.LOCK_STATE, TestData.LOCKED_STATE,
+                  BluetoothGatt.GATT_SUCCESS)
       );
       specUriBeaconTestsBuilder.add(
           new Builder()
-          .name("Locked: Try Long Data")
-          .write(ProtocolV2.DATA, TestData.LONG_URI, ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION)
+              .name("Locked: Try Long Data")
+              .write(ProtocolV2.DATA, TestData.LONG_URI, ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION)
       );
       specUriBeaconTestsBuilder.add(
           new Builder()
-          .name("Locked: Try Short Flags")
-          .write(ProtocolV2.FLAGS, TestData.SHORT_FLAGS, ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION)
+              .name("Locked: Try Short Flags")
+              .write(ProtocolV2.FLAGS, TestData.SHORT_FLAGS,
+                  ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION)
       );
       specUriBeaconTestsBuilder.add(
           new Builder()
-          .name("Locked: Try Valid Flags")
-          .write(ProtocolV2.FLAGS, TestData.BASIC_GENERAL_DATA, ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION)
+              .name("Locked: Try Valid Flags")
+              .write(ProtocolV2.FLAGS, TestData.BASIC_GENERAL_DATA,
+                  ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION)
       );
       specUriBeaconTestsBuilder.add(
           new Builder()
-          .name("Locked: Try Long Flags")
-          .write(ProtocolV2.FLAGS, TestData.LONG_FLAGS, ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION)
+              .name("Locked: Try Long Flags")
+              .write(ProtocolV2.FLAGS, TestData.LONG_FLAGS,
+                  ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION)
       );
       specUriBeaconTestsBuilder.add(
           new Builder()
-          .name("Locked: Try Short Advertised Tx Power Levels")
-          .write(ProtocolV2.POWER_LEVELS, TestData.SHORT_TX_POWER_LEVELS, ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION)
+              .name("Locked: Try Short Advertised Tx Power Levels")
+              .write(ProtocolV2.POWER_LEVELS, TestData.SHORT_TX_POWER_LEVELS,
+                  ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION)
       );
       specUriBeaconTestsBuilder.add(
           new Builder()
-          .name("Locked: Try Valid Advertised Tx Power Levels")
-          .write(ProtocolV2.POWER_LEVELS, TestData.BASIC_TX_POWER_LEVELS, ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION)
+              .name("Locked: Try Valid Advertised Tx Power Levels")
+              .write(ProtocolV2.POWER_LEVELS, TestData.BASIC_TX_POWER_LEVELS,
+                  ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION)
       );
       specUriBeaconTestsBuilder.add(
           new Builder()
-          .name("Locked: Try Long Advertised Tx Power Levels")
-          .write(ProtocolV2.POWER_LEVELS, TestData.LONG_TX_POWER_LEVELS, ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION)
+              .name("Locked: Try Long Advertised Tx Power Levels")
+              .write(ProtocolV2.POWER_LEVELS, TestData.LONG_TX_POWER_LEVELS,
+                  ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION)
       );
       specUriBeaconTestsBuilder.add(
           new Builder()
-          .name("Locked: Try Short Power Mode")
-          .write(ProtocolV2.POWER_MODE, TestData.SHORT_POWER_MODE, ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION)
+              .name("Locked: Try Short Power Mode")
+              .write(ProtocolV2.POWER_MODE, TestData.SHORT_POWER_MODE,
+                  ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION)
       );
       specUriBeaconTestsBuilder.add(
           new Builder()
-          .name("Locked: Try Valid Power Mode")
-          .write(ProtocolV2.POWER_MODE, TestData.BASIC_GENERAL_DATA, ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION)
+              .name("Locked: Try Valid Power Mode")
+              .write(ProtocolV2.POWER_MODE, TestData.BASIC_GENERAL_DATA,
+                  ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION)
       );
       specUriBeaconTestsBuilder.add(
           new Builder()
-          .name("Locked: Try Long Power Mode")
-          .write(ProtocolV2.POWER_MODE, TestData.BASIC_GENERAL_DATA, ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION)
+              .name("Locked: Try Long Power Mode")
+              .write(ProtocolV2.POWER_MODE, TestData.BASIC_GENERAL_DATA,
+                  ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION)
       );
       specUriBeaconTestsBuilder.add(
           new Builder()
-          .name("Locked: Try Short Period")
-          .write(ProtocolV2.PERIOD, TestData.SHORT_PERIOD, ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION)
+              .name("Locked: Try Short Period")
+              .write(ProtocolV2.PERIOD, TestData.SHORT_PERIOD,
+                  ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION)
       );
       specUriBeaconTestsBuilder.add(
           new Builder()
-          .name("Locked: Try Valid Period")
-          .write(ProtocolV2.PERIOD, TestData.BASIC_PERIOD, ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION)
+              .name("Locked: Try Valid Period")
+              .write(ProtocolV2.PERIOD, TestData.BASIC_PERIOD,
+                  ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION)
       );
       specUriBeaconTestsBuilder.add(
           new Builder()
-          .name("Locked: Try Long Period")
-          .write(ProtocolV2.PERIOD, TestData.LONG_PERIOD, ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION)
+              .name("Locked: Try Long Period")
+              .write(ProtocolV2.PERIOD, TestData.LONG_PERIOD,
+                  ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION)
       );
       specUriBeaconTestsBuilder.add(
           new Builder()
-          .name("Locked: Try Short Reset")
-          .write(ProtocolV2.RESET, TestData.SHORT_RESET, ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION)
+              .name("Locked: Try Short Reset")
+              .write(ProtocolV2.RESET, TestData.SHORT_RESET,
+                  ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION)
       );
       specUriBeaconTestsBuilder.add(
           new Builder()
-          .name("Locked: Try Valid Reset")
-          .write(ProtocolV2.RESET, TestData.BASIC_GENERAL_DATA, ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION)
+              .name("Locked: Try Valid Reset")
+              .write(ProtocolV2.RESET, TestData.BASIC_GENERAL_DATA,
+                  ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION)
       );
       specUriBeaconTestsBuilder.add(
           new Builder()
-          .name("Locked: Try Long Reset")
-          .write(ProtocolV2.RESET, TestData.LONG_RESET, ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION)
+              .name("Locked: Try Long Reset")
+              .write(ProtocolV2.RESET, TestData.LONG_RESET,
+                  ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION)
       );
       specUriBeaconTestsBuilder.add(
           new Builder()
-          .name("Unlocking...")
-          .write(ProtocolV2.UNLOCK, TestData.BASIC_LOCK_KEY, BluetoothGatt.GATT_SUCCESS)
+              .name("Unlocking...")
+              .write(ProtocolV2.UNLOCK, TestData.BASIC_LOCK_KEY, BluetoothGatt.GATT_SUCCESS)
       );
     }
     specUriBeaconTestsBuilder.add(
         new Builder()
-        .name("Disconnecting...")
-        .disconnect()
+            .name("Disconnecting...")
+            .disconnect()
     );
     ArrayList<TestHelper> specUriBeaconTests = new ArrayList<>();
     for (Builder builder : specUriBeaconTestsBuilder) {

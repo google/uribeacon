@@ -31,13 +31,13 @@ import java.util.ArrayList;
 import java.util.ListIterator;
 import java.util.concurrent.TimeUnit;
 
-public class TestRunner {
+class TestRunner {
 
   private static final String TAG = TestRunner.class.getCanonicalName();
 
-  private boolean mStoped;
+  private boolean mStopped;
   private boolean mFailed = false;
-  private TestCallback mTestCallback = new TestCallback() {
+  private final TestCallback mTestCallback = new TestCallback() {
     @Override
     public void testStarted() {
       mDataCallback.dataUpdated();
@@ -50,7 +50,7 @@ public class TestRunner {
         mFailed = true;
       }
       mDataCallback.dataUpdated();
-      if (!mStoped) {
+      if (!mStopped) {
         mHandler.postDelayed(new Runnable() {
           @Override
           public void run() {
@@ -58,7 +58,7 @@ public class TestRunner {
           }
         }, TimeUnit.SECONDS.toMillis(1));
       } else {
-        if (gatt != null){
+        if (gatt != null) {
           gatt.disconnect();
         }
         mHandler.removeCallbacksAndMessages(null);
@@ -75,20 +75,22 @@ public class TestRunner {
       mDataCallback.connectedToBeacon();
     }
   };
-  private ArrayList<TestHelper> mUriBeaconTests;
+  private final ArrayList<TestHelper> mUriBeaconTests;
   private TestHelper mLatestTest;
-  private ListIterator<TestHelper> mTestIterator;
-  private DataCallback mDataCallback;
-  private Handler mHandler;
+  private final ListIterator<TestHelper> mTestIterator;
+  private final DataCallback mDataCallback;
+  private final Handler mHandler;
 
   public TestRunner(Context context, DataCallback dataCallback,
       String testType, boolean optionalImplemented) {
-    mStoped = false;
+    mStopped = false;
     mDataCallback = dataCallback;
-    if (BasicUriBeaconTests.class.getName().equals(testType)) {
-      mUriBeaconTests = BasicUriBeaconTests.initializeTests(context, mTestCallback, optionalImplemented);
+    if (CoreUriBeaconTests.class.getName().equals(testType)) {
+      mUriBeaconTests = CoreUriBeaconTests.initializeTests(context, mTestCallback,
+          optionalImplemented);
     } else {
-      mUriBeaconTests = SpecUriBeaconTests.initializeTests(context, mTestCallback, optionalImplemented);
+      mUriBeaconTests = SpecUriBeaconTests
+          .initializeTests(context, mTestCallback, optionalImplemented);
     }
     mTestIterator = mUriBeaconTests.listIterator();
     mHandler = new Handler(Looper.myLooper());
@@ -107,7 +109,7 @@ public class TestRunner {
   // To keep the connection to the beacon alive the same gatt object
   // must be passed around. But since gatt is attached to a callback a single super callback
   // is needed for all tests to share.
-  private BluetoothGattCallback superBluetoothScanCallback = new BluetoothGattCallback() {
+  private final BluetoothGattCallback superBluetoothScanCallback = new BluetoothGattCallback() {
     @Override
     public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
       mLatestTest.mGattCallback.onConnectionStateChange(gatt, status, newState);
@@ -137,7 +139,7 @@ public class TestRunner {
   }
 
   public void stop() {
-    mStoped = true;
+    mStopped = true;
     mLatestTest.stopTest();
   }
 

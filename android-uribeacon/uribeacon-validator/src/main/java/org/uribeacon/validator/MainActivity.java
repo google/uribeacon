@@ -19,12 +19,9 @@ public class MainActivity extends Activity {
 
   public static final String TEST_TYPE = "MainActivity.TestType";
   public static final String LOCK_IMPLEMENTED = "MainActivity.LockImplemented";
-  private RecyclerView mRecyclerView;
-  private RecyclerView.Adapter mAdapter;
-  private RecyclerView.LayoutManager mLayoutManager;
   private boolean lockImplemented = false;
 
-  private StartTestType mStartTestType = new StartTestType() {
+  private final StartTestType mStartTestType = new StartTestType() {
     @Override
     public void startTestType(String type) {
       Intent intent = new Intent(MainActivity.this, TestActivity.class);
@@ -33,19 +30,20 @@ public class MainActivity extends Activity {
       startActivity(intent);
     }
   };
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
-    mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView_types);
+    RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView_types);
 
-    mRecyclerView.setHasFixedSize(true);
+    recyclerView.setHasFixedSize(true);
 
-    mLayoutManager = new LinearLayoutManager(this);
-    mRecyclerView.setLayoutManager(mLayoutManager);
+    RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+    recyclerView.setLayoutManager(layoutManager);
 
-    mAdapter = new TestTypesAdapter(getTestsInfo(), mStartTestType);
-    mRecyclerView.setAdapter(mAdapter);
+    RecyclerView.Adapter mAdapter = new TestTypesAdapter(getTestsInfo(), mStartTestType);
+    recyclerView.setAdapter(mAdapter);
 
   }
 
@@ -70,14 +68,16 @@ public class MainActivity extends Activity {
 
   private TestInfo[] getTestsInfo() {
     return new TestInfo[]{
-        new TestInfo(BasicUriBeaconTests.TEST_NAME, BasicUriBeaconTests.class.getName()),
+        new TestInfo(CoreUriBeaconTests.TEST_NAME, CoreUriBeaconTests.class.getName()),
         new TestInfo(SpecUriBeaconTests.TEST_NAME, SpecUriBeaconTests.class.getName())
     };
   }
 
   public class TestInfo {
-    public String testName;
-    public String className;
+
+    public final String testName;
+    public final String className;
+
     public TestInfo(String testName, String className) {
       this.testName = testName;
       this.className = className;

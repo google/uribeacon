@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android"
-        android:constantSize="true">
+          android:constantSize="true">
     <item
-        android:drawable="@drawable/lock_available"
-        android:state_checked="true"/>
+            android:drawable="@drawable/lock_available"
+            android:state_checked="true"/>
     <item
-        android:drawable="@drawable/lock_unavailable"
-        android:state_checked="false"/>
+            android:drawable="@drawable/lock_unavailable"
+            android:state_checked="false"/>
 </selector>
