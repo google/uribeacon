@@ -16,9 +16,45 @@ public class BasicUriBeaconTests {
     ArrayList<Builder> basicTestsBuilder = new ArrayList<>();
     basicTestsBuilder.add(
         new Builder()
-            .name("Write and read mandatory Characteristics")
+            .name("Connect to beacon")
             .connect()
-            .insertActions(writeAndReadMandatoryCharacteristics())
+    );
+    if (optional) {
+      addLockUnlockTests(basicTestsBuilder);
+    }
+    basicTestsBuilder.add(
+        new Builder()
+            .name("Write Reset")
+            .write(ProtocolV2.RESET, TestData.BASIC_GENERAL_DATA, BluetoothGatt.GATT_SUCCESS)
+    );
+    basicTestsBuilder.add(
+        new Builder()
+            .name("Write and Read Data")
+            .writeAndRead(ProtocolV2.DATA, TestData.MULTIPLE_GENERAL_DATA)
+    );
+    basicTestsBuilder.add(
+        new Builder()
+            .name("Write and read Flags")
+            .writeAndRead(ProtocolV2.FLAGS, TestData.MULTIPLE_GENERAL_DATA)
+    );
+    basicTestsBuilder.add(
+        new Builder()
+            .name("Write and read Tx Power Levels")
+            .writeAndRead(ProtocolV2.POWER_LEVELS, TestData.MULTIPLE_TX_POWER_LEVELS)
+    );
+    basicTestsBuilder.add(
+        new Builder()
+            .name("Write and read Tx Power Mode")
+            .writeAndRead(ProtocolV2.POWER_MODE, TestData.MULTIPLE_GENERAL_DATA)
+    );
+    basicTestsBuilder.add(
+        new Builder()
+            .name("Write and read period")
+            .writeAndRead(ProtocolV2.PERIOD, TestData.MULTIPLE_BASIC_PERIOD)
+    );
+    basicTestsBuilder.add(
+        new Builder()
+            .name("Disconnecting")
             .disconnect()
     );
     basicTestsBuilder.add(
@@ -28,31 +64,23 @@ public class BasicUriBeaconTests {
     );
     basicTestsBuilder.add(
         new Builder()
-            .name("Values that are written are advertised")
+            .name("Flag written are being broadcasted")
             .assertAdvFlags(TestData.BASIC_GENERAL_DATA[0])
+    );
+    basicTestsBuilder.add(
+        new Builder()
+            .name("Tx Power that is written is being broadcasted")
             .assertAdvTxPower(TestData.BASIC_TX_POWER_LEVELS[1])
+    );
+    basicTestsBuilder.add(
+        new Builder()
+            .name("Uri written is being broadcasted")
             .assertAdvUri(TestData.BASIC_GENERAL_DATA)
     );
-    if (optional) {
-      basicTestsBuilder.add(
-          new Builder()
-              .name("Lock/Unlock Beacon")
-              .connect()
-              .assertEquals(ProtocolV2.LOCK_STATE, TestData.UNLOCKED_STATE,
-                  BluetoothGatt.GATT_SUCCESS)
-              .write(ProtocolV2.LOCK, TestData.BASIC_LOCK_KEY, BluetoothGatt.GATT_SUCCESS)
-              .assertEquals(ProtocolV2.LOCK_STATE, TestData.LOCKED_STATE,
-                  BluetoothGatt.GATT_SUCCESS)
-              .write(ProtocolV2.UNLOCK, TestData.BASIC_LOCK_KEY, BluetoothGatt.GATT_SUCCESS)
-              .assertEquals(ProtocolV2.LOCK_STATE, TestData.UNLOCKED_STATE,
-                  BluetoothGatt.GATT_SUCCESS)
-              .write(ProtocolV2.LOCK, TestData.BASIC_LOCK_KEY, BluetoothGatt.GATT_SUCCESS)
-              .write(ProtocolV2.UNLOCK, TestData.WRONG_LOCK_KEY,
-                  ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION)
-              .write(ProtocolV2.UNLOCK, TestData.BASIC_LOCK_KEY, BluetoothGatt.GATT_SUCCESS)
-              .disconnect()
-      );
-    }
+    return setUpTests(basicTestsBuilder, context, testCallback);
+  }
+
+  private static ArrayList<TestHelper> setUpTests(ArrayList<Builder> basicTestsBuilder, Context context, TestCallback testCallback) {
     ArrayList<TestHelper> basicTests = new ArrayList<>();
     for(Builder builder : basicTestsBuilder) {
       basicTests.add(builder
@@ -61,14 +89,35 @@ public class BasicUriBeaconTests {
     }
     return basicTests;
   }
-  private static Builder writeAndReadMandatoryCharacteristics() {
-    return new Builder()
-        .write(ProtocolV2.RESET, TestData.BASIC_GENERAL_DATA, BluetoothGatt.GATT_SUCCESS)
-        .assertEquals(ProtocolV2.LOCK_STATE, TestData.UNLOCKED_STATE, BluetoothGatt.GATT_SUCCESS)
-        .writeAndRead(ProtocolV2.DATA, TestData.MULTIPLE_GENERAL_DATA)
-        .writeAndRead(ProtocolV2.FLAGS, TestData.MULTIPLE_GENERAL_DATA)
-        .writeAndRead(ProtocolV2.POWER_LEVELS, TestData.MULTIPLE_TX_POWER_LEVELS)
-        .writeAndRead(ProtocolV2.POWER_MODE, TestData.MULTIPLE_GENERAL_DATA)
-        .writeAndRead(ProtocolV2.PERIOD, TestData.MULTIPLE_BASIC_PERIOD);
+
+  private static void addLockUnlockTests(ArrayList<Builder> basicTestsBuilder) {
+    basicTestsBuilder.add(
+        new Builder()
+            .name("Read Lock State")
+            .assertEquals(ProtocolV2.LOCK_STATE, TestData.UNLOCKED_STATE,
+                BluetoothGatt.GATT_SUCCESS)
+    );
+    basicTestsBuilder.add(
+        new Builder()
+            .name("Lock Beacon")
+            .write(ProtocolV2.LOCK, TestData.BASIC_LOCK_KEY, BluetoothGatt.GATT_SUCCESS)
+            .assertEquals(ProtocolV2.LOCK_STATE, TestData.LOCKED_STATE,
+                BluetoothGatt.GATT_SUCCESS)
+    );
+    basicTestsBuilder.add(
+        new Builder()
+            .name("Unlock Beacon")
+            .write(ProtocolV2.UNLOCK, TestData.BASIC_LOCK_KEY, BluetoothGatt.GATT_SUCCESS)
+            .assertEquals(ProtocolV2.LOCK_STATE, TestData.UNLOCKED_STATE,
+                BluetoothGatt.GATT_SUCCESS)
+    );
+    basicTestsBuilder.add(
+        new Builder()
+            .name("Try to unlock with wrong key")
+            .write(ProtocolV2.LOCK, TestData.BASIC_LOCK_KEY, BluetoothGatt.GATT_SUCCESS)
+            .write(ProtocolV2.UNLOCK, TestData.WRONG_LOCK_KEY,
+                ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION)
+            .write(ProtocolV2.UNLOCK, TestData.BASIC_LOCK_KEY, BluetoothGatt.GATT_SUCCESS)
+    );
   }
 }
