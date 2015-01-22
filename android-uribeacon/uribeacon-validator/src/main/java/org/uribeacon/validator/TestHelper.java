@@ -151,6 +151,7 @@ public class TestHelper {
   private LinkedList<TestAction> mTestSteps;
   private BluetoothAdapter mBluetoothAdapter;
   private Handler mHandler;
+  private boolean stopped;
 
   private TestHelper(
       String name, Context context, UUID serviceUuid,
@@ -166,6 +167,7 @@ public class TestHelper {
         (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
     mBluetoothAdapter = bluetoothManager.getAdapter();
     mHandler = new Handler(Looper.myLooper());
+    stopped = false;
   }
 
   public String getName() {
@@ -249,7 +251,13 @@ public class TestHelper {
 
   private void dispatch() {
     Log.d(TAG, "Dispatching");
-    if (mTestActions.peek().actionType == TestAction.LAST) {
+    // If the test is stopped and connected to the beacon
+    // disconnect from the beacon
+    if (stopped) {
+      if (mGatt != null) {
+        disconnectFromGatt();
+      }
+    } else if (mTestActions.peek().actionType == TestAction.LAST) {
       finished = true;
       mTestCallback.testCompleted(mBluetoothDevice, mGatt);
     } else if (mTestActions.peek().actionType == TestAction.CONNECT) {
@@ -387,9 +395,7 @@ public class TestHelper {
   }
 
   public void stopTest() {
-    if (mGatt != null) {
-      disconnectFromGatt();
-    }
+    stopped = true;
     stopSearchingForBeacons();
     fail("Stopped by user");
   }

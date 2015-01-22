@@ -57,6 +57,11 @@ public class TestRunner {
             start(bluetoothDevice, gatt);
           }
         }, TimeUnit.SECONDS.toMillis(1));
+      } else {
+        if (gatt != null){
+          gatt.disconnect();
+        }
+        mHandler.removeCallbacksAndMessages(null);
       }
     }
 
