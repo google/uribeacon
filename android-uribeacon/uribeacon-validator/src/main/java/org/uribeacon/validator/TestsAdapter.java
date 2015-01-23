@@ -31,7 +31,7 @@ import java.util.ArrayList;
 public class TestsAdapter extends RecyclerView.Adapter<TestsAdapter.ViewHolder> {
 
   private static final String TAG = TestsAdapter.class.getCanonicalName();
-  private ArrayList<TestHelper> mDataset;
+  private final ArrayList<TestHelper> mDataset;
 
   // Provide a suitable constructor (depends on the kind of dataset)
   public TestsAdapter(ArrayList<TestHelper> uriBeaconTests) {
@@ -46,8 +46,7 @@ public class TestsAdapter extends RecyclerView.Adapter<TestsAdapter.ViewHolder> 
     View v = LayoutInflater.from(parent.getContext())
         .inflate(R.layout.test_view, parent, false);
 
-    ViewHolder vh = new ViewHolder(v);
-    return vh;
+    return new ViewHolder(v);
   }
 
   // Replace the contents of a view (invoked by the layout manager)
@@ -157,11 +156,11 @@ public class TestsAdapter extends RecyclerView.Adapter<TestsAdapter.ViewHolder> 
   public static class ViewHolder extends RecyclerView.ViewHolder {
 
     // each data item is just a string in this case
-    public TextView mTestName;
-    public TextView mTestResult;
-    public ImageView mImageView;
-    public TextView mTestDetails;
-    public LinearLayout mLayout;
+    public final TextView mTestName;
+    public final TextView mTestResult;
+    public final ImageView mImageView;
+    public final TextView mTestDetails;
+    public final LinearLayout mLayout;
     private boolean expanded;
 
     public ViewHolder(View v) {

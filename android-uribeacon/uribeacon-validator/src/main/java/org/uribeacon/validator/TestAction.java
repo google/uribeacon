@@ -18,7 +18,7 @@ package org.uribeacon.validator;
 
 import java.util.UUID;
 
-public class TestAction {
+class TestAction {
 
   public final static int CONNECT = 0;
   public final static int WRITE = 1;
@@ -31,7 +31,7 @@ public class TestAction {
   public final static int LAST = 8;
 
 
-  public int actionType;
+  public final int actionType;
   public UUID characteristicUuid;
   public int expectedReturnCode;
   public byte[] transmittedValue;

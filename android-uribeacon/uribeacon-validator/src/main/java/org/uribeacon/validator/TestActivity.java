@@ -34,8 +34,7 @@ public class TestActivity extends Activity {
 
   private static final String TAG = TestActivity.class.getCanonicalName();
   private TestRunner mTestRunner;
-  private ArrayList<TestHelper> mUriBeaconTests;
-  private DataCallback mDataCallback = new DataCallback() {
+  private final DataCallback mDataCallback = new DataCallback() {
     ProgressDialog progress;
 
     @Override
@@ -91,10 +90,7 @@ public class TestActivity extends Activity {
       });
     }
   };
-  // Recycle view variables
-  private RecyclerView mRecyclerView;
   private RecyclerView.Adapter mAdapter;
-  private RecyclerView.LayoutManager mLayoutManager;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -102,10 +98,10 @@ public class TestActivity extends Activity {
     setContentView(R.layout.activity_test);
     boolean optionalImplemented = getIntent().getBooleanExtra(MainActivity.LOCK_IMPLEMENTED, false);
     String testType = getIntent().getStringExtra(MainActivity.TEST_TYPE);
-    mTestRunner = new TestRunner(this,  mDataCallback, testType, optionalImplemented);
-    mUriBeaconTests = mTestRunner.getUriBeaconTests();
-    mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView_tests);
-    mLayoutManager = new LinearLayoutManager(this);
+    mTestRunner = new TestRunner(this, mDataCallback, testType, optionalImplemented);
+    ArrayList<TestHelper> mUriBeaconTests = mTestRunner.getUriBeaconTests();
+    RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView_tests);
+    RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
     mRecyclerView.setHasFixedSize(true);
     mRecyclerView.setLayoutManager(mLayoutManager);
     mAdapter = new TestsAdapter(mUriBeaconTests);

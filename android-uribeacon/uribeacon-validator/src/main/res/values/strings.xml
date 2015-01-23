@@ -14,18 +14,13 @@
 <resources>
 
     <string name="app_name">UriBeacon Validator</string>
-    <string name="action_settings">Settings</string>
     <string name="put_beacon_in_config_mode">Put UriBeacon in Config Mode</string>
     <string name="title_activity_test">Test</string>
     <string name="test_success">Tests Succeeded</string>
     <string name="test_failed">Tests failed</string>
-    <string name="lock_unlock_implemented">Is lock/unlock implemented?</string>
-    <string name="no">No</string>
-    <string name="yes">Yes</string>
     <string name="title_activity_main">UriBeacon Validator</string>
-    <string name="tests">Tests</string>
-    <string name="basic_tests">Basic Tests</string>
-    <string name="spec_tests">Spec Tests</string>
     <string name="lock_implemented">Lock Implemented</string>
+    <string name="chevron_right_description">Run Tests</string>
+    <string name="test_state_description">Test State</string>
 
 </resources>
