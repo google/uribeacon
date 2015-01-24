@@ -1,12 +1,12 @@
 [submodule "ios-uribeacon/uribeacon-sample/third-party/MBProgressHUD"]
 	path = ios-uribeacon/uribeacon-sample/third-party/MBProgressHUD
 	url = https://github.com/jdg/MBProgressHUD
-[submodule "beacons/mbed/mbedmicro/BLE_API"]
-	path = beacons/mbed/mbedmicro/BLE_API
-	url = https://github.com/schilit/BLE_API.git
 [submodule "beacons/mbed/mbedmicro/mbed"]
 	path = beacons/mbed/mbedmicro/mbed
 	url = https://github.com/mbedmicro/mbed.git
 [submodule "beacons/mbed/mbedmicro/nRF51822"]
 	path = beacons/mbed/mbedmicro/nRF51822
 	url = https://github.com/mbedmicro/nRF51822.git
+[submodule "beacons/mbed/mbedmicro/BLE_API"]
+	path = beacons/mbed/mbedmicro/BLE_API
+	url = https://github.com/schilit/BLE_API.git
