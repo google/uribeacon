@@ -12,9 +12,9 @@ cmake_minimum_required (VERSION 2.8)
 project (BLE_URIBEACON)
 
 # define some more paths to projects we depend on
-set (MBED_SRC_PATH     ${BLE_URIBEACON_SOURCE_DIR}/third_party/mbed/libraries/mbed)
-set (BLE_API_SRC_PATH  ${BLE_URIBEACON_SOURCE_DIR}/third_party/BLE_API)
-set (NRF51822_SRC_PATH ${BLE_URIBEACON_SOURCE_DIR}/third_party/nRF51822)
+set (MBED_SRC_PATH     ${BLE_URIBEACON_SOURCE_DIR}/mbedmicro/mbed/libraries/mbed)
+set (BLE_API_SRC_PATH  ${BLE_URIBEACON_SOURCE_DIR}/mbedmicro/BLE_API)
+set (NRF51822_SRC_PATH ${BLE_URIBEACON_SOURCE_DIR}/mbedmicro/nRF51822)
 
 # It's best to hide all the details of setting up the variable SRCS in a CMake
 # macro. The macro can then be called in all the project CMake list files to add
@@ -51,7 +51,7 @@ if (TOOLCHAIN STREQUAL "armcc")
     set(CMAKE_C_COMPILER   ${TOOLCHAIN_SYSROOT}/bin/armcc)
     set(SIZE_COMMAND       size)
 
-    SET(CMAKE_CXX_LINK_FLAGS "--libpath=${TOOLCHAIN_SYSROOT}/lib --info=totals --list=.link_totals.txt --scatter ${MBED_SRC_PATH}/targets/cmsis/TARGET_NORDIC/TARGET_MCU_NRF51822/TOOLCHAIN_ARM_STD/TARGET_MCU_NORDIC_16K/nRF51822.sct")
+    SET(CMAKE_CXX_LINK_FLAGS "--libpath=${TOOLCHAIN_SYSROOT}/lib --info=totals --list=.link_totals.txt --scatter ${MBED_SRC_PATH}/targets/cmsis/TARGET_NORDIC/TARGET_MCU_NRF51822/TOOLCHAIN_ARM_STD/TARGET_MCU_NORDIC_32K/nRF51822.sct")
 
     SET(CMAKE_CXX_LINK_EXECUTABLE
         "armlink <CMAKE_CXX_LINK_FLAGS> <OBJECTS> -o <TARGET>")
@@ -92,7 +92,7 @@ include_directories(
     ${MBED_SRC_PATH}/targets/hal/TARGET_NORDIC
     ${MBED_SRC_PATH}/targets/hal/TARGET_NORDIC/TARGET_MCU_NRF51822
     ${MBED_SRC_PATH}/targets/hal/TARGET_NORDIC/TARGET_MCU_NRF51822/Lib
-    ${MBED_SRC_PATH}/targets/hal/TARGET_NORDIC/TARGET_MCU_NRF51822/TARGET_NRF51822_MKIT
+    ${MBED_SRC_PATH}/targets/hal/TARGET_NORDIC/TARGET_MCU_NRF51822/TARGET_NRF51_DK
     ${BLE_API_SRC_PATH}
     ${BLE_API_SRC_PATH}/public
     ${BLE_API_SRC_PATH}/common
@@ -128,6 +128,10 @@ add_definitions(
     -D__MBED__=1
     -DMBED_BUILD_TIMESTAMP=1399904910.34
     -DMBED_USERNAME=rohgro01
+    -DTARGET_NRF51_DK
+    -DTARGET_MCU_NRF51822
+    -DTARGET_MCU_NORDIC_32K
+    -DTARGET_FF_ARDUINO
 )
 
 if (TOOLCHAIN STREQUAL "armcc")
@@ -173,7 +177,7 @@ elseif(TOOLCHAIN STREQUAL "armgcc")
         -DTOOLCHAIN_GCC
         -DTARGET_NRF51822_MKIT
         -DTARGET_MCU_NRF51822
-        -DTARGET_MCU_NORDIC_16K
+        -DTARGET_MCU_NORDIC_32K
     )
 
     # Language specifc compiler flags.
@@ -185,7 +189,7 @@ elseif(TOOLCHAIN STREQUAL "armgcc")
         "${COMMON_COMPILE_FLAGS} -x assembler-with-cpp")
 
     SET(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS
-        -T${MBED_SRC_PATH}/targets/cmsis/TARGET_NORDIC/TARGET_MCU_NRF51822/TOOLCHAIN_GCC_ARM/TARGET_MCU_NORDIC_16K/NRF51822.ld)
+        -T${MBED_SRC_PATH}/targets/cmsis/TARGET_NORDIC/TARGET_MCU_NRF51822/TOOLCHAIN_GCC_ARM/TARGET_MCU_NORDIC_32K/NRF51822.ld)
     SET(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS
         "${CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS} -Wl,--gc-sections -Wl,--wrap,main -Wl,-Map=${PROJECT_NAME}.map -mcpu=cortex-m0 -mthumb --specs=nano.specs -lstdc++ -lsupc++ -lm -lc -lgcc -lnosys -lstdc++ -lsupc++ -lm -lc -lgcc -lnosys")
 endif()
@@ -240,7 +244,7 @@ file(GLOB NRF51822_SOURCES
 add_sources(${NRF51822_SOURCES})
 
 if (TOOLCHAIN STREQUAL "armcc")
-    add_sources(${MBED_SRC_PATH}/targets/cmsis/TARGET_NORDIC/TARGET_MCU_NRF51822/TOOLCHAIN_ARM_STD/TARGET_MCU_NORDIC_16K/startup_nRF51822.s)
+    add_sources(${MBED_SRC_PATH}/targets/cmsis/TARGET_NORDIC/TARGET_MCU_NRF51822/TOOLCHAIN_ARM_STD/TARGET_MCU_NORDIC_32K/startup_nRF51822.s)
 elseif(TOOLCHAIN STREQUAL "armgcc")
     add_sources(${MBED_SRC_PATH}/targets/cmsis/TARGET_NORDIC/TARGET_MCU_NRF51822/TOOLCHAIN_GCC_ARM/startup_NRF51822.s)
 endif()
