@@ -175,6 +175,17 @@ void startAdvertisingUriBeacon() {
 
     ble.clearAdvertisingPayload();
     ble.setTxPower(firmwarePowerLevels[txPowerMode]);
+
+    ble.setAdvertisingType(
+        GapAdvertisingParams::ADV_NON_CONNECTABLE_UNDIRECTED);
+
+    ble.setAdvertisingInterval(
+        Gap::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(beaconPeriod));
+
+    ble.accumulateAdvertisingPayload(
+        GapAdvertisingData::BREDR_NOT_SUPPORTED |
+        GapAdvertisingData::LE_GENERAL_DISCOVERABLE);
+
     ble.accumulateAdvertisingPayload(
         GapAdvertisingData::COMPLETE_LIST_16BIT_SERVICE_IDS, BEACON_UUID,
         sizeof(BEACON_UUID));
@@ -190,12 +201,7 @@ void startAdvertisingUriBeacon() {
     ble.accumulateAdvertisingPayload(
         GapAdvertisingData::SERVICE_DATA,
         serviceData, serviceDataLen);
-    ble.setAdvertisingParams(
-        GapAdvertisingParams::ADV_NON_CONNECTABLE_UNDIRECTED);
-    ble.setAdvertisingType(
-        GapAdvertisingParams::ADV_NON_CONNECTABLE_UNDIRECTED);
-    ble.setAdvertisingInterval(
-        Gap::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(beaconPeriod));
+
     ble.startAdvertising();
 }
 
