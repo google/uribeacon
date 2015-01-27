@@ -19,12 +19,18 @@ class CoreUriBeaconTests {
     ArrayList<Builder> basicTestsBuilder = new ArrayList<>();
     basicTestsBuilder.add(
         new Builder()
-            .name("Connect to beacon")
+            .name("Connect to UriBeacon")
             .connect()
     );
     if (optional) {
       addLockUnlockTests(basicTestsBuilder);
     }
+    basicTestsBuilder.add(
+        new Builder()
+            .name("Read Lock State")
+            .assertEquals(ProtocolV2.LOCK_STATE, TestData.UNLOCKED_STATE,
+                BluetoothGatt.GATT_SUCCESS)
+    );
     basicTestsBuilder.add(
         new Builder()
             .name("Write Reset")
@@ -37,12 +43,12 @@ class CoreUriBeaconTests {
     );
     basicTestsBuilder.add(
         new Builder()
-            .name("Write and read Flags")
+            .name("Write and Read Flags")
             .writeAndRead(ProtocolV2.FLAGS, TestData.MULTIPLE_GENERAL_DATA)
     );
     basicTestsBuilder.add(
         new Builder()
-            .name("Write and read Tx Power Levels")
+            .name("Write and Read Tx Power Levels")
             .writeAndRead(ProtocolV2.POWER_LEVELS, TestData.MULTIPLE_TX_POWER_LEVELS)
     );
     basicTestsBuilder.add(
@@ -62,12 +68,12 @@ class CoreUriBeaconTests {
     );
     basicTestsBuilder.add(
         new Builder()
-            .name("Has valid Advertisement Packet")
+            .name("Has Valid Advertisement Packet")
             .checkAdvPacket()
     );
     basicTestsBuilder.add(
         new Builder()
-            .name("Flag written are being broadcasted")
+            .name("Flag Written are Broadcasted")
             .assertAdvFlags(TestData.BASIC_GENERAL_DATA[0])
     );
     basicTestsBuilder.add(
@@ -95,12 +101,6 @@ class CoreUriBeaconTests {
   }
 
   private static void addLockUnlockTests(ArrayList<Builder> basicTestsBuilder) {
-    basicTestsBuilder.add(
-        new Builder()
-            .name("Read Lock State")
-            .assertEquals(ProtocolV2.LOCK_STATE, TestData.UNLOCKED_STATE,
-                BluetoothGatt.GATT_SUCCESS)
-    );
     basicTestsBuilder.add(
         new Builder()
             .name("Lock Beacon")
