@@ -252,30 +252,31 @@ public class TestHelper {
 
   private void dispatch() {
     Log.d(TAG, "Dispatching");
+    int actionType = mTestActions.peek().actionType;
     // If the test is stopped and connected to the beacon
     // disconnect from the beacon
     if (stopped) {
       if (mGatt != null) {
         disconnectFromGatt();
       }
-    } else if (mTestActions.peek().actionType == TestAction.LAST) {
+    } else if (actionType == TestAction.LAST) {
       finished = true;
       mTestCallback.testCompleted(mBluetoothDevice, mGatt);
-    } else if (mTestActions.peek().actionType == TestAction.CONNECT) {
+    } else if (actionType == TestAction.CONNECT) {
       connectToGatt();
-    } else if (mTestActions.peek().actionType == TestAction.ASSERT) {
+    } else if (actionType == TestAction.ASSERT) {
       readFromGatt();
-    } else if (mTestActions.peek().actionType == TestAction.WRITE) {
+    } else if (actionType == TestAction.WRITE) {
       writeToGatt();
-    } else if (mTestActions.peek().actionType == TestAction.DISCONNECT) {
+    } else if (actionType == TestAction.DISCONNECT) {
       disconnectFromGatt();
-    } else if (mTestActions.peek().actionType == TestAction.ADV_FLAGS) {
+    } else if (actionType == TestAction.ADV_FLAGS) {
       lookForAdv();
-    } else if (mTestActions.peek().actionType == TestAction.ADV_TX_POWER) {
+    } else if (actionType == TestAction.ADV_TX_POWER) {
       lookForAdv();
-    } else if (mTestActions.peek().actionType == TestAction.ADV_URI) {
+    } else if (actionType == TestAction.ADV_URI) {
       lookForAdv();
-    } else if (mTestActions.peek().actionType == TestAction.ADV_PACKET) {
+    } else if (actionType == TestAction.ADV_PACKET) {
       lookForAdv();
     }
   }
