@@ -1,7 +1,7 @@
 # UriBeacon Validation App #
 
 ## Overview ##
-The UriBeacon Validation app is design for developers to test their implementations of the UriBeacon.
+The purpose of the UriBeacon Validation app is to allow developers to test their implementations of UriBeacon.
 The app consists of two sets of tests: Core UriBeacon Tests and Spec UriBeacon Tests.
 
 ### Core UriBeacon Tests ###
