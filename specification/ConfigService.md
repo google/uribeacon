@@ -143,6 +143,8 @@ The Flags characteristic is a sinlge unsigned byte value containing the
 This characteristic is a fixed length array of values, in dBm, to be included in the 
 [UriBeacon TX Power Level](https://github.com/google/uribeacon/tree/master/specification#uribeacon-tx-power-level) field of the advertisement when that mode is active. The index into the array is [TX Power Mode](#37-tx-power-mode). 
 
+Note to developers: The Advertised TX Power Levels is not the same as values set internally into the radio tx power. You need to implement an internal array indexed by TX Power Mode that is used for the internal facing radio setting. The Advertised TX Power Levels is also indexed by TX Power Mode but is outward facing, and is the value that is put into the adv packet. These are related but distinct because numbers used by radio function may not be the same as those exposed in adv packets.
+
 ### 3.7 TX Power Mode
 
 | Name | TX Power Mode |
