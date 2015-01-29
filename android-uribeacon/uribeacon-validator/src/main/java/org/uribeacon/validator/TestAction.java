@@ -23,12 +23,13 @@ class TestAction {
   public final static int CONNECT = 0;
   public final static int WRITE = 1;
   public final static int ASSERT = 2;
-  public final static int DISCONNECT = 3;
-  public final static int ADV_TX_POWER = 4;
-  public final static int ADV_FLAGS = 5;
-  public final static int ADV_URI = 6;
-  public final static int ADV_PACKET = 7;
-  public final static int LAST = 8;
+  public final static int ASSERT_NOT_EQUALS = 3;
+  public final static int DISCONNECT = 4;
+  public final static int ADV_TX_POWER = 5;
+  public final static int ADV_FLAGS = 6;
+  public final static int ADV_URI = 7;
+  public final static int ADV_PACKET = 8;
+  public final static int LAST = 9;
 
 
   public final int actionType;

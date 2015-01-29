@@ -63,6 +63,23 @@ class CoreUriBeaconTests {
     );
     basicTestsBuilder.add(
         new Builder()
+            .name("Disable Beacon using period = 0")
+            .writeAndRead(ProtocolV2.PERIOD, TestData.ZERO_PERIOD)
+    );
+    basicTestsBuilder.add(
+        new Builder()
+            .name("Floor period")
+            .write(ProtocolV2.PERIOD, TestData.LOW_PERIOD, BluetoothGatt.GATT_SUCCESS)
+            .assertNotEquals(ProtocolV2.PERIOD, TestData.LOW_PERIOD, BluetoothGatt.GATT_SUCCESS)
+            .assertNotEquals(ProtocolV2.PERIOD, TestData.ZERO_PERIOD, BluetoothGatt.GATT_SUCCESS)
+    );
+    basicTestsBuilder.add(
+        new Builder()
+            .name("Enable beacon again")
+            .writeAndRead(ProtocolV2.PERIOD, TestData.BASIC_PERIOD)
+    );
+    basicTestsBuilder.add(
+        new Builder()
             .name("Disconnecting")
             .disconnect()
     );
