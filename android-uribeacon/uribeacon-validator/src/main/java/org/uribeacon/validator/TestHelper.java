@@ -113,21 +113,23 @@ public class TestHelper {
       Log.d(TAG, "On characteristic read");
       mGatt = gatt;
       TestAction readTest = mTestActions.peek();
+      byte[] value = characteristic.getValue();
+      int actionType = readTest.actionType;
       if (readTest.expectedReturnCode != status) {
         fail("Incorrect status code: " + status + ". Expected: " + readTest.expectedReturnCode);
-      } else if (!Arrays.equals(readTest.transmittedValue, characteristic.getValue())) {
-        if (readTest.transmittedValue.length != characteristic.getValue().length) {
-          fail("Wrong length. Expected: " + new String(readTest.transmittedValue)
-              + ". But received: " + new String(characteristic.getValue()));
-        } else {
-          fail("Result not the same. Expected: " + new String(readTest.transmittedValue)
-              + ". But received: " + new String(characteristic.getValue()));
-        }
+      } else if (actionType == TestAction.ASSERT_NOT_EQUALS
+          && Arrays.equals(readTest.transmittedValue, value)) {
+        fail("Values read are the same: " + Arrays.toString(value));
+      } else if (actionType == TestAction.ASSERT
+          && !Arrays.equals(readTest.transmittedValue, value)) {
+        fail("Result not the same. Expected: " + Arrays.toString(readTest.transmittedValue)
+              + ". But received: " + Arrays.toString(value));
       } else {
         mTestActions.remove();
         dispatch();
       }
     }
+
 
     @Override
     public void onCharacteristicWrite(BluetoothGatt gatt,
@@ -264,7 +266,7 @@ public class TestHelper {
       mTestCallback.testCompleted(mBluetoothDevice, mGatt);
     } else if (actionType == TestAction.CONNECT) {
       connectToGatt();
-    } else if (actionType == TestAction.ASSERT) {
+    } else if (actionType == TestAction.ASSERT || actionType == TestAction.ASSERT_NOT_EQUALS) {
       readFromGatt();
     } else if (actionType == TestAction.WRITE) {
       writeToGatt();
@@ -456,6 +458,13 @@ public class TestHelper {
         int expectedReturnCode) {
       mTestActions.add(
           new TestAction(TestAction.ASSERT, characteristicUuid, expectedReturnCode, expectedValue));
+      return this;
+    }
+
+    public Builder assertNotEquals(UUID characteristicUuid, byte[] expectedValue,
+        int expectedReturnCode) {
+      mTestActions.add(
+          new TestAction(TestAction.ASSERT_NOT_EQUALS, characteristicUuid, expectedReturnCode, expectedValue));
       return this;
     }
 
