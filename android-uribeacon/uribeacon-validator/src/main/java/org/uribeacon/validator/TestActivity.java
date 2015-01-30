@@ -17,9 +17,12 @@
 package org.uribeacon.validator;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.bluetooth.le.ScanResult;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
+import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -86,6 +89,43 @@ public class TestActivity extends Activity {
             message = R.string.test_success;
           }
           Toast.makeText(TestActivity.this, message, Toast.LENGTH_SHORT).show();
+        }
+      });
+    }
+
+    @Override
+    public void multipleConfigModeBeacons(final ArrayList<ScanResult> scanResults) {
+      runOnUiThread(new Runnable() {
+        @Override
+        public void run() {
+          progress.dismiss();
+          CharSequence[] beaconNames = new CharSequence[scanResults.size()];
+          for (int i = 0; i < beaconNames.length; i++) {
+            beaconNames[i] = scanResults.get(i).getDevice().getAddress()
+                + " (" + scanResults.get(i).getRssi() + "dBm)";
+          }
+          new AlertDialog.Builder(TestActivity.this)
+              .setTitle(R.string.title_multiple_beacons)
+              .setItems(beaconNames, new OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                  mTestRunner.connectTo(which);
+                }
+              })
+              .setNegativeButton(R.string.cancel, new OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                  mTestRunner.stop();
+                }
+              })
+              .setOnCancelListener(new OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                  mTestRunner.stop();
+                }
+              })
+              .create()
+              .show();
         }
       });
     }
