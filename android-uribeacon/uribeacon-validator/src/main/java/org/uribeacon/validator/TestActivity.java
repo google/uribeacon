@@ -20,14 +20,22 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
+import android.text.Spanned;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.ShareActionProvider;
 import android.widget.Toast;
 
 import org.uribeacon.validator.TestRunner.DataCallback;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 
 public class TestActivity extends Activity {
@@ -46,6 +54,7 @@ public class TestActivity extends Activity {
             progress.dismiss();
           }
           mAdapter.notifyDataSetChanged();
+          setShareIntent();
         }
       });
     }
@@ -91,6 +100,7 @@ public class TestActivity extends Activity {
     }
   };
   private RecyclerView.Adapter mAdapter;
+  private ShareActionProvider mShareActionProvider;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +117,105 @@ public class TestActivity extends Activity {
     mAdapter = new TestsAdapter(mUriBeaconTests);
     mRecyclerView.setAdapter(mAdapter);
   }
+
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    getMenuInflater().inflate(R.menu.tests_activity_actions, menu);
+
+    MenuItem item = menu.findItem(R.id.menu_item_share);
+
+    mShareActionProvider = (ShareActionProvider) item.getActionProvider();
+    Log.d(TAG, "INTENT INTENT");
+    setShareIntent();
+    return true;
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    Log.d(TAG, "OPTIONS SELECTED");
+    setShareIntent();
+    return super.onOptionsItemSelected(item);
+  }
+
+
+
+  private void setShareIntent() {
+    Intent shareIntent = new Intent();
+    shareIntent.setAction(Intent.ACTION_SEND);
+    shareIntent.setType("message/rfc822");
+    shareIntent.putExtra(Intent.EXTRA_SUBJECT, "UriBeacon Test Results");
+    Spanned body = createTestResults();
+    shareIntent.putExtra(Intent.EXTRA_TEXT, body);
+    if (mShareActionProvider != null) {
+      mShareActionProvider.setShareIntent(shareIntent);
+    }
+  }
+
+  private Spanned createTestResults() {
+    String results = "<h1>UriBeacon Results</h1>\n";
+    for (TestHelper test : mTestRunner.getUriBeaconTests()) {
+      results += "<h3>" + test.getName() + "</h3>";
+      results += "<p>Status: ";
+      if (!test.isStarted()) {
+        results += "Didn't run</p>";
+      } else if (!test.isFinished()) {
+        results += "Running</p>";
+      } else if (!test.isFailed()) {
+        results += "<font color=\"#4CAF50\">Success</font></p>";
+      } else {
+        results += "<font color=\"#F44336\">Failed</font></p>";
+        results += getReasonTestFailed(test);
+      }
+    }
+    return Html.fromHtml(results);
+  }
+
+  private String getReasonTestFailed(TestHelper test) {
+    String steps = "<h6>Steps:</h6>";
+    for (int i = 0; i < test.getTestSteps().size(); i++) {
+      TestAction action = test.getTestSteps().get(i);
+      if (action.actionType == TestAction.LAST) {
+        continue;
+      }
+      steps += "<p>" + (i + 1) + ". ";
+      if (action.failed) {
+        steps += "<font color=\"#F44336\">";
+      }
+      switch (action.actionType) {
+        case TestAction.CONNECT:
+          steps += "Connect";
+          break;
+        case TestAction.WRITE:
+          steps += "Write: " + Arrays.toString(action.transmittedValue);
+          break;
+        case TestAction.ASSERT:
+          steps += "Assert: " + Arrays.toString(action.transmittedValue);
+          break;
+        case TestAction.DISCONNECT:
+          steps += "Disconnect</p>";
+          break;
+        case TestAction.ADV_FLAGS:
+          steps += "Read Adv Flags: " + Arrays.toString(action.transmittedValue);
+          break;
+        case TestAction.ADV_TX_POWER:
+          steps += "Read Adv Tx Power: " + Arrays.toString(action.transmittedValue);
+          break;
+        case TestAction.ADV_URI:
+          steps += "Read Adv URI: " + Arrays.toString(action.transmittedValue);
+          break;
+        case TestAction.ADV_PACKET:
+          steps += "Scan Adv Packet";
+          break;
+      }
+      if (action.failed) {
+        steps += "</font></p><p><font color=\"#F44336\">Reason: " + action.reason + "</font></p>";
+      } else {
+        steps += "</p>";
+      }
+    }
+    return steps;
+  }
+
 
   @Override
   protected void onResume() {

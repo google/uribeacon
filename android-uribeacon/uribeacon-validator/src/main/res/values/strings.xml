@@ -22,5 +22,6 @@
     <string name="lock_implemented">Lock Implemented</string>
     <string name="chevron_right_description">Run Tests</string>
     <string name="test_state_description">Test State</string>
+    <string name="share">Share</string>
 
 </resources>
