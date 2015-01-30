@@ -26,7 +26,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.Spanned;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ShareActionProvider;
@@ -125,19 +124,9 @@ public class TestActivity extends Activity {
     MenuItem item = menu.findItem(R.id.menu_item_share);
 
     mShareActionProvider = (ShareActionProvider) item.getActionProvider();
-    Log.d(TAG, "INTENT INTENT");
     setShareIntent();
     return true;
   }
-
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    Log.d(TAG, "OPTIONS SELECTED");
-    setShareIntent();
-    return super.onOptionsItemSelected(item);
-  }
-
-
 
   private void setShareIntent() {
     Intent shareIntent = new Intent();
