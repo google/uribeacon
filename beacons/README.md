@@ -1,4 +1,4 @@
-##UriBeacon Beacon Implementations
+##UriBeacon Implementations
 
 This directory contains reference implementations for  Bluetooth Low Energy
 platforms that broadcast UriBeacon advertisements and implement the UriBeacon Config Service:
