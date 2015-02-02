@@ -1,8 +1,11 @@
 ##UriBeacon Beacon Implementations
 
-This directory contains examples for various Bluetooth Low Energy
-platforms broadcast UriBeacon advertisements. The platforms
-are:
+This directory contains reference implementations for  Bluetooth Low Energy
+platforms that broadcast UriBeacon advertisements and implement the UriBeacon Config Service:
+
+* [mBED](mbed) supports the [Nordic nRF51 Dongle](http://developer.mbed.org/platforms/Nordic-nRF51-Dongle/) and [Nordic nRF51822 Smart Beacon](https://www.nordicsemi.com/eng/Products/Bluetooth-Smart-Bluetooth-low-energy/nRF51822-Bluetooth-Smart-Beacon-Kit)
+
+Additional contributed implementations:
 
 * [Bluegiga BLE113](BLE113)
 * [RFduino](RFduino)
