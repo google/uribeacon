@@ -28,8 +28,10 @@
 struct PersistentData_t {
     uint32_t magic;
     URIBeaconConfigService::Params_t params;
-};
+    uint8_t pad[4];
+} __attribute__ ((aligned (4)));
 
+static const int PERSISTENT_DATA_ALIGNED_SIZE = sizeof(PersistentData_t);
 // Seconds after power-on that config service is available.
 static const int ADVERTISING_TIMEOUT_SECONDS = 60;
 // Advertising interval for config service.
@@ -74,15 +76,14 @@ void pstorageLoad() {
     pstorage_init();
     pstorage_module_param_t pstorageParams = {
         .cb          = pstorageNotificationCallback,
-        .block_size  = sizeof(PersistentData_t),
+        .block_size  = PERSISTENT_DATA_ALIGNED_SIZE,
         .block_count = 1
     };
     pstorage_register(&pstorageParams, &pstorageHandle);
     if (pstorage_load(reinterpret_cast<uint8_t *>(&persistentData),
-                      &pstorageHandle, sizeof(PersistentData_t), 0) != NRF_SUCCESS) {
+                      &pstorageHandle, PERSISTENT_DATA_ALIGNED_SIZE, 0) != NRF_SUCCESS) {
         // On failure zero out and let the service reset to defaults
         memset(&persistentData, 0, sizeof(PersistentData_t));
-	blink(3);
     }
 }
 
@@ -94,13 +95,11 @@ void pstorageSave() {
                        reinterpret_cast<uint8_t *>(&persistentData),
                        sizeof(PersistentData_t),
                        0 /* offset */);
-	blink(2);
     } else {
         pstorage_update(&pstorageHandle,
                         reinterpret_cast<uint8_t *>(&persistentData),
                         sizeof(PersistentData_t),
                         0 /* offset */);
-	blink(3);
     }
 }
 
@@ -175,6 +174,17 @@ void startAdvertisingUriBeacon() {
 
     ble.clearAdvertisingPayload();
     ble.setTxPower(firmwarePowerLevels[txPowerMode]);
+
+    ble.setAdvertisingType(
+        GapAdvertisingParams::ADV_NON_CONNECTABLE_UNDIRECTED);
+
+    ble.setAdvertisingInterval(
+        Gap::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(beaconPeriod));
+
+    ble.accumulateAdvertisingPayload(
+        GapAdvertisingData::BREDR_NOT_SUPPORTED |
+        GapAdvertisingData::LE_GENERAL_DISCOVERABLE);
+
     ble.accumulateAdvertisingPayload(
         GapAdvertisingData::COMPLETE_LIST_16BIT_SERVICE_IDS, BEACON_UUID,
         sizeof(BEACON_UUID));
@@ -190,12 +200,7 @@ void startAdvertisingUriBeacon() {
     ble.accumulateAdvertisingPayload(
         GapAdvertisingData::SERVICE_DATA,
         serviceData, serviceDataLen);
-    ble.setAdvertisingParams(
-        GapAdvertisingParams::ADV_NON_CONNECTABLE_UNDIRECTED);
-    ble.setAdvertisingType(
-        GapAdvertisingParams::ADV_NON_CONNECTABLE_UNDIRECTED);
-    ble.setAdvertisingInterval(
-        Gap::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(beaconPeriod));
+
     ble.startAdvertising();
 }
 
@@ -220,7 +225,8 @@ void connectionCallback(Gap::Handle_t handle,
 // When disconnected from config service, start advertising UriBeacon
 void disconnectionCallback(Gap::Handle_t handle,
                            Gap::DisconnectionReason_t reason) {
-    connectionStateLed = 1;
+    advertisingStateLed = 0;    // on
+    connectionStateLed = 1;     // off
     startAdvertisingUriBeacon();
 }
 
@@ -257,7 +263,6 @@ int main(void) {
 
     startAdvertisingUriBeaconConfig();
 
-    blink(2);
     while (true) {
         ble.waitForEvent();
     }

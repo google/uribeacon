@@ -30,11 +30,16 @@ class TestData {
   public static final byte[] LONG_TX_POWER_LEVELS = new byte[5];
   public static final byte[] SHORT_POWER_MODE = new byte[0];
   public static final byte[] LONG_POWER_MODE = new byte[2];
+  public static final byte[] INVALID_POWER_MODE = new byte[]{5};
   public static final byte[] SHORT_PERIOD = new byte[1];
   // period = 999
   public static final byte[] BASIC_PERIOD = new byte[]{(byte) 0xE7, 0x03};
   // period = 1001
   public static final byte[] BASIC_PERIOD_2 = new byte[]{(byte) 0xE9, 0x03};
+  // period = 1
+  public static final byte[] LOW_PERIOD = new byte[]{1, 0};
+  // period = 0
+  public static final byte[] ZERO_PERIOD = new byte[]{0, 0};
   public static final byte[][] MULTIPLE_BASIC_PERIOD = new byte[][]{BASIC_PERIOD_2, BASIC_PERIOD};
   public static final byte[] LONG_PERIOD = new byte[3];
   public static final byte[] SHORT_RESET = new byte[0];

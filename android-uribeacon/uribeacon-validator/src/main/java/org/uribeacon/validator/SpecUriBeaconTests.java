@@ -64,21 +64,23 @@ class SpecUriBeaconTests {
             .write(ProtocolV2.POWER_MODE, TestData.LONG_POWER_MODE,
                 BluetoothGatt.GATT_INVALID_ATTRIBUTE_LENGTH)
     );
-
+    specUriBeaconTestsBuilder.add(
+        new Builder()
+            .name("Invalid Power Mode")
+            .write(ProtocolV2.POWER_MODE, TestData.INVALID_POWER_MODE, BluetoothGatt.GATT_WRITE_NOT_PERMITTED)
+    );
     specUriBeaconTestsBuilder.add(
         new Builder()
             .name("Try Short Period")
             .write(ProtocolV2.PERIOD, TestData.SHORT_PERIOD,
                 BluetoothGatt.GATT_INVALID_ATTRIBUTE_LENGTH)
     );
-
     specUriBeaconTestsBuilder.add(
         new Builder()
             .name("Try Long Period")
             .write(ProtocolV2.PERIOD, TestData.LONG_PERIOD,
                 BluetoothGatt.GATT_INVALID_ATTRIBUTE_LENGTH)
     );
-
     specUriBeaconTestsBuilder.add(
         new Builder()
             .name("Try Short Reset")
