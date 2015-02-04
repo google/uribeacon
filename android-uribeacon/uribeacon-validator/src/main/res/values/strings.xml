@@ -23,5 +23,6 @@
     <string name="chevron_right_description">Run Tests</string>
     <string name="test_state_description">Test State</string>
     <string name="title_multiple_beacons">Choose a UriBeacon to test</string>
+    <string name="share">Share</string>
 
 </resources>

@@ -105,7 +105,7 @@ class TestRunner {
 
   public void start(BluetoothDevice bluetoothDevice, BluetoothGatt gatt) {
     Log.d(TAG, "Starting tests");
-    if (mTestIterator.hasNext()) {
+    if (mTestIterator.hasNext() && !mStopped) {
       mLatestTest = mTestIterator.next();
       mLatestTest.run(bluetoothDevice, gatt, superBluetoothScanCallback);
     } else {

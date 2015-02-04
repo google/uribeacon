@@ -6,8 +6,11 @@
 
 *(pronounced YUR-ee-BEE-kun)*
 
+**Are you a UriBeacon Developer?** Open an [issue](https://github.com/google/uribeacon/issues) and we will point you at resources to help development and testing.
 
-Check out how UriBeacons are used in the [Physical Web](http://google.github.io/physical-web/) project.
+**Are you looking for UriBeacon Products?** Visit [Blesh](https://www.blesh.com/physical-web) and see the flashable implementations on the [gitub repo](https://github.com/google/uribeacon/blob/master/beacons/README.md).
+
+**Interested in the big picture?** Check out how UriBeacons are used in the [Physical Web](http://google.github.io/physical-web/) project.
 
 ## Disclaimer
 
