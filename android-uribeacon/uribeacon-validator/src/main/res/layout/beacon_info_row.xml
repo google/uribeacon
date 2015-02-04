@@ -5,17 +5,16 @@
               android:paddingEnd="24dp"
               android:layout_width="match_parent"
               android:gravity="center"
+              android:background="?android:attr/selectableItemBackground"
               android:layout_height="@dimen/list_item_height">
     <TextView
             android:id="@+id/primary_text"
             android:textAppearance="@android:style/TextAppearance.Material.Notification.Title"
             android:layout_width="fill_parent"
-            android:text="Two Line Item"
             android:layout_height="wrap_content"/>
     <TextView
             android:id="@+id/secondary_text"
             android:textAppearance="@android:style/TextAppearance.Material.Notification"
             android:layout_width="fill_parent"
-            android:text="Secondary Text"
             android:layout_height="wrap_content"/>
 </LinearLayout>

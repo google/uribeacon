@@ -1,5 +1,6 @@
 package org.uribeacon.validator;
 
+import android.app.AlertDialog;
 import android.bluetooth.le.ScanResult;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -15,12 +16,15 @@ public class MultipleBeaconsAdapter extends BaseAdapter {
   private LayoutInflater mInflater;
   private ArrayList<ScanResult> mScanResults;
   private TestRunner mTestRunner;
+  private AlertDialog mDialog;
 
 
-  public MultipleBeaconsAdapter(Context context, ArrayList<ScanResult> scanResults, TestRunner testRunner) {
+  public MultipleBeaconsAdapter(Context context, ArrayList<ScanResult> scanResults,
+      TestRunner testRunner, AlertDialog dialog) {
     mInflater = LayoutInflater.from(context);
     mScanResults = scanResults;
     mTestRunner = testRunner;
+    mDialog = dialog;
   }
 
   @Override
@@ -66,6 +70,7 @@ public class MultipleBeaconsAdapter extends BaseAdapter {
       @Override
       public void onClick(View v) {
         mTestRunner.connectTo(position);
+        mDialog.dismiss();
       }
     });
     return view;

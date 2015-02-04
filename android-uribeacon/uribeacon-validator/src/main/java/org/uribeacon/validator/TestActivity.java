@@ -241,6 +241,7 @@ public class TestActivity extends Activity {
           @Override
           public void onClick(DialogInterface dialog, int which) {
             mTestRunner.stop();
+            dialog.dismiss();
           }
         })
         .setOnCancelListener(new OnCancelListener() {
@@ -253,10 +254,10 @@ public class TestActivity extends Activity {
     View convertView = inflater.inflate(R.layout.multiple_beacon_dialog, null);
     alertDialog.setTitle(R.string.title_multiple_beacons);
     alertDialog.setView(convertView);
+    AlertDialog dialog= alertDialog.create();
     ListView lv = (ListView) convertView.findViewById(R.id.multipleBeacons_listView);
-    lv.setAdapter(new MultipleBeaconsAdapter(TestActivity.this, scanResults, mTestRunner));
-
-    alertDialog.show();
+    lv.setAdapter(new MultipleBeaconsAdapter(TestActivity.this, scanResults, mTestRunner, dialog));
+    dialog.show();
   }
 }
 
