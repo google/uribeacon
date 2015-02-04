@@ -17,17 +17,23 @@
 package org.uribeacon.validator;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.bluetooth.le.ScanResult;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.Spanned;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ListView;
 import android.widget.ShareActionProvider;
 import android.widget.Toast;
 
@@ -97,7 +103,19 @@ public class TestActivity extends Activity {
         }
       });
     }
+
+    @Override
+    public void multipleConfigModeBeacons(final ArrayList<ScanResult> scanResults) {
+      runOnUiThread(new Runnable() {
+        @Override
+        public void run() {
+          progress.dismiss();
+          showCustomDialog(scanResults);
+        }
+      });
+    }
   };
+
   private RecyclerView.Adapter mAdapter;
   private ShareActionProvider mShareActionProvider;
 
@@ -216,6 +234,30 @@ public class TestActivity extends Activity {
   protected void onDestroy() {
     super.onDestroy();
     mTestRunner.stop();
+  }
+  private void showCustomDialog(ArrayList<ScanResult> scanResults) {
+    AlertDialog.Builder alertDialog = new AlertDialog.Builder(TestActivity.this)
+        .setNegativeButton(R.string.cancel, new OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialog, int which) {
+            mTestRunner.stop();
+            dialog.dismiss();
+          }
+        })
+        .setOnCancelListener(new OnCancelListener() {
+          @Override
+          public void onCancel(DialogInterface dialog) {
+            mTestRunner.stop();
+          }
+        });
+    LayoutInflater inflater = getLayoutInflater();
+    View convertView = inflater.inflate(R.layout.multiple_beacon_dialog, null);
+    alertDialog.setTitle(R.string.title_multiple_beacons);
+    alertDialog.setView(convertView);
+    AlertDialog dialog= alertDialog.create();
+    ListView lv = (ListView) convertView.findViewById(R.id.multipleBeacons_listView);
+    lv.setAdapter(new MultipleBeaconsAdapter(TestActivity.this, scanResults, mTestRunner, dialog));
+    dialog.show();
   }
 }
 

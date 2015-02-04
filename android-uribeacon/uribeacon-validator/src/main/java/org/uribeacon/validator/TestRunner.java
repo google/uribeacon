@@ -20,6 +20,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.le.ScanResult;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
@@ -74,6 +75,12 @@ class TestRunner {
     public void connectedToBeacon() {
       mDataCallback.connectedToBeacon();
     }
+
+    @Override
+    public void multipleConfigModeBeacons(ArrayList<ScanResult> scanResults) {
+      mDataCallback.multipleConfigModeBeacons(scanResults);
+    }
+
   };
   private final ArrayList<TestHelper> mUriBeaconTests;
   private TestHelper mLatestTest;
@@ -143,6 +150,10 @@ class TestRunner {
     mLatestTest.stopTest();
   }
 
+  public void connectTo(int which) {
+    mLatestTest.connectTo(which);
+  }
+
   public interface DataCallback {
 
     public void dataUpdated();
@@ -152,5 +163,7 @@ class TestRunner {
     public void connectedToBeacon();
 
     public void testsCompleted(boolean failed);
+
+    public void multipleConfigModeBeacons(ArrayList<ScanResult> scanResults);
   }
 }

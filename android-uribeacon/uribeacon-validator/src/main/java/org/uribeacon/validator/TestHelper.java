@@ -40,6 +40,7 @@ import org.uribeacon.config.ProtocolV2;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -55,8 +56,9 @@ public class TestHelper {
       // First time we see the beacon
       Log.d(TAG, "On scan Result");
       if (mBluetoothDevice == null) {
-        mBluetoothDevice = result.getDevice();
-        mBluetoothDevice.connectGatt(mContext, false, mOutSideGattCallback);
+        if(mScanResultSet.add(result.getDevice())) {
+          mScanResults.add(result);
+        }
       } else {
         checkPacket(result);
       }
@@ -74,6 +76,9 @@ public class TestHelper {
   private BluetoothDevice mBluetoothDevice;
   private final UUID mServiceUuid;
   private BluetoothGattCallback mOutSideGattCallback;
+  private HashSet<BluetoothDevice> mScanResultSet;
+  private ArrayList<ScanResult> mScanResults;
+
   public final BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
     @Override
     public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
@@ -170,6 +175,8 @@ public class TestHelper {
     mBluetoothAdapter = bluetoothManager.getAdapter();
     mHandler = new Handler(Looper.myLooper());
     stopped = false;
+    mScanResults = new ArrayList<>();
+    mScanResultSet = new HashSet<>();
   }
 
   public String getName() {
@@ -216,7 +223,7 @@ public class TestHelper {
       }
     }
     mTestCallback.waitingForConfigMode();
-    // First time the device
+    // First time the device is seen
     if (mBluetoothDevice == null) {
       scanForBeacon();
     } else {
@@ -295,6 +302,19 @@ public class TestHelper {
     filters.add(filter);
     getLeScanner().startScan(filters, settings, mScanCallback);
     Log.d(TAG, "Looking for new beacons");
+    mHandler.postDelayed(new Runnable() {
+      @Override
+      public void run() {
+        stopSearchingForBeacons();
+        if (mScanResults.size() == 0) {
+          fail("No UriBeacons in Config Mode found");
+        } else if (mScanResults.size() == 1) {
+          connectTo(0);
+        } else {
+          mTestCallback.multipleConfigModeBeacons(mScanResults);
+        }
+      }
+    }, SCAN_TIMEOUT);
   }
 
   private void lookForAdv() {
@@ -406,6 +426,11 @@ public class TestHelper {
     fail("Stopped by user");
   }
 
+  public void connectTo(int which) {
+    mBluetoothDevice = mScanResults.get(which).getDevice();
+    mBluetoothDevice.connectGatt(mContext, false, mOutSideGattCallback);
+  }
+
   public interface TestCallback {
 
     public void testStarted();
@@ -415,6 +440,8 @@ public class TestHelper {
     public void waitingForConfigMode();
 
     public void connectedToBeacon();
+
+    public void multipleConfigModeBeacons(ArrayList<ScanResult> scanResults);
   }
 
   public static class Builder {
