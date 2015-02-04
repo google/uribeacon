@@ -29,8 +29,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.Spanned;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ListView;
 import android.widget.ShareActionProvider;
 import android.widget.Toast;
 
@@ -107,37 +110,12 @@ public class TestActivity extends Activity {
         @Override
         public void run() {
           progress.dismiss();
-          CharSequence[] beaconNames = new CharSequence[scanResults.size()];
-          for (int i = 0; i < beaconNames.length; i++) {
-            beaconNames[i] = scanResults.get(i).getDevice().getAddress()
-                + " (" + scanResults.get(i).getRssi() + "dBm)";
-          }
-          new AlertDialog.Builder(TestActivity.this)
-              .setTitle(R.string.title_multiple_beacons)
-              .setItems(beaconNames, new OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                  mTestRunner.connectTo(which);
-                }
-              })
-              .setNegativeButton(R.string.cancel, new OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                  mTestRunner.stop();
-                }
-              })
-              .setOnCancelListener(new OnCancelListener() {
-                @Override
-                public void onCancel(DialogInterface dialog) {
-                  mTestRunner.stop();
-                }
-              })
-              .create()
-              .show();
+          showCustomDialog(scanResults);
         }
       });
     }
   };
+
   private RecyclerView.Adapter mAdapter;
   private ShareActionProvider mShareActionProvider;
 
@@ -256,6 +234,29 @@ public class TestActivity extends Activity {
   protected void onDestroy() {
     super.onDestroy();
     mTestRunner.stop();
+  }
+  private void showCustomDialog(ArrayList<ScanResult> scanResults) {
+    AlertDialog.Builder alertDialog = new AlertDialog.Builder(TestActivity.this)
+        .setNegativeButton(R.string.cancel, new OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialog, int which) {
+            mTestRunner.stop();
+          }
+        })
+        .setOnCancelListener(new OnCancelListener() {
+          @Override
+          public void onCancel(DialogInterface dialog) {
+            mTestRunner.stop();
+          }
+        });
+    LayoutInflater inflater = getLayoutInflater();
+    View convertView = inflater.inflate(R.layout.multiple_beacon_dialog, null);
+    alertDialog.setTitle(R.string.title_multiple_beacons);
+    alertDialog.setView(convertView);
+    ListView lv = (ListView) convertView.findViewById(R.id.multipleBeacons_listView);
+    lv.setAdapter(new MultipleBeaconsAdapter(TestActivity.this, scanResults, mTestRunner));
+
+    alertDialog.show();
   }
 }
 
