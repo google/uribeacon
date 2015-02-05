@@ -28,47 +28,60 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class TestsAdapter extends RecyclerView.Adapter<TestsAdapter.ViewHolder> {
+public class TestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
   private static final String TAG = TestsAdapter.class.getCanonicalName();
+  private static final int TYPE_HEADER = 0;
+  private static final int TYPE_TEST_RESULT = 1;
   private final ArrayList<TestHelper> mDataset;
+  private String mHeader;
 
   // Provide a suitable constructor (depends on the kind of dataset)
-  public TestsAdapter(ArrayList<TestHelper> uriBeaconTests) {
+  public TestsAdapter(ArrayList<TestHelper> uriBeaconTests, String header) {
     mDataset = uriBeaconTests;
+    mHeader = header;
   }
 
   // Create new views (invoked by the layout manager)
   @Override
-  public TestsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
+  public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent,
       int viewType) {
-    // create a new view
-    View v = LayoutInflater.from(parent.getContext())
-        .inflate(R.layout.test_view, parent, false);
-
-    return new ViewHolder(v);
+    if (viewType == TYPE_HEADER) {
+      View v = LayoutInflater.from(parent.getContext())
+          .inflate(R.layout.list_subheader, parent, false);
+      return new HeaderViewHolder(v);
+    } else if (viewType == TYPE_TEST_RESULT) {
+      View v = LayoutInflater.from(parent.getContext())
+          .inflate(R.layout.test_view, parent, false);
+      return new TestResultViewHolder(v);
+    }
+    throw new RuntimeException("there is no type that matches the type " + viewType + " + make sure your using types correctly");
   }
 
   // Replace the contents of a view (invoked by the layout manager)
   @Override
-  public void onBindViewHolder(ViewHolder holder, int position) {
-    // - get element from your dataset at this position
-    // - replace the contents of the view with that element
-    TestHelper test = mDataset.get(position);
-    holder.mTestName.setText(test.getName());
-    setIcon(holder.mImageView, test);
-    if (test.isFailed()) {
-      setErrorMessage(holder, test);
-      setOnClickListener(holder);
-    } else {
-      holder.mTestResult.setVisibility(View.GONE);
-      holder.mTestDetails.setVisibility(View.GONE);
-      holder.mLayout.setOnClickListener(null);
-      holder.mLayout.setClickable(false);
+  public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    if (holder instanceof TestResultViewHolder) {
+      TestResultViewHolder testResultHolder = (TestResultViewHolder) holder;
+      TestHelper test = getItem(position);
+      testResultHolder.mTestName.setText(test.getName());
+      setIcon(testResultHolder.mImageView, test);
+      if (test.isFailed()) {
+        setErrorMessage(testResultHolder, test);
+        setOnClickListener(testResultHolder);
+      } else {
+        testResultHolder.mTestResult.setVisibility(View.GONE);
+        testResultHolder.mTestDetails.setVisibility(View.GONE);
+        testResultHolder.mLayout.setOnClickListener(null);
+        testResultHolder.mLayout.setClickable(false);
+      }
+    } else if (holder instanceof HeaderViewHolder) {
+      HeaderViewHolder headerViewHolder = (HeaderViewHolder) holder;
+      headerViewHolder.mHeader.setText(mHeader);
     }
   }
 
-  private void setOnClickListener(final ViewHolder holder) {
+  private void setOnClickListener(final TestResultViewHolder holder) {
     holder.mLayout.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View item) {
@@ -88,7 +101,7 @@ public class TestsAdapter extends RecyclerView.Adapter<TestsAdapter.ViewHolder> 
     });
   }
 
-  private void setErrorMessage(ViewHolder holder, TestHelper test) {
+  private void setErrorMessage(TestResultViewHolder holder, TestHelper test) {
     TextView details = holder.mTestDetails;
     String sDetails = "Steps:";
     for (int i = 0; i < test.getTestSteps().size(); i++) {
@@ -130,6 +143,18 @@ public class TestsAdapter extends RecyclerView.Adapter<TestsAdapter.ViewHolder> 
     details.setText(sDetails);
   }
 
+  @Override
+  public int getItemViewType(int position) {
+    if (position == 0) {
+      return TYPE_HEADER;
+    } else {
+      return TYPE_TEST_RESULT;
+    }
+  }
+
+  private TestHelper getItem(int position) {
+    return mDataset.get(position -1);
+  }
 
   private void setIcon(ImageView imageView, TestHelper test) {
     if (!test.isStarted()) {
@@ -147,13 +172,13 @@ public class TestsAdapter extends RecyclerView.Adapter<TestsAdapter.ViewHolder> 
   // Return the size of your dataset (invoked by the layout manager)
   @Override
   public int getItemCount() {
-    return mDataset.size();
+    return mDataset.size() + 1;
   }
 
   // Provide a reference to the views for each data item
   // Complex data items may need more than one view per item, and
   // you provide access to all the views for a data item in a view holder
-  public static class ViewHolder extends RecyclerView.ViewHolder {
+  public static class TestResultViewHolder extends RecyclerView.ViewHolder {
 
     // each data item is just a string in this case
     public final TextView mTestName;
@@ -163,7 +188,7 @@ public class TestsAdapter extends RecyclerView.Adapter<TestsAdapter.ViewHolder> 
     public final LinearLayout mLayout;
     private boolean expanded;
 
-    public ViewHolder(View v) {
+    public TestResultViewHolder(View v) {
       super(v);
       mLayout = (LinearLayout) v;
       expanded = false;
@@ -171,6 +196,14 @@ public class TestsAdapter extends RecyclerView.Adapter<TestsAdapter.ViewHolder> 
       mTestResult = (TextView) v.findViewById(R.id.test_reason);
       mImageView = (ImageView) v.findViewById(R.id.imageView_testIcon);
       mTestDetails = (TextView) v.findViewById(R.id.test_detailed_view);
+    }
+  }
+
+  public static class HeaderViewHolder extends RecyclerView.ViewHolder {
+    public final TextView mHeader;
+    public HeaderViewHolder(View v) {
+      super(v);
+      mHeader = (TextView) v.findViewById(R.id.subheader_textView);
     }
   }
 }

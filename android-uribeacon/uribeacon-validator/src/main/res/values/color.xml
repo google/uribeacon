@@ -12,6 +12,7 @@
   limitations under the License.
 -->
 <resources>
-    <color name="primary">#607D8B</color>
-    <color name="primary_dark">#455A64</color>
+    <color name="primary">#0F9D58</color>
+    <color name="primary_dark">#0B8043</color>
+    <color name="accent">#9E9E9E</color>
 </resources>
