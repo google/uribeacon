@@ -8,9 +8,7 @@
         android:background="?android:attr/selectableItemBackground">
     <TextView
             android:id="@+id/test_type"
-            android:fontFamily="sans-serif"
-            android:textSize="16sp"
-            android:textColor="#000"
+            android:textAppearance="@android:style/TextAppearance.Material.Subhead"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"

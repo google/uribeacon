@@ -42,7 +42,7 @@ public class MainActivity extends Activity {
     RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
     recyclerView.setLayoutManager(layoutManager);
 
-    RecyclerView.Adapter mAdapter = new TestTypesAdapter(getTestsInfo(), mStartTestType);
+    RecyclerView.Adapter mAdapter = new TestTypesAdapter(getTestsInfo(), mStartTestType, getString(R.string.test_type_header));
     recyclerView.setAdapter(mAdapter);
 
   }
