@@ -57,7 +57,8 @@ class TestRunner {
         mRestartedCompleted = true;
       }
       mDataCallback.dataUpdated();
-      if (!mStopped) {
+      // if the test haven't been stopped and a single test retry hasn't been done then run next test
+      if (!mStopped && !mRestartedCompleted) {
         Log.d(TAG, "Stopped");
         // If we just disconnected from the beacon we want to wait a second the next test
         // Otherwise the connection to the beacon might fail.

@@ -95,6 +95,9 @@ public class TestHelper {
           }
         }
       } else {
+        if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+          mGatt = null;
+        }
         fail("Failed. Status: " + status + ". New State: " + newState);
       }
     }
@@ -480,8 +483,9 @@ public class TestHelper {
   }
 
   public void repeat(BluetoothGattCallback outSideGattCallback) {
+    Log.d(TAG, "Repeating");
     mTestActions = new LinkedList<>(mTestSteps);
-    run(mBluetoothDevice, mGatt, outSideGattCallback);
+    run(mBluetoothDevice, null, outSideGattCallback);
   }
 
   public String getReference() {

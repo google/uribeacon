@@ -82,7 +82,6 @@ public class TestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
       holder.itemView.setOnTouchListener(new OnTouchListener() {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
-          v.onTouchEvent(event);
           if (event.getAction() == MotionEvent.ACTION_UP) {
             if (testResultHolder.longPressed) {
               testResultHolder.longPressed = false;
