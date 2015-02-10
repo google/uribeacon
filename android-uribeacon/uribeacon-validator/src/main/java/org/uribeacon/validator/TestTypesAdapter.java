@@ -43,7 +43,7 @@ public class TestTypesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     if (holder instanceof ViewHolderTest) {
       ViewHolderTest testHolder = (ViewHolderTest) holder;
       testHolder.mTextView.setText(getItem(position).testName);
-      testHolder.mLayout.setOnClickListener(new OnClickListener() {
+      testHolder.itemView.setOnClickListener(new OnClickListener() {
         @Override
         public void onClick(View v) {
           mCallback.startTestType(getItem(position).className);
@@ -83,11 +83,9 @@ public class TestTypesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
   public static class ViewHolderTest extends RecyclerView.ViewHolder {
 
     public final TextView mTextView;
-    public final View mLayout;
 
     public ViewHolderTest(View v) {
       super(v);
-      mLayout = v;
       mTextView = (TextView) v.findViewById(R.id.test_type);
     }
   }

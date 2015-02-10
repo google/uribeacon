@@ -25,7 +25,6 @@ import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
@@ -34,80 +33,65 @@ import java.util.ArrayList;
 public class TestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
   private static final String TAG = TestsAdapter.class.getCanonicalName();
-  private static final int TYPE_HEADER = 0;
-  private static final int TYPE_TEST_RESULT = 1;
   private final ArrayList<TestHelper> mDataset;
   private final AdapterCallback mAdapterCallback;
-  private String mHeader;
 
   // Provide a suitable constructor (depends on the kind of dataset)
-  public TestsAdapter(ArrayList<TestHelper> uriBeaconTests, AdapterCallback adapterCallback, String header) {
+  public TestsAdapter(ArrayList<TestHelper> uriBeaconTests, AdapterCallback adapterCallback) {
     mAdapterCallback = adapterCallback;
     mDataset = uriBeaconTests;
-    mHeader = header;
   }
 
   // Create new views (invoked by the layout manager)
   @Override
   public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent,
       int viewType) {
-    if (viewType == TYPE_HEADER) {
-      View v = LayoutInflater.from(parent.getContext())
-          .inflate(R.layout.list_subheader, parent, false);
-      return new HeaderViewHolder(v);
-    } else if (viewType == TYPE_TEST_RESULT) {
-      View v = LayoutInflater.from(parent.getContext())
-          .inflate(R.layout.test_view, parent, false);
-      return new TestResultViewHolder(v);
-    }
-    throw new RuntimeException("there is no type that matches the type " + viewType + " + make sure your using types correctly");
+    View v = LayoutInflater.from(parent.getContext())
+        .inflate(R.layout.test_view, parent, false);
+    return new TestResultViewHolder(v);
   }
 
   // Replace the contents of a view (invoked by the layout manager)
   @Override
   public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
-    if (holder instanceof TestResultViewHolder) {
-      final TestResultViewHolder testResultHolder = (TestResultViewHolder) holder;
-      TestHelper test = getItem(position);
-      testResultHolder.mTestName.setText(test.getName());
-      setIcon(testResultHolder.mImageView, test);
 
-      holder.itemView.setOnLongClickListener(new OnLongClickListener() {
+    final TestResultViewHolder testResultHolder = (TestResultViewHolder) holder;
+    TestHelper test = getItem(position);
+    testResultHolder.mTestName.setText(test.getName());
+    setIcon(testResultHolder.mImageView, test);
+
+    holder.itemView.setOnLongClickListener(new OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
           testResultHolder.longPressed = true;
           return true;
         }
-      });
-      holder.itemView.setOnTouchListener(new OnTouchListener() {
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-          if (event.getAction() == MotionEvent.ACTION_UP) {
-            if (testResultHolder.longPressed) {
-              testResultHolder.longPressed = false;
-              mAdapterCallback.restart(position - 1);
-            }
+    });
+    holder.itemView.setOnTouchListener(new OnTouchListener() {
+      @Override
+      public boolean onTouch(View v, MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_UP) {
+          if (testResultHolder.longPressed) {
+            testResultHolder.longPressed = false;
+            mAdapterCallback.restart(position);
           }
-          return false;
         }
-      });
-      if (test.isFailed()) {
-        setErrorMessage(testResultHolder, test);
-        setOnClickListener(testResultHolder);
-      } else {
-        testResultHolder.mTestResult.setVisibility(View.GONE);
-        testResultHolder.mTestDetails.setVisibility(View.GONE);
-        testResultHolder.mLayout.setOnClickListener(null);
-        testResultHolder.mLayout.setClickable(false);
+        return false;
       }
-    } else if (holder instanceof HeaderViewHolder) {
-      HeaderViewHolder headerViewHolder = (HeaderViewHolder) holder;
-      headerViewHolder.mHeader.setText(mHeader);
+    });
+    if (test.isFailed()) {
+      setErrorMessage(testResultHolder, test);
+      setOnClickListener(testResultHolder);
+    } else {
+      testResultHolder.mTestResult.setVisibility(View.GONE);
+      testResultHolder.mTestDetails.setVisibility(View.GONE);
+      testResultHolder.itemView.setOnClickListener(null);
+      testResultHolder.itemView.setClickable(false);
     }
   }
 
   private void setOnClickListener(final TestResultViewHolder holder) {
-    holder.mLayout.setOnClickListener(new View.OnClickListener() {
+    holder.itemView.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View item) {
         if (holder.expanded) {
@@ -168,17 +152,9 @@ public class TestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     details.setText(sDetails);
   }
 
-  @Override
-  public int getItemViewType(int position) {
-    if (position == 0) {
-      return TYPE_HEADER;
-    } else {
-      return TYPE_TEST_RESULT;
-    }
-  }
 
   private TestHelper getItem(int position) {
-    return mDataset.get(position -1);
+    return mDataset.get(position);
   }
 
   private void setIcon(ImageView imageView, TestHelper test) {
@@ -197,7 +173,7 @@ public class TestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
   // Return the size of your dataset (invoked by the layout manager)
   @Override
   public int getItemCount() {
-    return mDataset.size() + 1;
+    return mDataset.size();
   }
 
   // Provide a reference to the views for each data item
@@ -210,13 +186,11 @@ public class TestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public final TextView mTestResult;
     public final ImageView mImageView;
     public final TextView mTestDetails;
-    public final LinearLayout mLayout;
     private boolean expanded;
     public boolean longPressed;
 
     public TestResultViewHolder(View v) {
       super(v);
-      mLayout = (LinearLayout) v;
       expanded = false;
       longPressed = false;
       mTestName = (TextView) v.findViewById(R.id.test_name);
@@ -226,13 +200,6 @@ public class TestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
   }
 
-  public static class HeaderViewHolder extends RecyclerView.ViewHolder {
-    public final TextView mHeader;
-    public HeaderViewHolder(View v) {
-      super(v);
-      mHeader = (TextView) v.findViewById(R.id.subheader_textView);
-    }
-  }
   public interface AdapterCallback {
     public void restart(int testPosition);
   }

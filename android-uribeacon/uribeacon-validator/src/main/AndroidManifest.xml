@@ -51,7 +51,7 @@
         <activity
             android:name=".TestActivity"
             android:configChanges="orientation|keyboardHidden"
-            android:label="@string/title_activity_test"
+            android:label="@string/title_activity_tests"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="portrait" >
             <meta-data
