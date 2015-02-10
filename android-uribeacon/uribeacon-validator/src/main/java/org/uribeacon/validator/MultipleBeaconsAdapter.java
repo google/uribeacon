@@ -58,7 +58,7 @@ public class MultipleBeaconsAdapter extends BaseAdapter {
     }
 
     ScanResult result = mScanResults.get(position);
-    if (!result.getDevice().getName().isEmpty()) {
+    if (result.getDevice().getName() != null && !result.getDevice().getName().isEmpty()) {
       holder.primary_text.setText(result.getDevice().getName());
       holder.secondary_text.setText(result.getDevice().getAddress()
           + " (" + result.getRssi() + "dBm)");
@@ -69,7 +69,7 @@ public class MultipleBeaconsAdapter extends BaseAdapter {
     view.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
-        mTestRunner.connectTo(position);
+        mTestRunner.continueTest(position);
         mDialog.dismiss();
       }
     });
