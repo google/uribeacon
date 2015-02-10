@@ -173,7 +173,7 @@ Sets the transmission power mode to one of:
 | Type        | uint16                                      |
 | Lock State  | For write, must be unlocked.                |
 
-The period in milliseconds that a UriBeacon packet is transmitted. A value of zero disables UriBeacon transmissions.
+The period in milliseconds that a UriBeacon packet is transmitted. **A value of zero disables UriBeacon transmissions.** Setting a period value that the hardware doesn't support should default to minimum value the hardware supports. For example if the user tries to set the period to 1 millisecond and the lowest value the hardware supports is 100 milliseconds, the value for the characteristic should be set to 100 milliseconds and the UriBeacon should broadcast at a 100 milliseconds.
 
 ### 3.9 Reset
 
