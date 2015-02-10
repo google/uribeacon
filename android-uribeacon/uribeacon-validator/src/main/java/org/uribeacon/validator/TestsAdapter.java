@@ -25,7 +25,6 @@ import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
@@ -97,8 +96,8 @@ public class TestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
       } else {
         testResultHolder.mTestResult.setVisibility(View.GONE);
         testResultHolder.mTestDetails.setVisibility(View.GONE);
-        testResultHolder.mLayout.setOnClickListener(null);
-        testResultHolder.mLayout.setClickable(false);
+        testResultHolder.itemView.setOnClickListener(null);
+        testResultHolder.itemView.setClickable(false);
       }
     } else if (holder instanceof HeaderViewHolder) {
       HeaderViewHolder headerViewHolder = (HeaderViewHolder) holder;
@@ -107,7 +106,7 @@ public class TestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
   }
 
   private void setOnClickListener(final TestResultViewHolder holder) {
-    holder.mLayout.setOnClickListener(new View.OnClickListener() {
+    holder.itemView.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View item) {
         if (holder.expanded) {
@@ -210,13 +209,11 @@ public class TestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public final TextView mTestResult;
     public final ImageView mImageView;
     public final TextView mTestDetails;
-    public final LinearLayout mLayout;
     private boolean expanded;
     public boolean longPressed;
 
     public TestResultViewHolder(View v) {
       super(v);
-      mLayout = (LinearLayout) v;
       expanded = false;
       longPressed = false;
       mTestName = (TextView) v.findViewById(R.id.test_name);
