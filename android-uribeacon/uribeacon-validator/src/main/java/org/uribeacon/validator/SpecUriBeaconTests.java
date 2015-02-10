@@ -117,7 +117,7 @@ class SpecUriBeaconTests {
           new Builder()
               .name("Locked: Try Lock with Short Key")
               .write(ProtocolV2.LOCK, TestData.SHORT_LOCK_KEY,
-                  ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION)
+                  TestData.VALID_LENGTH_AUTHORIZATION_ERRORS)
       );
       specUriBeaconTestsBuilder.add(
           new Builder()
@@ -129,7 +129,7 @@ class SpecUriBeaconTests {
           new Builder()
               .name("Locked: Try Lock with Long Key")
               .write(ProtocolV2.LOCK, TestData.LONG_LOCK_KEY,
-                  ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION)
+                  TestData.VALID_LENGTH_AUTHORIZATION_ERRORS)
       );
       specUriBeaconTestsBuilder.add(
           new Builder()
@@ -191,13 +191,13 @@ class SpecUriBeaconTests {
       specUriBeaconTestsBuilder.add(
           new Builder()
               .name("Locked: Try Long Data")
-              .write(ProtocolV2.DATA, TestData.LONG_URI, ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION)
+              .write(ProtocolV2.DATA, TestData.LONG_URI, TestData.VALID_LENGTH_AUTHORIZATION_ERRORS)
       );
       specUriBeaconTestsBuilder.add(
           new Builder()
               .name("Locked: Try Short Flags")
               .write(ProtocolV2.FLAGS, TestData.SHORT_FLAGS,
-                  ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION)
+                  TestData.VALID_LENGTH_AUTHORIZATION_ERRORS)
       );
       specUriBeaconTestsBuilder.add(
           new Builder()
@@ -209,13 +209,13 @@ class SpecUriBeaconTests {
           new Builder()
               .name("Locked: Try Long Flags")
               .write(ProtocolV2.FLAGS, TestData.LONG_FLAGS,
-                  ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION)
+                  TestData.VALID_LENGTH_AUTHORIZATION_ERRORS)
       );
       specUriBeaconTestsBuilder.add(
           new Builder()
               .name("Locked: Try Short Advertised Tx Power Levels")
               .write(ProtocolV2.POWER_LEVELS, TestData.SHORT_TX_POWER_LEVELS,
-                  ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION)
+                  TestData.VALID_LENGTH_AUTHORIZATION_ERRORS)
       );
       specUriBeaconTestsBuilder.add(
           new Builder()
@@ -227,13 +227,13 @@ class SpecUriBeaconTests {
           new Builder()
               .name("Locked: Try Long Advertised Tx Power Levels")
               .write(ProtocolV2.POWER_LEVELS, TestData.LONG_TX_POWER_LEVELS,
-                  ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION)
+                  TestData.VALID_LENGTH_AUTHORIZATION_ERRORS)
       );
       specUriBeaconTestsBuilder.add(
           new Builder()
               .name("Locked: Try Short Power Mode")
               .write(ProtocolV2.POWER_MODE, TestData.SHORT_POWER_MODE,
-                  ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION)
+                  TestData.VALID_LENGTH_AUTHORIZATION_ERRORS)
       );
       specUriBeaconTestsBuilder.add(
           new Builder()
@@ -245,13 +245,13 @@ class SpecUriBeaconTests {
           new Builder()
               .name("Locked: Try Long Power Mode")
               .write(ProtocolV2.POWER_MODE, TestData.BASIC_GENERAL_DATA,
-                  ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION)
+                  TestData.VALID_LENGTH_AUTHORIZATION_ERRORS)
       );
       specUriBeaconTestsBuilder.add(
           new Builder()
               .name("Locked: Try Short Period")
               .write(ProtocolV2.PERIOD, TestData.SHORT_PERIOD,
-                  ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION)
+                  TestData.VALID_LENGTH_AUTHORIZATION_ERRORS)
       );
       specUriBeaconTestsBuilder.add(
           new Builder()
@@ -263,13 +263,13 @@ class SpecUriBeaconTests {
           new Builder()
               .name("Locked: Try Long Period")
               .write(ProtocolV2.PERIOD, TestData.LONG_PERIOD,
-                  ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION)
+                  TestData.VALID_LENGTH_AUTHORIZATION_ERRORS)
       );
       specUriBeaconTestsBuilder.add(
           new Builder()
               .name("Locked: Try Short Reset")
               .write(ProtocolV2.RESET, TestData.SHORT_RESET,
-                  ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION)
+                  TestData.VALID_LENGTH_AUTHORIZATION_ERRORS)
       );
       specUriBeaconTestsBuilder.add(
           new Builder()
@@ -281,7 +281,7 @@ class SpecUriBeaconTests {
           new Builder()
               .name("Locked: Try Long Reset")
               .write(ProtocolV2.RESET, TestData.LONG_RESET,
-                  ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION)
+                  TestData.VALID_LENGTH_AUTHORIZATION_ERRORS)
       );
       specUriBeaconTestsBuilder.add(
           new Builder()

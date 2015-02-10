@@ -24,18 +24,20 @@ class TestAction {
   public final static int WRITE = 1;
   public final static int ASSERT = 2;
   public final static int ASSERT_NOT_EQUALS = 3;
-  public final static int DISCONNECT = 4;
-  public final static int ADV_TX_POWER = 5;
-  public final static int ADV_FLAGS = 6;
-  public final static int ADV_URI = 7;
-  public final static int ADV_PACKET = 8;
-  public final static int LAST = 9;
+  public final static int MULTIPLE_VALID_RETURN_CODES = 4;
+  public final static int DISCONNECT = 5;
+  public final static int ADV_TX_POWER = 6;
+  public final static int ADV_FLAGS = 7;
+  public final static int ADV_URI = 8;
+  public final static int ADV_PACKET = 9;
+  public final static int LAST = 10;
 
 
   public final int actionType;
   public UUID characteristicUuid;
   public int expectedReturnCode;
   public byte[] transmittedValue;
+  public int[] expectedReturnCodes;
   public boolean failed;
   public String reason;
 
@@ -54,6 +56,13 @@ class TestAction {
   public TestAction(int actionType, byte[] transmittedValue) {
     this.actionType = actionType;
     this.transmittedValue = transmittedValue;
+  }
+
+  public TestAction(int actionType, UUID characteristicUuid, byte[] transmittedValue, int[] expectedReturnCodes) {
+    this.actionType = actionType;
+    this.characteristicUuid = characteristicUuid;
+    this.transmittedValue = transmittedValue;
+    this.expectedReturnCodes = expectedReturnCodes;
   }
 }
 
