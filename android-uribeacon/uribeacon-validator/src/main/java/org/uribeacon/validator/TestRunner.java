@@ -59,12 +59,18 @@ class TestRunner {
       mDataCallback.dataUpdated();
       if (!mStopped) {
         Log.d(TAG, "Stopped");
-        mHandler.postDelayed(new Runnable() {
-          @Override
-          public void run() {
-            start(bluetoothDevice, gatt);
-          }
-        }, TimeUnit.SECONDS.toMillis(1));
+        // If we just disconnected from the beacon we want to wait a second the next test
+        // Otherwise the connection to the beacon might fail.
+        if (gatt == null) {
+          mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+              start(bluetoothDevice, gatt);
+            }
+          }, TimeUnit.SECONDS.toMillis(1));
+        } else {
+          start(bluetoothDevice, gatt);
+        }
       } else {
         Log.d(TAG, "Not Stopped");
         if (gatt != null) {
