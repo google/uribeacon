@@ -142,7 +142,7 @@ public class TestActivity extends Activity {
     RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
     mRecyclerView.setHasFixedSize(true);
     mRecyclerView.setLayoutManager(mLayoutManager);
-    mAdapter = new TestsAdapter(mUriBeaconTests, mAdapterCallback, getString(R.string.tests));
+    mAdapter = new TestsAdapter(mUriBeaconTests, mAdapterCallback);
     mRecyclerView.setAdapter(mAdapter);
   }
 
