@@ -19,7 +19,10 @@ package org.uribeacon.validator;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnLongClickListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -34,10 +37,12 @@ public class TestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
   private static final int TYPE_HEADER = 0;
   private static final int TYPE_TEST_RESULT = 1;
   private final ArrayList<TestHelper> mDataset;
+  private final AdapterCallback mAdapterCallback;
   private String mHeader;
 
   // Provide a suitable constructor (depends on the kind of dataset)
-  public TestsAdapter(ArrayList<TestHelper> uriBeaconTests, String header) {
+  public TestsAdapter(ArrayList<TestHelper> uriBeaconTests, AdapterCallback adapterCallback, String header) {
+    mAdapterCallback = adapterCallback;
     mDataset = uriBeaconTests;
     mHeader = header;
   }
@@ -60,12 +65,33 @@ public class TestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
   // Replace the contents of a view (invoked by the layout manager)
   @Override
-  public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+  public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
     if (holder instanceof TestResultViewHolder) {
-      TestResultViewHolder testResultHolder = (TestResultViewHolder) holder;
+      final TestResultViewHolder testResultHolder = (TestResultViewHolder) holder;
       TestHelper test = getItem(position);
       testResultHolder.mTestName.setText(test.getName());
       setIcon(testResultHolder.mImageView, test);
+
+      holder.itemView.setOnLongClickListener(new OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+          testResultHolder.longPressed = true;
+          return true;
+        }
+      });
+      holder.itemView.setOnTouchListener(new OnTouchListener() {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+          v.onTouchEvent(event);
+          if (event.getAction() == MotionEvent.ACTION_UP) {
+            if (testResultHolder.longPressed) {
+              testResultHolder.longPressed = false;
+              mAdapterCallback.restart(position - 1);
+            }
+          }
+          return false;
+        }
+      });
       if (test.isFailed()) {
         setErrorMessage(testResultHolder, test);
         setOnClickListener(testResultHolder);
@@ -187,11 +213,13 @@ public class TestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public final TextView mTestDetails;
     public final LinearLayout mLayout;
     private boolean expanded;
+    public boolean longPressed;
 
     public TestResultViewHolder(View v) {
       super(v);
       mLayout = (LinearLayout) v;
       expanded = false;
+      longPressed = false;
       mTestName = (TextView) v.findViewById(R.id.test_name);
       mTestResult = (TextView) v.findViewById(R.id.test_reason);
       mImageView = (ImageView) v.findViewById(R.id.imageView_testIcon);
@@ -205,5 +233,8 @@ public class TestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
       super(v);
       mHeader = (TextView) v.findViewById(R.id.subheader_textView);
     }
+  }
+  public interface AdapterCallback {
+    public void restart(int testPosition);
   }
 }
