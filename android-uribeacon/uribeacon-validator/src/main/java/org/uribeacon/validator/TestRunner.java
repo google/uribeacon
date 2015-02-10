@@ -59,12 +59,16 @@ class TestRunner {
       mDataCallback.dataUpdated();
       if (!mStopped) {
         Log.d(TAG, "Stopped");
-        mHandler.postDelayed(new Runnable() {
-          @Override
-          public void run() {
-            start(bluetoothDevice, gatt);
-          }
-        }, TimeUnit.SECONDS.toMillis(1));
+        if (gatt == null) {
+          mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+              start(bluetoothDevice, gatt);
+            }
+          }, TimeUnit.SECONDS.toMillis(1));
+        } else {
+          start(bluetoothDevice, gatt);
+        }
       } else {
         Log.d(TAG, "Not Stopped");
         if (gatt != null) {
