@@ -93,7 +93,9 @@ Read returns true if the device is locked.
 |  Type | uint128 |
 |  Lock State | Must be unlocked. Will be locked after successful write.|
 
-When the UriBeacon is locked, a write characteristic attempt with a valid length value should return [Insufficient Authorization](#13-error-codes). The exception is of course when attempting to Unlock the beacon with the correct key. An attempt to write a characteristic with an invalid value, e.g. invalid length, should preferably return [Insufficient Authorization](#13-error-codes), but [Invalid length](#13-error-codes) is also acceptable.
+**Error Codes**
+* [Insufficient Authorization](#13-error-codes) for attempt with a valid length value and the beacon is locked. The exception is of course when attempting to Unlock the beacon with the correct key.
+* [Insufficient Authorization](#13-error-codes) for an attempt to write a characteristic with an invalid value, e.g. invalid length. [Invalid length](#13-error-codes) is also acceptable.
 
 ### 3.3 Unlock
 
