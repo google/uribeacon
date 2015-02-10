@@ -1,5 +1,9 @@
 package org.uribeacon.validator;
 
+import android.bluetooth.BluetoothGatt;
+
+import org.uribeacon.beacon.ConfigUriBeacon;
+
 class TestData {
 
   public static final byte[] SHORT_LOCK_KEY = new byte[15];
@@ -44,4 +48,5 @@ class TestData {
   public static final byte[] LONG_PERIOD = new byte[3];
   public static final byte[] SHORT_RESET = new byte[0];
   public static final byte[] LONG_RESET = new byte[2];
+  public static final int[] VALID_LENGTH_AUTHORIZATION_ERRORS = new int[]{ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION, BluetoothGatt.GATT_INVALID_ATTRIBUTE_LENGTH};
 }
