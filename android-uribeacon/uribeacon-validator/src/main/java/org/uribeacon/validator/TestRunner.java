@@ -59,6 +59,8 @@ class TestRunner {
       mDataCallback.dataUpdated();
       if (!mStopped) {
         Log.d(TAG, "Stopped");
+        // If we just disconnected from the beacon we want to wait a second the next test
+        // Otherwise the connection to the beacon might fail.
         if (gatt == null) {
           mHandler.postDelayed(new Runnable() {
             @Override
