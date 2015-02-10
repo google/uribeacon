@@ -69,6 +69,7 @@ public class TestHelper {
   private final long SCAN_TIMEOUT = TimeUnit.SECONDS.toMillis(5);
   private BluetoothGattService mService;
   private final String mName;
+  private final String mReference;
   private final Context mContext;
   private BluetoothDevice mBluetoothDevice;
   private final UUID mServiceUuid;
@@ -175,10 +176,11 @@ public class TestHelper {
 
 
   private TestHelper(
-      String name, Context context, UUID serviceUuid,
+      String name, String reference, Context context, UUID serviceUuid,
       TestCallback testCallback, LinkedList<TestAction> testActions,
       LinkedList<TestAction> testSteps) {
     mName = name;
+    mReference = reference;
     mContext = context;
     mServiceUuid = serviceUuid;
     mTestCallback = testCallback;
@@ -482,6 +484,10 @@ public class TestHelper {
     run(mBluetoothDevice, mGatt, outSideGattCallback);
   }
 
+  public String getReference() {
+    return mReference;
+  }
+
   public interface TestCallback {
 
     public void testStarted();
@@ -498,13 +504,19 @@ public class TestHelper {
   public static class Builder {
 
     private String mName;
+    private String mReference = "";
     private Context mContext;
     private UUID mServiceUuid;
     private TestCallback mTestCallback;
     private final LinkedList<TestAction> mTestActions = new LinkedList<>();
 
-    public Builder name(String s) {
-      mName = s;
+    public Builder name(String name) {
+      mName = name;
+      return this;
+    }
+
+    public Builder reference(String reference) {
+      mReference = reference;
       return this;
     }
 
@@ -603,7 +615,7 @@ public class TestHelper {
       mTestActions.add(new TestAction(TestAction.LAST));
       // Keep a copy of the steps to show in the UI
       LinkedList<TestAction> testSteps = new LinkedList<>(mTestActions);
-      return new TestHelper(mName, mContext, mServiceUuid, mTestCallback,
+      return new TestHelper(mName, mReference, mContext, mServiceUuid, mTestCallback,
           mTestActions, testSteps);
     }
   }

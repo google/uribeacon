@@ -20,6 +20,7 @@ class CoreUriBeaconTests {
     basicTestsBuilder.add(
         new Builder()
             .name("Connect to UriBeacon")
+            .reference("https://github.com/google/uribeacon/blob/master/specification/ConfigService.md")
             .connect()
     );
     if (optional) {
@@ -28,47 +29,56 @@ class CoreUriBeaconTests {
     basicTestsBuilder.add(
         new Builder()
             .name("Read Lock State")
+            .reference("https://github.com/google/uribeacon/blob/master/specification/ConfigService.md#31-lock-state")
             .assertEquals(ProtocolV2.LOCK_STATE, TestData.UNLOCKED_STATE,
                 BluetoothGatt.GATT_SUCCESS)
     );
     basicTestsBuilder.add(
         new Builder()
             .name("Write Reset")
+            .reference("https://github.com/google/uribeacon/blob/master/specification/ConfigService.md#39-reset")
             .write(ProtocolV2.RESET, TestData.BASIC_GENERAL_DATA, BluetoothGatt.GATT_SUCCESS)
     );
     basicTestsBuilder.add(
         new Builder()
             .name("Write and Read Data")
+            .reference("https://github.com/google/uribeacon/blob/master/specification/ConfigService.md#34-uri-data")
             .writeAndRead(ProtocolV2.DATA, TestData.MULTIPLE_GENERAL_DATA)
     );
     basicTestsBuilder.add(
         new Builder()
             .name("Write and Read Flags")
+            .reference("https://github.com/google/uribeacon/blob/master/specification/ConfigService.md#35-flags")
             .writeAndRead(ProtocolV2.FLAGS, TestData.MULTIPLE_GENERAL_DATA)
     );
     basicTestsBuilder.add(
         new Builder()
             .name("Write and Read Tx Power Levels")
+            .reference("https://github.com/google/uribeacon/blob/master/specification/ConfigService.md#36-advertised-tx-power-levels")
             .writeAndRead(ProtocolV2.POWER_LEVELS, TestData.MULTIPLE_TX_POWER_LEVELS)
     );
     basicTestsBuilder.add(
         new Builder()
             .name("Write and read Tx Power Mode")
+            .reference("https://github.com/google/uribeacon/blob/master/specification/ConfigService.md#37-tx-power-mode")
             .writeAndRead(ProtocolV2.POWER_MODE, TestData.MULTIPLE_GENERAL_DATA)
     );
     basicTestsBuilder.add(
         new Builder()
             .name("Write and read period")
+            .reference("https://github.com/google/uribeacon/blob/master/specification/ConfigService.md#38-beacon-period")
             .writeAndRead(ProtocolV2.PERIOD, TestData.MULTIPLE_BASIC_PERIOD)
     );
     basicTestsBuilder.add(
         new Builder()
             .name("Disable Beacon using period = 0")
+            .reference("https://github.com/google/uribeacon/blob/master/specification/ConfigService.md#38-beacon-period")
             .writeAndRead(ProtocolV2.PERIOD, TestData.ZERO_PERIOD)
     );
     basicTestsBuilder.add(
         new Builder()
             .name("Floor period")
+            .reference("https://github.com/google/uribeacon/blob/master/specification/ConfigService.md#38-beacon-period")
             .write(ProtocolV2.PERIOD, TestData.LOW_PERIOD, BluetoothGatt.GATT_SUCCESS)
             .assertNotEquals(ProtocolV2.PERIOD, TestData.LOW_PERIOD, BluetoothGatt.GATT_SUCCESS)
             .assertNotEquals(ProtocolV2.PERIOD, TestData.ZERO_PERIOD, BluetoothGatt.GATT_SUCCESS)
@@ -76,6 +86,7 @@ class CoreUriBeaconTests {
     basicTestsBuilder.add(
         new Builder()
             .name("Enable beacon again")
+            .reference("https://github.com/google/uribeacon/blob/master/specification/ConfigService.md#38-beacon-period")
             .writeAndRead(ProtocolV2.PERIOD, TestData.BASIC_PERIOD)
     );
     basicTestsBuilder.add(
@@ -86,21 +97,25 @@ class CoreUriBeaconTests {
     basicTestsBuilder.add(
         new Builder()
             .name("Has Valid Advertisement Packet")
+            .reference("https://github.com/google/uribeacon/tree/master/specification#uribeacon-advertising-data")
             .checkAdvPacket()
     );
     basicTestsBuilder.add(
         new Builder()
             .name("Flag Written are Broadcasted")
+            .reference("https://github.com/google/uribeacon/tree/master/specification#uribeacon-flags")
             .assertAdvFlags(TestData.BASIC_GENERAL_DATA[0])
     );
     basicTestsBuilder.add(
         new Builder()
             .name("Tx Power that is written is being broadcasted")
+            .reference("https://github.com/google/uribeacon/tree/master/specification#uribeacon-tx-power-level")
             .assertAdvTxPower(TestData.BASIC_TX_POWER_LEVELS[1])
     );
     basicTestsBuilder.add(
         new Builder()
             .name("Uri written is being broadcasted")
+            .reference("https://github.com/google/uribeacon/tree/master/specification#uribeacon-uri-scheme-prefix")
             .assertAdvUri(TestData.BASIC_GENERAL_DATA)
     );
     return setUpTests(basicTestsBuilder, context, testCallback);
@@ -121,6 +136,7 @@ class CoreUriBeaconTests {
     basicTestsBuilder.add(
         new Builder()
             .name("Lock Beacon")
+            .reference("https://github.com/google/uribeacon/blob/master/specification/ConfigService.md#32-lock")
             .write(ProtocolV2.LOCK, TestData.BASIC_LOCK_KEY, BluetoothGatt.GATT_SUCCESS)
             .assertEquals(ProtocolV2.LOCK_STATE, TestData.LOCKED_STATE,
                 BluetoothGatt.GATT_SUCCESS)
@@ -128,6 +144,7 @@ class CoreUriBeaconTests {
     basicTestsBuilder.add(
         new Builder()
             .name("Unlock Beacon")
+            .reference("https://github.com/google/uribeacon/blob/master/specification/ConfigService.md#33-unlock")
             .write(ProtocolV2.UNLOCK, TestData.BASIC_LOCK_KEY, BluetoothGatt.GATT_SUCCESS)
             .assertEquals(ProtocolV2.LOCK_STATE, TestData.UNLOCKED_STATE,
                 BluetoothGatt.GATT_SUCCESS)
@@ -141,6 +158,7 @@ class CoreUriBeaconTests {
     basicTestsBuilder.add(
         new Builder()
             .name("Try to unlock with wrong key")
+            .reference("https://github.com/google/uribeacon/blob/master/specification/ConfigService.md#33-unlock")
             .write(ProtocolV2.UNLOCK, TestData.WRONG_LOCK_KEY,
                 ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION)
     );

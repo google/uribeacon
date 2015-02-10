@@ -182,6 +182,9 @@ public class TestActivity extends Activity {
         results += "<font color=\"#4CAF50\">Success</font></p>";
       } else {
         results += "<font color=\"#F44336\">Failed</font></p>";
+        if (!test.getReference().isEmpty()) {
+          results += "<p><a href=\"" + test.getReference() + "\">Reference</p>";
+        }
         results += getReasonTestFailed(test);
       }
     }
@@ -189,7 +192,7 @@ public class TestActivity extends Activity {
   }
 
   private String getReasonTestFailed(TestHelper test) {
-    String steps = "<h6>Steps:</h6>";
+    String steps = "<h6>Steps to reproduce:</h6>";
     for (int i = 0; i < test.getTestSteps().size(); i++) {
       TestAction action = test.getTestSteps().get(i);
       if (action.actionType == TestAction.LAST) {
