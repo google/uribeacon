@@ -128,7 +128,7 @@ public class TestHelper {
       } else if (actionType == TestAction.ASSERT
           && !Arrays.equals(readTest.transmittedValue, value)) {
         fail("Result not the same. Expected: " + Arrays.toString(readTest.transmittedValue)
-              + ". But received: " + Arrays.toString(value));
+            + ". Received: " + Arrays.toString(value));
       } else {
         mTestActions.remove();
         dispatch();
@@ -144,8 +144,22 @@ public class TestHelper {
       Log.d(TAG, "On write");
       mGatt = gatt;
       TestAction writeTest = mTestActions.peek();
-      if (writeTest.expectedReturnCode != status) {
+      int actionType = writeTest.actionType;
+      if (actionType == TestAction.WRITE &&  writeTest.expectedReturnCode != status) {
         fail("Incorrect status code: " + status + ". Expected: " + writeTest.expectedReturnCode);
+      } else if (actionType == TestAction.MULTIPLE_VALID_RETURN_CODES) {
+        boolean match = false;
+        for (int expected : writeTest.expectedReturnCodes) {
+          if (expected == status) {
+            match = true;
+          }
+        }
+        if (!match) {
+          fail("Error code didn't match any of the expected error codes.");
+        } else {
+          mTestActions.remove();
+          dispatch();
+        }
       } else {
         mTestActions.remove();
         dispatch();
@@ -300,7 +314,7 @@ public class TestHelper {
     } else if (actionType == TestAction.ASSERT || actionType == TestAction.ASSERT_NOT_EQUALS) {
       Log.d(TAG, "Read");
       readFromGatt();
-    } else if (actionType == TestAction.WRITE) {
+    } else if (actionType == TestAction.WRITE || actionType == TestAction.MULTIPLE_VALID_RETURN_CODES) {
       Log.d(TAG, "Write");
       writeToGatt();
     } else if (actionType == TestAction.DISCONNECT) {
@@ -522,6 +536,14 @@ public class TestHelper {
         int expectedReturnCode) {
       mTestActions.add(
           new TestAction(TestAction.ASSERT, characteristicUuid, expectedReturnCode, expectedValue));
+      return this;
+    }
+
+    public Builder write(UUID characteristicUuid, byte[] value,
+        int[] expectedReturnCodes) {
+      mTestActions.add(
+          new TestAction(TestAction.MULTIPLE_VALID_RETURN_CODES, characteristicUuid, value, expectedReturnCodes)
+      );
       return this;
     }
 
