@@ -470,6 +470,10 @@ public class TestHelper {
     run(mBluetoothDevice, mGatt, outSideGattCallback);
   }
 
+  public String getReference() {
+    return mReference;
+  }
+
   public interface TestCallback {
 
     public void testStarted();
@@ -486,7 +490,7 @@ public class TestHelper {
   public static class Builder {
 
     private String mName;
-    private String mReference;
+    private String mReference = "";
     private Context mContext;
     private UUID mServiceUuid;
     private TestCallback mTestCallback;

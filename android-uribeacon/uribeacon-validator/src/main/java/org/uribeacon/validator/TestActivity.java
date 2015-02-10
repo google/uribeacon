@@ -181,6 +181,9 @@ public class TestActivity extends Activity {
       } else if (!test.isFailed()) {
         results += "<font color=\"#4CAF50\">Success</font></p>";
       } else {
+        if (!test.getReference().isEmpty()) {
+          results += "<p><a href=\"" + test.getReference() + "\">Reference</p>";
+        }
         results += "<font color=\"#F44336\">Failed</font></p>";
         results += getReasonTestFailed(test);
       }
