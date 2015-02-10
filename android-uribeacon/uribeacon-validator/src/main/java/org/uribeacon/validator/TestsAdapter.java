@@ -73,7 +73,7 @@ public class TestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         if (event.getAction() == MotionEvent.ACTION_UP) {
           if (testResultHolder.longPressed) {
             testResultHolder.longPressed = false;
-            mAdapterCallback.restart(position - 1);
+            mAdapterCallback.restart(position);
           }
         }
         return false;
