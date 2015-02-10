@@ -93,7 +93,7 @@ Read returns true if the device is locked.
 |  Type | uint128 |
 |  Lock State | Must be unlocked. Will be locked after successful write.|
 
-**Error Codes**
+**Return Codes**
 * [Insufficient Authorization](#13-error-codes) for attempt with a valid length value and the beacon is locked. The exception is of course when attempting to Unlock the beacon with the correct key.
 * [Insufficient Authorization](#13-error-codes) for an attempt to write a characteristic with an invalid value, e.g. invalid length. [Invalid length](#13-error-codes) is also acceptable.
 
@@ -106,7 +106,7 @@ Read returns true if the device is locked.
 |  Type | uint128 |
 |  Lock State | Will be unlocked after successful write.|
 
-**Error Codes**
+**Return Codes**
 * [Insufficient Authorization](#13-error-codes) for an unlock attempt with an valid length incorrect key when the beacon is locked.
 * [Invalid length](#13-error-codes) for an unlock attempt with an invalid length whether the beacon is locked or not.
 * Success for an unlock attempt with a valid length key when the beacon is unlocked
