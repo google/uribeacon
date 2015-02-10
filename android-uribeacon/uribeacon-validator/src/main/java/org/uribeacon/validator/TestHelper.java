@@ -55,19 +55,16 @@ public class TestHelper {
       super.onScanResult(callbackType, result);
       // First time we see the beacon
       Log.d(TAG, "On scan Result");
-      if (mBluetoothDevice == null) {
-        if(mScanResultSet.add(result.getDevice())) {
-          mScanResults.add(result);
-        }
-      } else {
-        checkPacket(result);
+      if(mScanResultSet.add(result.getDevice())) {
+        mScanResults.add(result);
       }
     }
   };
-  private boolean started = false;
-  private boolean failed = false;
-  private boolean finished = false;
-  private boolean disconnected = false;
+  private boolean started;
+  private boolean failed;
+  private boolean finished;
+  private boolean disconnected;
+  private boolean stopped;
   private BluetoothGatt mGatt;
   private final long SCAN_TIMEOUT = TimeUnit.SECONDS.toMillis(5);
   private BluetoothGattService mService;
@@ -92,6 +89,7 @@ public class TestHelper {
           if (!failed) {
             mTestActions.remove();
             disconnected = true;
+            mGatt = null;
             dispatch();
           }
         }
@@ -106,7 +104,9 @@ public class TestHelper {
       Log.d(TAG, "On services discovered");
       mGatt = gatt;
       mService = mGatt.getService(mServiceUuid);
-      mTestActions.remove();
+      if (mTestActions.peek().actionType == TestAction.CONNECT) {
+        mTestActions.remove();
+      }
       mTestCallback.connectedToBeacon();
       dispatch();
     }
@@ -154,11 +154,11 @@ public class TestHelper {
 
   };
   private final TestCallback mTestCallback;
-  private final LinkedList<TestAction> mTestActions;
+  private LinkedList<TestAction> mTestActions;
   private final LinkedList<TestAction> mTestSteps;
   private final BluetoothAdapter mBluetoothAdapter;
   private final Handler mHandler;
-  private boolean stopped;
+
 
   private TestHelper(
       String name, Context context, UUID serviceUuid,
@@ -174,7 +174,6 @@ public class TestHelper {
         (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
     mBluetoothAdapter = bluetoothManager.getAdapter();
     mHandler = new Handler(Looper.myLooper());
-    stopped = false;
     mScanResults = new ArrayList<>();
     mScanResultSet = new HashSet<>();
   }
@@ -199,6 +198,10 @@ public class TestHelper {
       BluetoothGattCallback outsideCallback) {
     Log.d(TAG, "Run Called for: " + getName());
     started = true;
+    failed = false;
+    finished = false;
+    disconnected = false;
+    stopped = false;
     mBluetoothDevice = bluetoothDevice;
     mGatt = gatt;
     if (mGatt != null) {
@@ -261,6 +264,10 @@ public class TestHelper {
 
   private void dispatch() {
     Log.d(TAG, "Dispatching");
+    Log.d(TAG, "Stopped: " + stopped);
+    for (TestAction test : mTestActions) {
+      Log.d(TAG, "Test action: " + test.actionType);
+    }
     int actionType = mTestActions.peek().actionType;
     // If the test is stopped and connected to the beacon
     // disconnect from the beacon
@@ -269,24 +276,36 @@ public class TestHelper {
         disconnectFromGatt();
       }
     } else if (actionType == TestAction.LAST) {
+      Log.d(TAG, "Last");
       finished = true;
       mTestCallback.testCompleted(mBluetoothDevice, mGatt);
     } else if (actionType == TestAction.CONNECT) {
+      Log.d(TAG, "Conenct");
       connectToGatt();
-    } else if (actionType == TestAction.ASSERT || actionType == TestAction.ASSERT_NOT_EQUALS) {
-      readFromGatt();
-    } else if (actionType == TestAction.WRITE) {
-      writeToGatt();
-    } else if (actionType == TestAction.DISCONNECT) {
-      disconnectFromGatt();
     } else if (actionType == TestAction.ADV_FLAGS) {
+      Log.d(TAG, "ADV FLAGS");
       lookForAdv();
     } else if (actionType == TestAction.ADV_TX_POWER) {
+      Log.d(TAG, "ADV TX POWER");
       lookForAdv();
     } else if (actionType == TestAction.ADV_URI) {
+      Log.d(TAG, "ADV uri");
       lookForAdv();
     } else if (actionType == TestAction.ADV_PACKET) {
+      Log.d(TAG, "ADV packet");
       lookForAdv();
+    } else if (mGatt == null) {
+      Log.d(TAG, "no gatt. conencting");
+      connectToGatt();
+    } else if (actionType == TestAction.ASSERT || actionType == TestAction.ASSERT_NOT_EQUALS) {
+      Log.d(TAG, "Read");
+      readFromGatt();
+    } else if (actionType == TestAction.WRITE) {
+      Log.d(TAG, "Write");
+      writeToGatt();
+    } else if (actionType == TestAction.DISCONNECT) {
+      Log.d(TAG, "Disconenct");
+      disconnectFromGatt();
     }
   }
 
@@ -309,7 +328,7 @@ public class TestHelper {
         if (mScanResults.size() == 0) {
           fail("No UriBeacons in Config Mode found");
         } else if (mScanResults.size() == 1) {
-          connectTo(0);
+          continueTest(0);
         } else {
           mTestCallback.multipleConfigModeBeacons(mScanResults);
         }
@@ -324,7 +343,6 @@ public class TestHelper {
     List<ScanFilter> filters = new ArrayList<>();
 
     ScanFilter filter = new ScanFilter.Builder()
-        .setDeviceAddress(mBluetoothDevice.getAddress())
         .setServiceUuid(UriBeacon.URI_SERVICE_UUID)
         .build();
     filters.add(filter);
@@ -333,7 +351,20 @@ public class TestHelper {
       @Override
       public void run() {
         stopSearchingForBeacons();
-        fail("Could not find adv packet");
+        if (mBluetoothDevice != null) {
+          for (ScanResult scanResult : mScanResults) {
+            if (scanResult.getDevice().getAddress().equals(mBluetoothDevice.getAddress())) {
+              checkPacket(scanResult);
+              break;
+            }
+          }
+        } else if (mScanResults.size() == 1) {
+          continueTest(0);
+        } else if (mScanResults.size() > 1) {
+          mTestCallback.multipleConfigModeBeacons(mScanResults);
+        } else {
+          fail("Could not find adv packet");
+        }
       }
     }, SCAN_TIMEOUT);
   }
@@ -409,6 +440,7 @@ public class TestHelper {
 
   private void fail(String reason) {
     Log.d(TAG, "Failing because: " + reason);
+    mHandler.removeCallbacksAndMessages(null);
     failed = true;
     mTestActions.peek().failed = true;
     mTestActions.peek().reason = reason;
@@ -426,9 +458,14 @@ public class TestHelper {
     fail("Stopped by user");
   }
 
-  public void connectTo(int which) {
+  public void continueTest(int which) {
     mBluetoothDevice = mScanResults.get(which).getDevice();
-    mBluetoothDevice.connectGatt(mContext, false, mOutSideGattCallback);
+    dispatch();
+  }
+
+  public void repeat(BluetoothGattCallback outSideGattCallback) {
+    mTestActions = new LinkedList<>(mTestSteps);
+    run(mBluetoothDevice, mGatt, outSideGattCallback);
   }
 
   public interface TestCallback {

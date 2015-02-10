@@ -38,6 +38,8 @@ class TestRunner {
 
   private boolean mStopped;
   private boolean mFailed = false;
+  private boolean mRestartedCompleted = false;
+  private boolean mRestarted = false;
   private final TestCallback mTestCallback = new TestCallback() {
     @Override
     public void testStarted() {
@@ -50,8 +52,13 @@ class TestRunner {
       if (mLatestTest.isFailed()) {
         mFailed = true;
       }
+      if (mRestarted) {
+        mRestarted = false;
+        mRestartedCompleted = true;
+      }
       mDataCallback.dataUpdated();
       if (!mStopped) {
+        Log.d(TAG, "Stopped");
         mHandler.postDelayed(new Runnable() {
           @Override
           public void run() {
@@ -59,6 +66,7 @@ class TestRunner {
           }
         }, TimeUnit.SECONDS.toMillis(1));
       } else {
+        Log.d(TAG, "Not Stopped");
         if (gatt != null) {
           gatt.disconnect();
         }
@@ -119,7 +127,10 @@ class TestRunner {
   private final BluetoothGattCallback superBluetoothScanCallback = new BluetoothGattCallback() {
     @Override
     public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
-      mLatestTest.mGattCallback.onConnectionStateChange(gatt, status, newState);
+      Log.d(TAG, "RESTARTED COMPLETED: " + mRestartedCompleted);
+      if (!mRestartedCompleted) {
+        mLatestTest.mGattCallback.onConnectionStateChange(gatt, status, newState);
+      }
     }
 
     @Override
@@ -150,8 +161,15 @@ class TestRunner {
     mLatestTest.stopTest();
   }
 
-  public void connectTo(int which) {
-    mLatestTest.connectTo(which);
+  public void continueTest(int which) {
+    mLatestTest.continueTest(which);
+  }
+
+  public void restart(int testPosition) {
+    mRestarted = true;
+    mRestartedCompleted = false;
+    mLatestTest = mUriBeaconTests.get(testPosition);
+    mLatestTest.repeat(superBluetoothScanCallback);
   }
 
   public interface DataCallback {

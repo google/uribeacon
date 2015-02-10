@@ -38,6 +38,7 @@ import android.widget.ShareActionProvider;
 import android.widget.Toast;
 
 import org.uribeacon.validator.TestRunner.DataCallback;
+import org.uribeacon.validator.TestsAdapter.AdapterCallback;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -115,8 +116,13 @@ public class TestActivity extends Activity {
       });
     }
   };
-
   private RecyclerView.Adapter mAdapter;
+  private final AdapterCallback mAdapterCallback = new AdapterCallback() {
+    @Override
+    public void restart(int testPosition) {
+      mTestRunner.restart(testPosition);
+    }
+  };
   private ShareActionProvider mShareActionProvider;
 
   @Override
@@ -131,7 +137,7 @@ public class TestActivity extends Activity {
     RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
     mRecyclerView.setHasFixedSize(true);
     mRecyclerView.setLayoutManager(mLayoutManager);
-    mAdapter = new TestsAdapter(mUriBeaconTests, getString(R.string.tests));
+    mAdapter = new TestsAdapter(mUriBeaconTests, mAdapterCallback, getString(R.string.tests));
     mRecyclerView.setAdapter(mAdapter);
   }
 

@@ -20,6 +20,7 @@ import android.graphics.drawable.AnimatedVectorDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -34,10 +35,12 @@ public class TestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
   private static final int TYPE_HEADER = 0;
   private static final int TYPE_TEST_RESULT = 1;
   private final ArrayList<TestHelper> mDataset;
+  private final AdapterCallback mAdapterCallback;
   private String mHeader;
 
   // Provide a suitable constructor (depends on the kind of dataset)
-  public TestsAdapter(ArrayList<TestHelper> uriBeaconTests, String header) {
+  public TestsAdapter(ArrayList<TestHelper> uriBeaconTests, AdapterCallback adapterCallback, String header) {
+    mAdapterCallback = adapterCallback;
     mDataset = uriBeaconTests;
     mHeader = header;
   }
@@ -60,12 +63,20 @@ public class TestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
   // Replace the contents of a view (invoked by the layout manager)
   @Override
-  public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+  public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
     if (holder instanceof TestResultViewHolder) {
       TestResultViewHolder testResultHolder = (TestResultViewHolder) holder;
       TestHelper test = getItem(position);
       testResultHolder.mTestName.setText(test.getName());
       setIcon(testResultHolder.mImageView, test);
+
+      holder.itemView.setOnLongClickListener(new OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+          mAdapterCallback.restart(position - 1);
+          return true;
+        }
+      });
       if (test.isFailed()) {
         setErrorMessage(testResultHolder, test);
         setOnClickListener(testResultHolder);
@@ -205,5 +216,8 @@ public class TestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
       super(v);
       mHeader = (TextView) v.findViewById(R.id.subheader_textView);
     }
+  }
+  public interface AdapterCallback {
+    public void restart(int testPosition);
   }
 }
