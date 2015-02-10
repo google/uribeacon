@@ -35,6 +35,7 @@ This service is not dependent upon any other [services](https://developer.blueto
 | Code   | Description                |
 |:-------|:---------------------------|
 | 0x00   | Success                    |
+| 0x03   | Write Not Permitted        |
 | 0x08   | Insufficient Authorization |
 | 0x0d   | Invalid Attribute Length   |
 
@@ -170,6 +171,8 @@ Sets the transmission power mode to one of:
 | TX_POWER_MODE_LOW | 1 | 
 | TX_POWER_MODE_LOWEST | 0 |
 
+**Return Codes**
+* [Write Not Permitted](#13-error-codes) for an attempt to write invalid values.
 
 ### 3.8 Beacon Period
 
