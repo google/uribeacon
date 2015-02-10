@@ -278,6 +278,12 @@ class SpecUriBeaconTests {
       );
       specUriBeaconTestsBuilder.add(
           new Builder()
+              .name("Locked: Invalid Power Mode")
+              .reference("https://github.com/google/uribeacon/blob/master/specification/ConfigService.md#32-lock")
+              .write(ProtocolV2.POWER_MODE, TestData.INVALID_POWER_MODE, ConfigUriBeacon.INSUFFICIENT_AUTHORIZATION)
+      );
+      specUriBeaconTestsBuilder.add(
+          new Builder()
               .name("Locked: Try Long Power Mode")
               .reference("https://github.com/google/uribeacon/blob/master/specification/ConfigService.md#32-lock")
               .write(ProtocolV2.POWER_MODE, TestData.BASIC_GENERAL_DATA,
