@@ -174,8 +174,6 @@ public class TestHelper {
         (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
     mBluetoothAdapter = bluetoothManager.getAdapter();
     mHandler = new Handler(Looper.myLooper());
-    mScanResults = new ArrayList<>();
-    mScanResultSet = new HashSet<>();
   }
 
   public String getName() {
@@ -202,6 +200,8 @@ public class TestHelper {
     finished = false;
     disconnected = false;
     stopped = false;
+    mScanResults = new ArrayList<>();
+    mScanResultSet = new HashSet<>();
     mBluetoothDevice = bluetoothDevice;
     mGatt = gatt;
     if (mGatt != null) {

@@ -58,6 +58,7 @@ public class TestActivity extends Activity {
         public void run() {
           if (progress != null) {
             progress.dismiss();
+            progress = null;
           }
           mAdapter.notifyDataSetChanged();
           setShareIntent();
@@ -70,16 +71,18 @@ public class TestActivity extends Activity {
       runOnUiThread(new Runnable() {
         @Override
         public void run() {
-          progress = new ProgressDialog(TestActivity.this);
-          progress.setMessage(getString(R.string.put_beacon_in_config_mode));
-          progress.show();
-          progress.setCanceledOnTouchOutside(false);
-          progress.setOnCancelListener(new OnCancelListener() {
-            @Override
-            public void onCancel(DialogInterface dialog) {
-              mTestRunner.stop();
-            }
-          });
+          if (progress == null) {
+            progress = new ProgressDialog(TestActivity.this);
+            progress.setMessage(getString(R.string.put_beacon_in_config_mode));
+            progress.show();
+            progress.setCanceledOnTouchOutside(false);
+            progress.setOnCancelListener(new OnCancelListener() {
+              @Override
+              public void onCancel(DialogInterface dialog) {
+                mTestRunner.stop();
+              }
+            });
+          }
         }
       });
     }
@@ -87,6 +90,7 @@ public class TestActivity extends Activity {
     @Override
     public void connectedToBeacon() {
       progress.dismiss();
+      progress = null;
     }
 
     @Override
@@ -111,6 +115,7 @@ public class TestActivity extends Activity {
         @Override
         public void run() {
           progress.dismiss();
+          progress = null;
           showCustomDialog(scanResults);
         }
       });
