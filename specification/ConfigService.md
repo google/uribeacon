@@ -30,10 +30,11 @@ This service is not dependent upon any other [services](https://developer.blueto
 | Classic    | false	 |
 | Low Energy | true      |
 
-### 1.3 Error Codes
+### 1.3 Return Codes
 
 | Code   | Description                |
 |:-------|:---------------------------|
+| 0x00   | Success                    |
 | 0x08   | Insufficient Authorization |
 | 0x0d   | Invalid Attribute Length   |
 
