@@ -114,8 +114,10 @@ public class TestActivity extends Activity {
       runOnUiThread(new Runnable() {
         @Override
         public void run() {
-          progress.dismiss();
-          progress = null;
+          if (progress != null) {
+            progress.dismiss();
+            progress = null;
+          }
           showCustomDialog(scanResults);
         }
       });
