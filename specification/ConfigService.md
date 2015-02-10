@@ -105,7 +105,7 @@ When the UriBeacon is locked, a write characteristic attempt with a valid length
 |  Lock State | Will be unlocked after successful write.|
 
 If the beacon is unlocked then the write will return success regardless of the
-contents of the parameter. An unlock attempt with a invalid key should return [Insufficient Authorization](#13-error-codes).
+contents of the parameter. An unlock attempt with an valid length incorrect key should return [Insufficient Authorization](#13-error-codes). An unlock attempt with an invalid length key should return [Invalid length](#13-error-codes).
 
 ### 3.4 Uri Data
 
