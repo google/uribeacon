@@ -163,7 +163,8 @@ Sets the transmission power mode to one of:
 | TX_POWER_MODE_LOW | 1 | 
 | TX_POWER_MODE_LOWEST | 0 |
 
-An attempt to write any other value should return [Write Not Permitted](#13-error-codes).
+**Return Codes**
+* [Write Not Permitted](#13-error-codes) for an attempt to write invalid values.
 
 ### 3.8 Beacon Period
 
