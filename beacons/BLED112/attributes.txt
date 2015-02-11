@@ -1,0 +1,10 @@
+uri_lockstate 17
+uri_lock 20
+uri_unlock 23
+uri_data 26
+uri_flags 29
+uri_adv_txpower_levels 32
+uri_txpower_mode 35
+uri_beacon_period 38
+uri_reset 41
+uri_radio_txpower_levels 44

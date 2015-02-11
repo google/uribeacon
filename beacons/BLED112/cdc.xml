@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--
+  Copyright 2015 Google Inc. All rights reserved.
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  http://www.apache.org/licenses/LICENSE-2.0
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<usb>
+
+<device
+		bDeviceClass="2"
+		bcdDevice="1"		
+        iManufacturer="Bluegiga"
+        idVendor="2458"
+        idProduct="0001"
+        iProduct="Low Energy Dongle"
+        iSerialNumber="1"
+        bcdUSB="200"        
+        >
+        <configuration        
+                iConfiguration="CDC"
+                bmAttributes="80" 
+                bMaxPower="25">
+                
+	                <interface
+    	            bInterfaceClass="2"
+        	        bInterfaceSubClass="2"
+            	    bInterfaceProtocol="1"
+                	iInterface="CDC control"
+                	>
+	                	<descriptor Type="24">
+	                		<data>001001</data>
+	                	</descriptor>
+	            		<descriptor Type="24">
+	                		<data>0202</data>
+	                	</descriptor>
+	                	<descriptor Type="24">
+	                		<data>060001</data>
+	                	</descriptor>
+	                	<descriptor Type="24">
+	                		<data>010301</data>
+	                	</descriptor>
+	                	<endpoint bEndpointAddress="82" bmAttributes="3" wMaxPacketSize="40" bInterval="40">
+	                	</endpoint>
+                	</interface>
+	                <interface
+    	            bInterfaceClass="A"
+        	        bInterfaceSubClass="0"
+            	    bInterfaceProtocol="0"
+                	iInterface="CDC data"
+                	>	                	
+	                	<endpoint bEndpointAddress="84" bmAttributes="2" wMaxPacketSize="40" bInterval="1">
+	                	</endpoint>
+	                	<endpoint bEndpointAddress="4" bmAttributes="2" wMaxPacketSize="40" bInterval="1">
+	                	</endpoint>
+                	</interface>
+        </configuration>
+</device>
+</usb>
