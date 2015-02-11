@@ -200,7 +200,7 @@ procedure set_uribeacon_config_mode()
    advConfSrData(1:1)  = $01 # AD Flags
    advConfSrData(2:1)  = $06 # 06=connectable 04=non-connectable
 
-   # Name= "Config Uribeacon BG"
+   # Adervtised Name= "Change Uri"
    advConfSrData(3:1)  = 11  # Length
    advConfSrData(4:1)  = $09 # AD Full Name
    advConfSrData(5:15) = "Change Uri" 
