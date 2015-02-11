@@ -44,7 +44,7 @@ and sample code for advertisers and scanners:
 * **[specification](specification) - The UriBeacon Open Specification.**
 * **[android-uribeacon](android-uribeacon) - Android client to interact with UriBeacons.**
 * **[ios-uribeacon](ios-uribeacon) - iOS client to interact with UriBeacons.**
-* **[uribeacon-validator](android-uribeacon/uribeacon-validator) - Android validation app for testing UriBeacon implementations over BLE.**
+* **[uribeacon-validator](android-uribeacon/uribeacon-validator) - Android app for testing UriBeacon implementations over BLE.**
 * **[beacons](beacons) - Implementations for UriBeacon on a number of embedded BLE devices.**
 
 We will also be providing instructions on how to assemble and
