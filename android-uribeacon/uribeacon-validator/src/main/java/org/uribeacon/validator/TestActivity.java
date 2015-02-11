@@ -35,6 +35,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.ShareActionProvider;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.uribeacon.validator.TestRunner.DataCallback;
@@ -62,6 +63,7 @@ public class TestActivity extends Activity {
           }
           mAdapter.notifyDataSetChanged();
           setShareIntent();
+          setButtonProgress();
         }
       });
     }
@@ -121,6 +123,19 @@ public class TestActivity extends Activity {
       });
     }
   };
+
+  private void setButtonProgress() {
+    int completed = 0;
+    int total = mTestRunner.getUriBeaconTests().size();
+    for (TestHelper test : mTestRunner.getUriBeaconTests()) {
+      if (test.isStarted() && test.isFinished()) {
+        completed++;
+      }
+    }
+    TextView fab = (TextView) findViewById(R.id.button_progress);
+    fab.setText((completed * 100 / total) + "%");
+  }
+
   private RecyclerView.Adapter mAdapter;
   private final AdapterCallback mAdapterCallback = new AdapterCallback() {
     @Override
@@ -144,6 +159,15 @@ public class TestActivity extends Activity {
     mRecyclerView.setLayoutManager(mLayoutManager);
     mAdapter = new TestsAdapter(mUriBeaconTests, mAdapterCallback);
     mRecyclerView.setAdapter(mAdapter);
+
+    TextView fab = (TextView) findViewById(R.id.button_progress);
+    fab.setText("0%");
+    fab.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+
+      }
+    });
   }
 
   @Override
