@@ -25,34 +25,34 @@ class SpecUriBeaconTests {
     specUriBeaconTestsBuilder.add(
         new Builder()
             .name("Try Long UriData")
-            .reference("https://github.com/google/uribeacon/blob/master/specification/ConfigService.md#13-error-codes")
+            .reference("https://github.com/google/uribeacon/blob/master/specification/ConfigService.md#13-return-codes")
             .write(ProtocolV2.DATA, TestData.LONG_URI, BluetoothGatt.GATT_INVALID_ATTRIBUTE_LENGTH)
     );
     specUriBeaconTestsBuilder.add(
         new Builder()
             .name("Try Short Flags")
-            .reference("https://github.com/google/uribeacon/blob/master/specification/ConfigService.md#13-error-codes")
+            .reference("https://github.com/google/uribeacon/blob/master/specification/ConfigService.md#13-return-codes")
             .write(ProtocolV2.FLAGS, TestData.SHORT_FLAGS,
                 BluetoothGatt.GATT_INVALID_ATTRIBUTE_LENGTH)
     );
     specUriBeaconTestsBuilder.add(
         new Builder()
             .name("Try Long Flags")
-            .reference("https://github.com/google/uribeacon/blob/master/specification/ConfigService.md#13-error-codes")
+            .reference("https://github.com/google/uribeacon/blob/master/specification/ConfigService.md#13-return-codes")
             .write(ProtocolV2.FLAGS, TestData.LONG_FLAGS,
                 BluetoothGatt.GATT_INVALID_ATTRIBUTE_LENGTH)
     );
     specUriBeaconTestsBuilder.add(
         new Builder()
             .name("Try Short Advertised Tx Power Levels")
-            .reference("https://github.com/google/uribeacon/blob/master/specification/ConfigService.md#13-error-codes")
+            .reference("https://github.com/google/uribeacon/blob/master/specification/ConfigService.md#13-return-codes")
             .write(ProtocolV2.POWER_LEVELS, TestData.SHORT_TX_POWER_LEVELS,
                 BluetoothGatt.GATT_INVALID_ATTRIBUTE_LENGTH)
     );
     specUriBeaconTestsBuilder.add(
         new Builder()
             .name("Try Long Advertised Tx Power Levels")
-            .reference("https://github.com/google/uribeacon/blob/master/specification/ConfigService.md#13-error-codes")
+            .reference("https://github.com/google/uribeacon/blob/master/specification/ConfigService.md#13-return-codes")
             .write(ProtocolV2.POWER_LEVELS, TestData.LONG_TX_POWER_LEVELS,
                 BluetoothGatt.GATT_INVALID_ATTRIBUTE_LENGTH)
     );
@@ -60,14 +60,14 @@ class SpecUriBeaconTests {
     specUriBeaconTestsBuilder.add(
         new Builder()
             .name("Try Short Power Mode")
-            .reference("https://github.com/google/uribeacon/blob/master/specification/ConfigService.md#13-error-codes")
+            .reference("https://github.com/google/uribeacon/blob/master/specification/ConfigService.md#13-return-codes")
             .write(ProtocolV2.POWER_MODE, TestData.SHORT_POWER_MODE,
                 BluetoothGatt.GATT_INVALID_ATTRIBUTE_LENGTH)
     );
     specUriBeaconTestsBuilder.add(
         new Builder()
             .name("Try Long Power Mode")
-            .reference("https://github.com/google/uribeacon/blob/master/specification/ConfigService.md#13-error-codes")
+            .reference("https://github.com/google/uribeacon/blob/master/specification/ConfigService.md#13-return-codes")
             .write(ProtocolV2.POWER_MODE, TestData.LONG_POWER_MODE,
                 BluetoothGatt.GATT_INVALID_ATTRIBUTE_LENGTH)
     );
@@ -80,28 +80,28 @@ class SpecUriBeaconTests {
     specUriBeaconTestsBuilder.add(
         new Builder()
             .name("Try Short Period")
-            .reference("https://github.com/google/uribeacon/blob/master/specification/ConfigService.md#13-error-codes")
+            .reference("https://github.com/google/uribeacon/blob/master/specification/ConfigService.md#13-return-codes")
             .write(ProtocolV2.PERIOD, TestData.SHORT_PERIOD,
                 BluetoothGatt.GATT_INVALID_ATTRIBUTE_LENGTH)
     );
     specUriBeaconTestsBuilder.add(
         new Builder()
             .name("Try Long Period")
-            .reference("https://github.com/google/uribeacon/blob/master/specification/ConfigService.md#13-error-codes")
+            .reference("https://github.com/google/uribeacon/blob/master/specification/ConfigService.md#13-return-codes")
             .write(ProtocolV2.PERIOD, TestData.LONG_PERIOD,
                 BluetoothGatt.GATT_INVALID_ATTRIBUTE_LENGTH)
     );
     specUriBeaconTestsBuilder.add(
         new Builder()
             .name("Try Short Reset")
-            .reference("https://github.com/google/uribeacon/blob/master/specification/ConfigService.md#13-error-codes")
+            .reference("https://github.com/google/uribeacon/blob/master/specification/ConfigService.md#13-return-codes")
             .write(ProtocolV2.RESET, TestData.SHORT_RESET,
                 BluetoothGatt.GATT_INVALID_ATTRIBUTE_LENGTH)
     );
     specUriBeaconTestsBuilder.add(
         new Builder()
             .name("Try Long Reset")
-            .reference("https://github.com/google/uribeacon/blob/master/specification/ConfigService.md#13-error-codes")
+            .reference("https://github.com/google/uribeacon/blob/master/specification/ConfigService.md#13-return-codes")
             .write(ProtocolV2.RESET, TestData.LONG_RESET,
                 BluetoothGatt.GATT_INVALID_ATTRIBUTE_LENGTH)
     );
@@ -109,14 +109,14 @@ class SpecUriBeaconTests {
       specUriBeaconTestsBuilder.add(
           new Builder()
               .name("Try Lock with Short Key")
-              .reference("https://github.com/google/uribeacon/blob/master/specification/ConfigService.md#13-error-codes")
+              .reference("https://github.com/google/uribeacon/blob/master/specification/ConfigService.md#13-return-codes")
               .write(ProtocolV2.LOCK, TestData.SHORT_LOCK_KEY,
                   BluetoothGatt.GATT_INVALID_ATTRIBUTE_LENGTH)
       );
       specUriBeaconTestsBuilder.add(
           new Builder()
               .name("Try Lock with Long Key")
-              .reference("https://github.com/google/uribeacon/blob/master/specification/ConfigService.md#13-error-codes")
+              .reference("https://github.com/google/uribeacon/blob/master/specification/ConfigService.md#13-return-codes")
               .write(ProtocolV2.LOCK, TestData.LONG_LOCK_KEY,
                   BluetoothGatt.GATT_INVALID_ATTRIBUTE_LENGTH)
       );
@@ -158,7 +158,7 @@ class SpecUriBeaconTests {
       specUriBeaconTestsBuilder.add(
           new Builder()
               .name("Try Unlock with Short Key")
-              .reference("https://github.com/google/uribeacon/blob/master/specification/ConfigService.md#13-error-codes")
+              .reference("https://github.com/google/uribeacon/blob/master/specification/ConfigService.md#13-return-codes")
               .write(ProtocolV2.UNLOCK, TestData.SHORT_LOCK_KEY,
                   BluetoothGatt.GATT_INVALID_ATTRIBUTE_LENGTH)
       );
@@ -171,7 +171,7 @@ class SpecUriBeaconTests {
       specUriBeaconTestsBuilder.add(
           new Builder()
               .name("Try Unlock with Long Key")
-              .reference("https://github.com/google/uribeacon/blob/master/specification/ConfigService.md#13-error-codes")
+              .reference("https://github.com/google/uribeacon/blob/master/specification/ConfigService.md#13-return-codes")
               .write(ProtocolV2.UNLOCK, TestData.LONG_LOCK_KEY,
                   BluetoothGatt.GATT_INVALID_ATTRIBUTE_LENGTH)
       );
