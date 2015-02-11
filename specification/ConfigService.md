@@ -91,7 +91,7 @@ Read returns true if the device is locked.
 | Name | Lock |
 |:------------|:--------------------------------------------|
 | UUID  | ee0c<b>2082</b>-8786-40ba-ab96-99b91ac981d8|
-|  Description| Locks the beacon. |
+|  Description| Locks the beacon and sets the single-use lock-code. |
 |  Type | uint128 |
 |  Lock State | Must be unlocked. Will be locked after successful write.|
 
@@ -104,7 +104,7 @@ Read returns true if the device is locked.
 | Name | Unlock |
 |:------------|:--------------------------------------------|
 | UUID  | ee0c<b>2083</b>-8786-40ba-ab96-99b91ac981d8|
-|  Description| Unlocks the beacon. |
+|  Description| Unlocks the beacon and clears the single-use lock-code. |
 |  Type | uint128 |
 |  Lock State | Will be unlocked after successful write.|
 
