@@ -170,7 +170,7 @@ public class TestActivity extends Activity {
       public void onClick(View v) {
         // Move running test to the top
         int numberOfTestInScreen = mRecyclerView.getHeight() / mRecyclerView.getChildAt(0).getHeight();
-        mRecyclerView.smoothScrollToPosition(mCompleted + numberOfTestInScreen);
+        mRecyclerView.smoothScrollToPosition(mCompleted + numberOfTestInScreen - 1);
       }
     });
   }
