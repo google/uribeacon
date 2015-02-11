@@ -35,6 +35,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.ShareActionProvider;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.uribeacon.validator.TestRunner.DataCallback;
@@ -48,6 +49,7 @@ public class TestActivity extends Activity {
 
   private static final String TAG = TestActivity.class.getCanonicalName();
   private TestRunner mTestRunner;
+  private int mCompleted;
   private final DataCallback mDataCallback = new DataCallback() {
     ProgressDialog progress;
 
@@ -62,6 +64,7 @@ public class TestActivity extends Activity {
           }
           mAdapter.notifyDataSetChanged();
           setShareIntent();
+          setButtonProgress();
         }
       });
     }
@@ -123,6 +126,21 @@ public class TestActivity extends Activity {
       });
     }
   };
+
+  private void setButtonProgress() {
+    mCompleted = 0;
+    int total = mTestRunner.getUriBeaconTests().size();
+    for (TestHelper test : mTestRunner.getUriBeaconTests()) {
+      if (test.isStarted() && test.isFinished()) {
+        mCompleted++;
+      } else {
+        break;
+      }
+    }
+    TextView fab = (TextView) findViewById(R.id.button_progress);
+    fab.setText((mCompleted * 100 / total) + "%");
+  }
+
   private RecyclerView.Adapter mAdapter;
   private final AdapterCallback mAdapterCallback = new AdapterCallback() {
     @Override
@@ -140,12 +158,23 @@ public class TestActivity extends Activity {
     String testType = getIntent().getStringExtra(MainActivity.TEST_TYPE);
     mTestRunner = new TestRunner(this, mDataCallback, testType, optionalImplemented);
     ArrayList<TestHelper> mUriBeaconTests = mTestRunner.getUriBeaconTests();
-    RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView_tests);
-    RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
+    final RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView_tests);
+    final RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
     mRecyclerView.setHasFixedSize(true);
     mRecyclerView.setLayoutManager(mLayoutManager);
     mAdapter = new TestsAdapter(mUriBeaconTests, mAdapterCallback);
     mRecyclerView.setAdapter(mAdapter);
+
+    TextView fab = (TextView) findViewById(R.id.button_progress);
+    fab.setText("0%");
+    fab.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        // Move running test to the top
+        int numberOfTestInScreen = mRecyclerView.getHeight() / mRecyclerView.getChildAt(0).getHeight();
+        mRecyclerView.smoothScrollToPosition(mCompleted + numberOfTestInScreen - 1);
+      }
+    });
   }
 
   @Override
