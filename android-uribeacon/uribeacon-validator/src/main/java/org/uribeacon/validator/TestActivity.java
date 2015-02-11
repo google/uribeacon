@@ -49,6 +49,7 @@ public class TestActivity extends Activity {
 
   private static final String TAG = TestActivity.class.getCanonicalName();
   private TestRunner mTestRunner;
+  private int mCompleted;
   private final DataCallback mDataCallback = new DataCallback() {
     ProgressDialog progress;
 
@@ -125,15 +126,15 @@ public class TestActivity extends Activity {
   };
 
   private void setButtonProgress() {
-    int completed = 0;
+    mCompleted = 0;
     int total = mTestRunner.getUriBeaconTests().size();
     for (TestHelper test : mTestRunner.getUriBeaconTests()) {
       if (test.isStarted() && test.isFinished()) {
-        completed++;
+        mCompleted++;
       }
     }
     TextView fab = (TextView) findViewById(R.id.button_progress);
-    fab.setText((completed * 100 / total) + "%");
+    fab.setText((mCompleted * 100 / total) + "%");
   }
 
   private RecyclerView.Adapter mAdapter;
@@ -153,8 +154,8 @@ public class TestActivity extends Activity {
     String testType = getIntent().getStringExtra(MainActivity.TEST_TYPE);
     mTestRunner = new TestRunner(this, mDataCallback, testType, optionalImplemented);
     ArrayList<TestHelper> mUriBeaconTests = mTestRunner.getUriBeaconTests();
-    RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView_tests);
-    RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
+    final RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView_tests);
+    final RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
     mRecyclerView.setHasFixedSize(true);
     mRecyclerView.setLayoutManager(mLayoutManager);
     mAdapter = new TestsAdapter(mUriBeaconTests, mAdapterCallback);
@@ -165,7 +166,7 @@ public class TestActivity extends Activity {
     fab.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-
+        mRecyclerView.smoothScrollToPosition(mCompleted);
       }
     });
   }
