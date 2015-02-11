@@ -168,8 +168,9 @@ public class TestActivity extends Activity {
     fab.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        // Jump to running test
-        mRecyclerView.smoothScrollToPosition(mCompleted - 1);
+        // Move running test to the top
+        int numberOfTestInScreen = mRecyclerView.getHeight() / mRecyclerView.getChildAt(0).getHeight();
+        mRecyclerView.smoothScrollToPosition(mCompleted + numberOfTestInScreen);
       }
     });
   }
