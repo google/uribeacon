@@ -131,6 +131,8 @@ public class TestActivity extends Activity {
     for (TestHelper test : mTestRunner.getUriBeaconTests()) {
       if (test.isStarted() && test.isFinished()) {
         mCompleted++;
+      } else {
+        break;
       }
     }
     TextView fab = (TextView) findViewById(R.id.button_progress);
@@ -166,7 +168,8 @@ public class TestActivity extends Activity {
     fab.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        mRecyclerView.smoothScrollToPosition(mCompleted);
+        // Jump to running test
+        mRecyclerView.smoothScrollToPosition(mCompleted - 1);
       }
     });
   }
