@@ -264,7 +264,6 @@ public class UriBeaconScanActivity extends ListActivity implements SwipeRefreshL
         UriBeacon.parseFromBytes(scanRecord);
 
     if (uriBeacon != null) {
-      int txPowerLevel = uriBeacon.getTxPowerLevel();
       return uriBeacon.getTxPowerLevel();
     }
 
