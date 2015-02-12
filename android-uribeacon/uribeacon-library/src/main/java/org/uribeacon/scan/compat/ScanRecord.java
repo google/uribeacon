@@ -264,7 +264,9 @@ public final class ScanRecord {
                     advertiseFlag, txPowerLevel, localName, scanRecord);
         } catch (Exception e) {
             Logger.logError("unable to parse scan record: " + Arrays.toString(scanRecord), e);
-            return null;
+            // As the record is invalid, ignore all the parsed results for this packet
+            // and return an empty record with raw scanRecord bytes in results
+            return new ScanRecord(null, null, null, -1, Integer.MIN_VALUE, null, scanRecord);
         }
     }
 
