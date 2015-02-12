@@ -103,6 +103,8 @@ The Transmit Power Level represents the transmit power level in
 dBm, and the value ranges from -100 dBm to +20 dBm to a resolution of
 1 dBm.
 
+Note to developers: the best way to determine the precise value to put into this field is to measure the actual output of your beacon from 1 meter away and then add 41dBm to that. 41dBm is the signal loss that occurs over 1 meter.
+
 #### Summary
 
 The value is a signed 8 bit integer as specified by
