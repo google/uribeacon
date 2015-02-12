@@ -31,4 +31,16 @@
     <string name="pref_summary_off_filter_uribeacon">Not filtering on UriBeacon</string>
     <string name="pref_summary_on_filter_uribeacon">Filtering on UriBeacon</string>
 
+    <!-- Smooth Factor -->
+
+    <string name="pref_key_smooth_factor">smoth_factor_key</string>
+    <string name="pref_title_smooth_factor">Smooth Factor</string>
+    <string name="pref_summary_smooth_factor">Smooth Factor for RSSI weighted average</string>
+
+    <!-- Scan Time -->
+
+    <string name="pref_key_scan_time">scan_time_key</string>
+    <string name="pref_summary_scan_time">Number of seconds scan should run for</string>
+    <string name="pref_title_scan_time">Scan time</string>
+
 </resources>
