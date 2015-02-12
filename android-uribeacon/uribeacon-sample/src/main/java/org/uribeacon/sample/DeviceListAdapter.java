@@ -74,6 +74,11 @@ class DeviceListAdapter extends ScanResultAdapter {
     if (beacon != null) {
       displayName = beacon.getUriString();
       txPowerLevel = beacon.getTxPowerLevel();
+      // Check if null to avoid null pointer exception.
+      // Check if name is empty if it's empty show other value for displayName
+      if (displayName != null && displayName.isEmpty()) {
+        displayName = null;
+      }
     }
     else {
       txPowerLevel = (byte) scanResult.getScanRecord().getTxPowerLevel();

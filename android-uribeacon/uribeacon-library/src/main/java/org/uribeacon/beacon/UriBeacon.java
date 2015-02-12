@@ -166,7 +166,7 @@ public class UriBeacon {
   public static UriBeacon parseFromBytes(byte[] scanRecordBytes) {
     byte[] serviceData = parseServiceDataFromBytes(scanRecordBytes);
     // Minimum UriBeacon consists of flags, TxPower
-    if (serviceData == null || serviceData.length < 3) {
+    if (serviceData == null || serviceData.length < 2) {
       return null;
     }
     int currentPos = 0;
@@ -306,7 +306,7 @@ public class UriBeacon {
   }
 
   private static String decodeUri(byte[] serviceData, int offset) {
-    if (serviceData.length == 0) {
+    if (serviceData.length == offset) {
       return NO_URI;
     }
     StringBuilder uriBuilder = new StringBuilder();
