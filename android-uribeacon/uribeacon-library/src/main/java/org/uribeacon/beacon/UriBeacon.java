@@ -166,7 +166,7 @@ public class UriBeacon {
   public static UriBeacon parseFromBytes(byte[] scanRecordBytes) {
     byte[] serviceData = parseServiceDataFromBytes(scanRecordBytes);
     // Minimum UriBeacon consists of flags, TxPower
-    if (serviceData == null || serviceData.length < 3) {
+    if (serviceData == null || serviceData.length < 2) {
       return null;
     }
     int currentPos = 0;
