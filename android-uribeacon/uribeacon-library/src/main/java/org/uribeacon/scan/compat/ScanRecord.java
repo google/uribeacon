@@ -23,18 +23,17 @@
 
 package org.uribeacon.scan.compat;
 
-import org.uribeacon.scan.util.Logger;
-
 import android.os.ParcelUuid;
+import android.support.annotation.Nullable;
 import android.util.SparseArray;
+
+import org.uribeacon.scan.util.Logger;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import android.support.annotation.Nullable;
 
 /**
  * Represents a scan record from Bluetooth LE scan.
@@ -263,8 +262,8 @@ public final class ScanRecord {
             }
             return new ScanRecord(serviceUuids, manufacturerData, serviceData,
                     advertiseFlag, txPowerLevel, localName, scanRecord);
-        } catch (IndexOutOfBoundsException e) {
-            Logger.logError("unable to parse scan record: " + Arrays.toString(scanRecord));
+        } catch (Exception e) {
+            Logger.logError("unable to parse scan record: " + Arrays.toString(scanRecord), e);
             return null;
         }
     }

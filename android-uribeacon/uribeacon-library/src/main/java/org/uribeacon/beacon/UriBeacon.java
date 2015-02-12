@@ -479,8 +479,8 @@ public class UriBeacon {
         // length includes the length of the field type
         currentPos += fieldLength - 1;
       }
-    } catch (IndexOutOfBoundsException e) {
-      Log.e(TAG, "unable to parse scan record: " + Arrays.toString(scanRecord));
+    } catch (Exception e) {
+      Log.e(TAG, "unable to parse scan record: " + Arrays.toString(scanRecord), e);
     }
     return null;
   }
