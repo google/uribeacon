@@ -16,34 +16,9 @@
 <resources>
     <string name="title_activity_uribeacon_settings">Settings</string>
 
-    <!-- BLE Background Scanning Mode -->
-
-    <string name="pref_title_main_background">Background Scanning</string>
-
-    <string name="pref_key_background">background</string>
-    <string name="pref_title_background">Background Mode</string>
-
-    <!-- Hardware override -->
-
-    <string name="pref_title_main_hardware_override">Hardware Override</string>
-
-    <string name="pref_key_hardware_override">hardware_override</string>
-    <string name="pref_title_hardware_override">Hardware BLE enabled</string>
-
     <!-- BLE Serial Scan setting -->
 
     <string name="pref_title_main_serial_scan_mode">Serial Scanner</string>
-
-    <!-- BLE Serial Scan Mode settings -->
-
-    <string name="pref_key_serial_scan_mode">serial_scan_mode_key</string>
-    <string name="pref_title_serial_scan_mode">Scan Mode</string>
-
-    <!-- BLE Scan Mode Values -->
-
-    <string name="pref_val_scan_mode_low_power">Low Power</string>
-    <string name="pref_val_scan_mode_low_latency">Low Latency</string>
-    <string name="pref_val_scan_mode_balanced">Balanced</string>
 
     <!-- BLE Filter settings -->
 

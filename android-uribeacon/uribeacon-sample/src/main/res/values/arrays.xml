@@ -15,11 +15,6 @@
   limitations under the License.
 -->
 <resources>
-    <string-array name="scanModeKeys">
-        <item>@string/pref_val_scan_mode_low_power</item>
-        <item>@string/pref_val_scan_mode_balanced</item>
-        <item>@string/pref_val_scan_mode_low_latency</item>
-    </string-array>
     <string-array name="powerModes">
         <item>@string/tx_power_lowest</item>
         <item>@string/tx_power_low</item>

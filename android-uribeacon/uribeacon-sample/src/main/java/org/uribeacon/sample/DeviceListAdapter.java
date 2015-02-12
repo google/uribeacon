@@ -67,7 +67,7 @@ class DeviceListAdapter extends ScanResultAdapter {
     DeviceSighting deviceSighting = getItem(i);
     ScanResult scanResult = deviceSighting.scanResult;
     UriBeacon beacon;
-    byte txPowerLevel = 0;
+    byte txPowerLevel;
     beacon = UriBeacon.parseFromBytes(scanResult.getScanRecord().getBytes());
 
     String displayName = null;
