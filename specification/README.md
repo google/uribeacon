@@ -98,6 +98,7 @@ The `Invisible Hint` flag is a command for the user-agent that tells it not to a
 
 ### UriBeacon Tx Power Level
 
+TX Power in the UriBeacon advertising packet is the received power at 0 meters.
 The Transmit Power Level represents the transmit power level in
 dBm, and the value ranges from -100 dBm to +20 dBm to a resolution of
 1 dBm.
