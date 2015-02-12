@@ -306,7 +306,7 @@ public class UriBeacon {
   }
 
   private static String decodeUri(byte[] serviceData, int offset) {
-    if (serviceData.length == 0) {
+    if (serviceData.length == offset) {
       return NO_URI;
     }
     StringBuilder uriBuilder = new StringBuilder();
