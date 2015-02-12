@@ -14,33 +14,8 @@
   limitations under the License.
 -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory android:title="@string/pref_title_main_background">
-
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="@string/pref_key_background"
-            android:title="@string/pref_title_background" />
-
-    </PreferenceCategory>
-
-    <PreferenceCategory android:title="@string/pref_title_main_hardware_override">
-
-        <SwitchPreference
-            android:defaultValue="true"
-            android:key="@string/pref_key_hardware_override"
-            android:title="@string/pref_title_hardware_override" />
-
-    </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_title_main_serial_scan_mode">
-
-        <ListPreference
-            android:defaultValue="@string/pref_val_scan_mode_low_latency"
-            android:entries="@array/scanModeKeys"
-            android:entryValues="@array/scanModeKeys"
-            android:key="@string/pref_key_serial_scan_mode"
-            android:summary="@string/pref_val_scan_mode_low_power"
-            android:title="@string/pref_title_serial_scan_mode" />
         <EditTextPreference
             android:defaultValue="10"
             android:key="@string/pref_key_scan_time"
