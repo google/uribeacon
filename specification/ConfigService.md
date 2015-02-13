@@ -156,7 +156,7 @@ The Advertised TX Power Levels is not the same as values set internally into the
 
 The Advertised TX Power Levels is also indexed by TX Power Mode but is outward facing, and is the value that is put into the adv packet. These are related but distinct because numbers used by radio function may not be the same as those exposed in adv packets. 
 
-The best way to determine the precise value for these output values is to measure the actual output of your beacon from 1 meter away and then add 41dBm to that. 41dBm is the signal loss that occurs over 1 meter.
+The best way to determine the precise value for these output values is to measure the actual RSSI from your beacon from 1 meter away and then add 41dBm to that. 41dBm is the signal loss that occurs over 1 meter.
 
 ### 3.7 TX Power Mode
 
