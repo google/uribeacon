@@ -15,14 +15,16 @@
   limitations under the License.
 -->
 <resources>
-    <string name="title_activity_uribeacon_config">Config</string>
-
     <string name="ble_not_supported">BLE is not supported</string>
-    <string name="title_devices">Scan</string>
-    <string name="title_config">Config</string>
     <string name="error_bluetooth_not_supported">Bluetooth not supported.</string>
+
+    <!-- Scan -->
+    <string name="title_devices">Scan</string>
     <string name="empty_scan_start">Searching for devices</string>
     <string name="empty_scan_end">No devices found</string>
+
+    <!-- Config -->
+    <string name="title_config">Config</string>
     <string name="empty_config_start">Searching for configurable UriBeacons</string>
     <string name="empty_config_end">No configurable UriBeacons found.\nVisit uribeacon.org</string>
 
@@ -31,10 +33,5 @@
     <string name="menu_stop_refresh">Stop Refresh</string>
     <string name="menu_settings">Settings</string>
     <string name="menu_config">Configure UriBeacon</string>
-    <string name="pref_key_smooth_factor">smoth_factor_key</string>
-    <string name="pref_title_smooth_factor">Smooth Factor</string>
-    <string name="pref_key_scan_time">scan_time_key</string>
-    <string name="pref_summary_scan_time">Number of seconds scan should run for</string>
-    <string name="pref_title_scan_time">Scan time</string>
-    <string name="pref_summary_smooth_factor">Smooth Factor for RSSI weighted average</string>
+
 </resources>

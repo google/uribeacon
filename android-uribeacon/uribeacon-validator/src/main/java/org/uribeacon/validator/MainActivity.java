@@ -1,3 +1,19 @@
+/*
+ * Copyright 2015 Google Inc. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.uribeacon.validator;
 
 import android.app.Activity;
@@ -21,11 +37,12 @@ public class MainActivity extends Activity {
   public static final String LOCK_IMPLEMENTED = "MainActivity.LockImplemented";
   private boolean lockImplemented = false;
 
+
   private final StartTestType mStartTestType = new StartTestType() {
     @Override
-    public void startTestType(String type) {
+    public void startTestType(String testType) {
       Intent intent = new Intent(MainActivity.this, TestActivity.class);
-      intent.putExtra(MainActivity.TEST_TYPE, type);
+      intent.putExtra(MainActivity.TEST_TYPE, testType);
       intent.putExtra(MainActivity.LOCK_IMPLEMENTED, lockImplemented);
       startActivity(intent);
     }
@@ -42,7 +59,7 @@ public class MainActivity extends Activity {
     RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
     recyclerView.setLayoutManager(layoutManager);
 
-    RecyclerView.Adapter mAdapter = new TestTypesAdapter(getTestsInfo(), mStartTestType);
+    RecyclerView.Adapter mAdapter = new TestTypesAdapter(getTestsInfo(), mStartTestType, getString(R.string.test_type_header));
     recyclerView.setAdapter(mAdapter);
 
   }
@@ -62,9 +79,9 @@ public class MainActivity extends Activity {
         lockImplemented = ((Switch) v).isChecked();
       }
     });
+
     return super.onCreateOptionsMenu(menu);
   }
-
 
   private TestInfo[] getTestsInfo() {
     return new TestInfo[]{
@@ -73,6 +90,8 @@ public class MainActivity extends Activity {
     };
   }
 
+  // Object to hold the test name and the test type.
+  // The test type is then passed to the test activity
   public class TestInfo {
 
     public final String testName;

@@ -11,8 +11,11 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<resources>
-    <color name="primary">#0F9D58</color>
-    <color name="primary_dark">#0B8043</color>
-    <color name="accent">#9E9E9E</color>
-</resources>
+<ListView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/multipleBeacons_listView"
+        android:divider="@null"
+        android:dividerHeight="0dp"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+</ListView>

@@ -30,10 +30,12 @@ This service is not dependent upon any other [services](https://developer.blueto
 | Classic    | false	 |
 | Low Energy | true      |
 
-### 1.3 Error Codes
+### 1.3 Return Codes
 
 | Code   | Description                |
 |:-------|:---------------------------|
+| 0x00   | Success                    |
+| 0x03   | Write Not Permitted        |
 | 0x08   | Insufficient Authorization |
 | 0x0d   | Invalid Attribute Length   |
 
@@ -89,21 +91,27 @@ Read returns true if the device is locked.
 | Name | Lock |
 |:------------|:--------------------------------------------|
 | UUID  | ee0c<b>2082</b>-8786-40ba-ab96-99b91ac981d8|
-|  Description| Locks the beacon. |
+|  Description| Locks the beacon and sets the single-use lock-code. |
 |  Type | uint128 |
 |  Lock State | Must be unlocked. Will be locked after successful write.|
+
+**Return Codes**
+* [Insufficient Authorization](#13-return-codes) for attempt with a valid length value and the beacon is locked. The exception is of course when attempting to Unlock the beacon with the correct key.
+* [Insufficient Authorization](#13-return-codes) for an attempt to write a characteristic with an invalid value, e.g. invalid length. [Invalid length](#13-return-codes) is also acceptable.
 
 ### 3.3 Unlock
 
 | Name | Unlock |
 |:------------|:--------------------------------------------|
 | UUID  | ee0c<b>2083</b>-8786-40ba-ab96-99b91ac981d8|
-|  Description| Unlocks the beacon. |
+|  Description| Unlocks the beacon and clears the single-use lock-code. |
 |  Type | uint128 |
 |  Lock State | Will be unlocked after successful write.|
 
-If the beacon is unlocked then the write will return success regardless of the
-contents of the parameter.
+**Return Codes**
+* [Insufficient Authorization](#13-return-codes) for an unlock attempt with an valid length incorrect key when the beacon is locked.
+* [Invalid length](#13-return-codes) for an unlock attempt with an invalid length whether the beacon is locked or not.
+* Success for an unlock attempt with a valid length key when the beacon is unlocked
 
 ### 3.4 Uri Data
 
@@ -143,7 +151,12 @@ The Flags characteristic is a sinlge unsigned byte value containing the
 This characteristic is a fixed length array of values, in dBm, to be included in the 
 [UriBeacon TX Power Level](https://github.com/google/uribeacon/tree/master/specification#uribeacon-tx-power-level) field of the advertisement when that mode is active. The index into the array is [TX Power Mode](#37-tx-power-mode). 
 
-Note to developers: The Advertised TX Power Levels is not the same as values set internally into the radio tx power. You need to implement an internal array indexed by TX Power Mode that is used for the internal facing radio setting. The Advertised TX Power Levels is also indexed by TX Power Mode but is outward facing, and is the value that is put into the adv packet. These are related but distinct because numbers used by radio function may not be the same as those exposed in adv packets.
+**Note to developers:** 
+The Advertised TX Power Levels is not the same as values set internally into the radio tx power. You need to implement an internal array indexed by TX Power Mode that is used for the internal facing radio setting. 
+
+The Advertised TX Power Levels is also indexed by TX Power Mode but is outward facing, and is the value that is put into the adv packet. These are related but distinct because numbers used by radio function may not be the same as those exposed in adv packets. 
+
+The best way to determine the precise value for these output values is to measure the actual RSSI from your beacon from 1 meter away and then add 41dBm to that. 41dBm is the signal loss that occurs over 1 meter.
 
 ### 3.7 TX Power Mode
 
@@ -163,6 +176,8 @@ Sets the transmission power mode to one of:
 | TX_POWER_MODE_LOW | 1 | 
 | TX_POWER_MODE_LOWEST | 0 |
 
+**Return Codes**
+* [Write Not Permitted](#13-return-codes) for an attempt to write invalid values.
 
 ### 3.8 Beacon Period
 
@@ -173,7 +188,7 @@ Sets the transmission power mode to one of:
 | Type        | uint16                                      |
 | Lock State  | For write, must be unlocked.                |
 
-The period in milliseconds that a UriBeacon packet is transmitted. A value of zero disables UriBeacon transmissions.
+The period in milliseconds that a UriBeacon packet is transmitted. **A value of zero disables UriBeacon transmissions.** Setting a period value that the hardware doesn't support should default to minimum value the hardware supports. For example if the user tries to set the period to 1 millisecond and the lowest value the hardware supports is 100 milliseconds, the value for the characteristic should be set to 100 milliseconds and the UriBeacon should broadcast at a 100 milliseconds.
 
 ### 3.9 Reset
 

@@ -166,7 +166,7 @@ public class UriBeacon {
   public static UriBeacon parseFromBytes(byte[] scanRecordBytes) {
     byte[] serviceData = parseServiceDataFromBytes(scanRecordBytes);
     // Minimum UriBeacon consists of flags, TxPower
-    if (serviceData == null || serviceData.length < 3) {
+    if (serviceData == null || serviceData.length < 2) {
       return null;
     }
     int currentPos = 0;
@@ -306,7 +306,7 @@ public class UriBeacon {
   }
 
   private static String decodeUri(byte[] serviceData, int offset) {
-    if (serviceData.length == 0) {
+    if (serviceData.length == offset) {
       return NO_URI;
     }
     StringBuilder uriBuilder = new StringBuilder();
@@ -479,8 +479,8 @@ public class UriBeacon {
         // length includes the length of the field type
         currentPos += fieldLength - 1;
       }
-    } catch (IndexOutOfBoundsException e) {
-      Log.e(TAG, "unable to parse scan record: " + Arrays.toString(scanRecord));
+    } catch (Exception e) {
+      Log.e(TAG, "unable to parse scan record: " + Arrays.toString(scanRecord), e);
     }
     return null;
   }
