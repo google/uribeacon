@@ -1,3 +1,19 @@
+/*
+ * Copyright 2015 Google Inc. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.uribeacon.validator;
 
 import android.support.v7.widget.RecyclerView;
@@ -10,16 +26,22 @@ import android.widget.TextView;
 import org.uribeacon.validator.MainActivity.TestInfo;
 
 public class TestTypesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-  private static final int TYPE_HEADER = 0;
+  private static final int TYPE_SUBHEADER = 0;
   private static final int TYPE_TEST = 1;
   private final TestInfo[] mDataset;
   private final StartTestType mCallback;
-  private String mHeader;
+  private String mSubheader;
 
-  public TestTypesAdapter(TestInfo[] tests, StartTestType callback, String header) {
+  /**
+   * Adapter to show the available test sets to run
+   * @param tests Available tests
+   * @param callback Callback to notify which test to run
+   * @param subheader List subheader
+   */
+  public TestTypesAdapter(TestInfo[] tests, StartTestType callback, String subheader) {
     mDataset = tests;
     mCallback = callback;
-    mHeader = header;
+    mSubheader = subheader;
   }
 
   // Create new views
@@ -28,20 +50,20 @@ public class TestTypesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     if (viewType == TYPE_TEST) {
       View v = LayoutInflater.from(parent.getContext())
           .inflate(R.layout.type_view, parent, false);
-      return new ViewHolderTest(v);
-    } else if (viewType == TYPE_HEADER) {
+      return new TestViewHolder(v);
+    } else if (viewType == TYPE_SUBHEADER) {
       View v = LayoutInflater.from(parent.getContext())
           .inflate(R.layout.list_subheader, parent, false);
-      return new ViewHolderHeader(v);
+      return new SubheaderViewHolder(v);
     }
     throw new RuntimeException("there is no type that matches the type " + viewType + " + make sure your using types correctly");
   }
 
-  // Replace the contest of a view
+  // Replace the contents of a view
   @Override
   public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
-    if (holder instanceof ViewHolderTest) {
-      ViewHolderTest testHolder = (ViewHolderTest) holder;
+    if (holder instanceof TestViewHolder) {
+      TestViewHolder testHolder = (TestViewHolder) holder;
       testHolder.mTextView.setText(getItem(position).testName);
       testHolder.itemView.setOnClickListener(new OnClickListener() {
         @Override
@@ -49,9 +71,9 @@ public class TestTypesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
           mCallback.startTestType(getItem(position).className);
         }
       });
-    } else if (holder instanceof ViewHolderHeader) {
-      ViewHolderHeader headerHolder = (ViewHolderHeader) holder;
-      headerHolder.mSubheader.setText(mHeader);
+    } else if (holder instanceof SubheaderViewHolder) {
+      SubheaderViewHolder subheaderHolder = (SubheaderViewHolder) holder;
+      subheaderHolder.mSubheader.setText(mSubheader);
     }
   }
   private TestInfo getItem(int position) {
@@ -66,30 +88,39 @@ public class TestTypesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
   @Override
   public int getItemViewType(int position) {
     if (position == 0) {
-      return TYPE_HEADER;
+      return TYPE_SUBHEADER;
     } else {
       return TYPE_TEST;
     }
   }
-  public static class ViewHolderHeader extends RecyclerView.ViewHolder {
+
+  /**
+   * View holder for the subheader of the list
+   */
+  public static class SubheaderViewHolder extends RecyclerView.ViewHolder {
 
     public final TextView mSubheader;
 
-    public ViewHolderHeader(View v) {
+    public SubheaderViewHolder(View v) {
       super(v);
       mSubheader = (TextView) v.findViewById(R.id.subheader_textView);
     }
   }
-  public static class ViewHolderTest extends RecyclerView.ViewHolder {
+
+  /**
+   * View Holder for test types
+   */
+  public static class TestViewHolder extends RecyclerView.ViewHolder {
 
     public final TextView mTextView;
 
-    public ViewHolderTest(View v) {
+    public TestViewHolder(View v) {
       super(v);
       mTextView = (TextView) v.findViewById(R.id.test_type);
     }
   }
 
+  // Interface to notify which test should be started
   public interface StartTestType {
 
     public void startTestType(String type);

@@ -48,7 +48,11 @@ import java.util.concurrent.TimeUnit;
 
 public class TestHelper {
 
+  // Constants
   private static final String TAG = TestHelper.class.getCanonicalName();
+  private final long SCAN_TIMEOUT = TimeUnit.SECONDS.toMillis(5);
+
+  // BLE Scan callback
   private final ScanCallback mScanCallback = new ScanCallback() {
     @Override
     public void onScanResult(int callbackType, ScanResult result) {
@@ -60,23 +64,15 @@ public class TestHelper {
       }
     }
   };
-  private boolean started;
-  private boolean failed;
-  private boolean finished;
-  private boolean disconnected;
-  private boolean stopped;
+
+  // Gatt Variables
   private BluetoothGatt mGatt;
-  private final long SCAN_TIMEOUT = TimeUnit.SECONDS.toMillis(5);
   private BluetoothGattService mService;
-  private final String mName;
-  private final String mReference;
-  private final Context mContext;
   private BluetoothDevice mBluetoothDevice;
   private final UUID mServiceUuid;
+  //TODO: It seems that to maintain connection between tests a better idea would be to extract the Gatt service to the Test Runner
   private BluetoothGattCallback mOutSideGattCallback;
-  private HashSet<BluetoothDevice> mScanResultSet;
-  private ArrayList<ScanResult> mScanResults;
-
+  private final BluetoothAdapter mBluetoothAdapter;
   public final BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
     @Override
     public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
@@ -171,10 +167,25 @@ public class TestHelper {
     }
 
   };
-  private final TestCallback mTestCallback;
+
+  // Test Information
+  private final String mName;
+  private final String mReference;
+  private final Context mContext;
+  private HashSet<BluetoothDevice> mScanResultSet;
+  private ArrayList<ScanResult> mScanResults;
   private LinkedList<TestAction> mTestActions;
   private final LinkedList<TestAction> mTestSteps;
-  private final BluetoothAdapter mBluetoothAdapter;
+
+  // Test State
+  //TODO: there is probably no need to have so many variables. Defining states would be better.
+  private boolean started;
+  private boolean failed;
+  private boolean finished;
+  private boolean disconnected;
+  private boolean stopped;
+
+  private final TestCallback mTestCallback;
   private final Handler mHandler;
 
 
@@ -195,30 +206,59 @@ public class TestHelper {
     mHandler = new Handler(Looper.myLooper());
   }
 
+  /**
+   * @return name of the test
+   */
   public String getName() {
     return mName;
   }
 
+  /**
+   * @return A link to the reference in the spec regarding the correct behavior
+   */
+  public String getReference() {
+    return mReference;
+  }
+
+  /**
+   * @return a linked list containing the tests
+   */
   public LinkedList<TestAction> getTestSteps() {
     return mTestSteps;
   }
 
+  /**
+   * @return whether the test failed or not
+   */
   public boolean isFailed() {
     return failed;
   }
 
+  /**
+   * @return whether or not the test has started
+   */
   public boolean isStarted() {
     return started;
   }
 
+  /**
+   * Start running the test
+   * @param bluetoothDevice device to connect for the test. If no device is present the TestHelper
+   * will scan for nearby beacons in config mode
+   * @param gatt gatt connection if available. If no gatt connection is available the TestHelper
+   * will try to connect to the bluetoothDevice
+   * @param outsideCallback Outside callback for the gatt connection
+   */
   public void run(BluetoothDevice bluetoothDevice, BluetoothGatt gatt,
       BluetoothGattCallback outsideCallback) {
     Log.d(TAG, "Run Called for: " + getName());
+    // Reset Test state
     started = true;
     failed = false;
     finished = false;
     disconnected = false;
     stopped = false;
+    // Initialize new list for results
     mScanResults = new ArrayList<>();
     mScanResultSet = new HashSet<>();
     mBluetoothDevice = bluetoothDevice;
@@ -226,28 +266,30 @@ public class TestHelper {
     if (mGatt != null) {
       mService = gatt.getService(mServiceUuid);
     }
-    mTestCallback.testStarted();
     mOutSideGattCallback = outsideCallback;
+
+    // Notify test started
+    mTestCallback.testStarted();
     dispatch();
   }
 
   private void connectToGatt() {
     Log.d(TAG, "Connecting");
-
+    // If the test just disconnected from the beacon, wait a second
+    // otherwise the connection will fail.
     if (disconnected) {
       try {
         disconnected = false;
-        // We have to wait before trying to connect
-        // Else the connection is not successful
         TimeUnit.SECONDS.sleep(1);
       } catch (InterruptedException e) {
         e.printStackTrace();
       }
     }
+    // Notify runner that the test is currently waiting for a beacon
     mTestCallback.waitingForConfigMode();
-    // First time the device is seen
+    // If there is no device defined scan for a beacon to connect to
     if (mBluetoothDevice == null) {
-      scanForBeacon();
+      scanForConfigBeacon();
     } else {
       mBluetoothDevice.connectGatt(mContext, false, mOutSideGattCallback);
     }
@@ -281,12 +323,11 @@ public class TestHelper {
     mGatt.disconnect();
   }
 
+  /**
+   * This function is in charge of dispatching the next action in the test
+   */
   private void dispatch() {
     Log.d(TAG, "Dispatching");
-    Log.d(TAG, "Stopped: " + stopped);
-    for (TestAction test : mTestActions) {
-      Log.d(TAG, "Test action: " + test.actionType);
-    }
     int actionType = mTestActions.peek().actionType;
     // If the test is stopped and connected to the beacon
     // disconnect from the beacon
@@ -297,9 +338,11 @@ public class TestHelper {
     } else if (actionType == TestAction.LAST) {
       Log.d(TAG, "Last");
       finished = true;
+      // Tell the test runner that the test has been completed.
+      // Pass both the bluetoohDevice and the gatt connection for the next test to use.
       mTestCallback.testCompleted(mBluetoothDevice, mGatt);
     } else if (actionType == TestAction.CONNECT) {
-      Log.d(TAG, "Conenct");
+      Log.d(TAG, "Connect");
       connectToGatt();
     } else if (actionType == TestAction.ADV_FLAGS) {
       Log.d(TAG, "ADV FLAGS");
@@ -313,8 +356,9 @@ public class TestHelper {
     } else if (actionType == TestAction.ADV_PACKET) {
       Log.d(TAG, "ADV packet");
       lookForAdv();
+      // There was no previous test or the previous test disconnected from the beacon so need to connect again
     } else if (mGatt == null) {
-      Log.d(TAG, "no gatt. conencting");
+      Log.d(TAG, "no gatt. connecting");
       connectToGatt();
     } else if (actionType == TestAction.ASSERT || actionType == TestAction.ASSERT_NOT_EQUALS) {
       Log.d(TAG, "Read");
@@ -328,7 +372,10 @@ public class TestHelper {
     }
   }
 
-  private void scanForBeacon() {
+  /**
+   * Function to start a scan for config beacon
+   */
+  private void scanForConfigBeacon() {
     ScanSettings settings = new ScanSettings.Builder()
         .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
         .build();
@@ -339,7 +386,8 @@ public class TestHelper {
         .build();
     filters.add(filter);
     getLeScanner().startScan(filters, settings, mScanCallback);
-    Log.d(TAG, "Looking for new beacons");
+    Log.d(TAG, "Looking for new config beacons");
+    // Stop the test after a while
     mHandler.postDelayed(new Runnable() {
       @Override
       public void run() {
@@ -349,12 +397,16 @@ public class TestHelper {
         } else if (mScanResults.size() == 1) {
           continueTest(0);
         } else {
-          mTestCallback.multipleConfigModeBeacons(mScanResults);
+          // Tell the runner that there are multiple beacons available
+          mTestCallback.multipleBeacons(mScanResults);
         }
       }
     }, SCAN_TIMEOUT);
   }
 
+  /**
+   * Function to scan for broadcasting beacons (not configurable beacons).
+   */
   private void lookForAdv() {
     ScanSettings settings = new ScanSettings.Builder()
         .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
@@ -366,10 +418,13 @@ public class TestHelper {
         .build();
     filters.add(filter);
     getLeScanner().startScan(filters, settings, mScanCallback);
+    // Stop after a while
     mHandler.postDelayed(new Runnable() {
       @Override
       public void run() {
         stopSearchingForBeacons();
+        // If a device is defined check its packet.
+        // Otherwise notify runner that there are multiple beacons available to test.
         if (mBluetoothDevice != null) {
           for (ScanResult scanResult : mScanResults) {
             if (scanResult.getDevice().getAddress().equals(mBluetoothDevice.getAddress())) {
@@ -380,19 +435,24 @@ public class TestHelper {
         } else if (mScanResults.size() == 1) {
           continueTest(0);
         } else if (mScanResults.size() > 1) {
-          mTestCallback.multipleConfigModeBeacons(mScanResults);
+          mTestCallback.multipleBeacons(mScanResults);
         } else {
           fail("Could not find adv packet");
         }
       }
     }, SCAN_TIMEOUT);
   }
-
+  // Stop BLE scanner
   private void stopSearchingForBeacons() {
     getLeScanner().stopScan(mScanCallback);
   }
 
+  /**
+   * Function that checks that the packet has the correct value depending on the action.
+   * @param result ScanResult from the scanner
+   */
   private void checkPacket(ScanResult result) {
+    //TODO: Separate this function into smaller chunks
     mHandler.removeCallbacksAndMessages(null);
     stopSearchingForBeacons();
     Log.d(TAG, "Found beacon");
@@ -450,6 +510,7 @@ public class TestHelper {
 
   private byte[] getUri(ScanResult result) {
     byte[] serviceData = result.getScanRecord().getServiceData(UriBeacon.URI_SERVICE_UUID);
+    // Get the uri which should start at position 2
     return Arrays.copyOfRange(serviceData, 2, serviceData.length);
   }
 
@@ -457,13 +518,18 @@ public class TestHelper {
     return result.getScanRecord().getServiceData(UriBeacon.URI_SERVICE_UUID);
   }
 
+  /**
+   * Called when a test fails
+   * @param reason
+   */
   private void fail(String reason) {
     Log.d(TAG, "Failing because: " + reason);
     mHandler.removeCallbacksAndMessages(null);
     failed = true;
+    finished = true;
+    // Update action to failed
     mTestActions.peek().failed = true;
     mTestActions.peek().reason = reason;
-    finished = true;
     mTestCallback.testCompleted(mBluetoothDevice, mGatt);
   }
 
@@ -471,40 +537,71 @@ public class TestHelper {
     return finished;
   }
 
+  // Stops the current running test
   public void stopTest() {
     stopped = true;
     stopSearchingForBeacons();
     fail("Stopped by user");
   }
 
+  /**
+   * Set the new bluetooth device to run the test on
+   * @param which
+   */
   public void continueTest(int which) {
+    //TODO: should probably have a better name
     mBluetoothDevice = mScanResults.get(which).getDevice();
     dispatch();
   }
 
+  /**
+   * Function to repeat a test
+   * @param outSideGattCallback gatt callback to use
+   */
   public void repeat(BluetoothGattCallback outSideGattCallback) {
     Log.d(TAG, "Repeating");
     mTestActions = new LinkedList<>(mTestSteps);
+    // The test should use a new gatt connection but use the previous bluetooth device if available
     run(mBluetoothDevice, null, outSideGattCallback);
   }
 
-  public String getReference() {
-    return mReference;
-  }
-
+  /**
+   * Interface to communicate the test state to the runner
+   */
   public interface TestCallback {
 
+    /**
+     * Indicate the test started
+     */
     public void testStarted();
 
+    /**
+     * Indicate the test completed
+     * @param deviceBeingTested device to use for the next test
+     * @param gatt gatt connection to use for the next test
+     */
     public void testCompleted(BluetoothDevice deviceBeingTested, BluetoothGatt gatt);
 
+    /**
+     * Indicate that the test is waiting for a connectable beacon
+     */
     public void waitingForConfigMode();
 
+    /**
+     * Indicate that the test has connected to a beacon
+     */
     public void connectedToBeacon();
 
-    public void multipleConfigModeBeacons(ArrayList<ScanResult> scanResults);
+    /**
+     * Indicate that there are multiple beacons available to test
+     * @param scanResults ArrayList containing the scan results of the beacons found
+     */
+    public void multipleBeacons(ArrayList<ScanResult> scanResults);
   }
 
+  /**
+   * Builder class to build a test
+   */
   public static class Builder {
 
     private String mName;
@@ -514,40 +611,68 @@ public class TestHelper {
     private TestCallback mTestCallback;
     private final LinkedList<TestAction> mTestActions = new LinkedList<>();
 
+    /**
+     * Set the name of the test to show in the test adapter
+     * @param name Name of the test
+     * @return this builder
+     */
     public Builder name(String name) {
       mName = name;
       return this;
     }
 
+    /**
+     * Set the reference in the spec that shows the correct behavior
+     * @param reference
+     * @return
+     */
     public Builder reference(String reference) {
       mReference = reference;
       return this;
     }
 
+    /**
+     * Sets necessary parameters for the test
+     * @param context used for bluetooth stack
+     * @param serviceUuid service id of the config service
+     * @param testCallback callback to communicate back with the runner
+     * @return this builder
+     */
     public Builder setUp(Context context, ParcelUuid serviceUuid,
         TestCallback testCallback) {
+      //TODO: since all the tests share these parameters it seems unnecessary to have to define them for each test.
       mContext = context;
       mServiceUuid = serviceUuid.getUuid();
       mTestCallback = testCallback;
       return this;
     }
 
+    /**
+     * Adds a Connect action to the queue of actions
+     * @return this builder
+     */
     public Builder connect() {
       mTestActions.add(new TestAction(TestAction.CONNECT));
       return this;
     }
 
-    public Builder write(UUID characteristicUuid, byte[] value, int expectedReturnCode) {
-      mTestActions.add(
-          new TestAction(TestAction.WRITE, characteristicUuid, expectedReturnCode, value));
-      return this;
-    }
-
+    /**
+     * Adds a Disconnect action to the queue of actions
+     * @return this builder
+     */
     public Builder disconnect() {
       mTestActions.add(new TestAction(TestAction.DISCONNECT));
       return this;
     }
 
+    /**
+     * Adds a Assert action to the queue of actions. Reads a value from the beacon and compares it
+     * to an expected value.
+     * @param characteristicUuid UUID of the characteristic to read
+     * @param expectedValue Expected value to read from the beacon
+     * @param expectedReturnCode Expected return code from the beacon
+     * @return this builder
+     */
     public Builder assertEquals(UUID characteristicUuid, byte[] expectedValue,
         int expectedReturnCode) {
       mTestActions.add(
@@ -555,6 +680,84 @@ public class TestHelper {
       return this;
     }
 
+    /**
+     * Adds a Assert Not Equal action to the queue of actions. Read a value from the beacon and
+     * compares it to the not expected value.
+     * @param characteristicUuid UUID of the characteristic to read
+     * @param expectedValue Value that should not be returned from the beacon
+     * @param expectedReturnCode Expected return code from the beacon
+     * @return this builder
+     */
+    public Builder assertNotEquals(UUID characteristicUuid, byte[] expectedValue,
+        int expectedReturnCode) {
+      mTestActions.add(
+          new TestAction(TestAction.ASSERT_NOT_EQUALS, characteristicUuid, expectedReturnCode, expectedValue));
+      return this;
+    }
+
+    /**
+     * Adds an Assert Adv Flags action to the queue of actions. Assert the flags in the
+     * Advertisement Packet are the expected ones.
+     * @param expectedValue Expected value of the flags
+     * @return this builder
+     */
+    public Builder assertAdvFlags(byte expectedValue) {
+      mTestActions.add(new TestAction(TestAction.ADV_FLAGS, new byte[]{expectedValue}));
+      return this;
+    }
+
+    /**
+     * Adds an Assert Adv Tx Power action to the queue of actions. Assert the tx power in the
+     * Advertisement packet is the expected one.
+     * @param expectedValue Expected value of the tx power.
+     * @return this builder
+     */
+    public Builder assertAdvTxPower(byte expectedValue) {
+      mTestActions.add(new TestAction(TestAction.ADV_TX_POWER, new byte[]{expectedValue}));
+      return this;
+    }
+
+    /**
+     * Adds an Assert Adv URI actions to the queue of actions. Assert the URI in the Advertisement
+     * packet is the expected one.
+     * @param expectedValue Expected value of the URI
+     * @return this builder
+     */
+    public Builder assertAdvUri(byte[] expectedValue) {
+      mTestActions.add(new TestAction(TestAction.ADV_URI, expectedValue));
+      return this;
+    }
+
+    /**
+     * Adds an Assert Adv Packet action to the queue of actions. Assert that the UriBeacon has a
+     * valid advertisement packet according to spec.
+     * @return this builder
+     */
+    public Builder checkAdvPacket() {
+      mTestActions.add(new TestAction(TestAction.ADV_PACKET));
+      return this;
+    }
+
+    /**
+     * Adds a Write action to the queue of actions
+     * @param characteristicUuid UUID of the characteristic to write
+     * @param value Value to write to the UriBeacon
+     * @param expectedReturnCode Expected return code from the beacon
+     * @return this builder
+     */
+    public Builder write(UUID characteristicUuid, byte[] value, int expectedReturnCode) {
+      mTestActions.add(
+          new TestAction(TestAction.WRITE, characteristicUuid, expectedReturnCode, value));
+      return this;
+    }
+
+    /**
+     * Adds a Write action to the queue of actions
+     * @param characteristicUuid UUID of the characteristic to write
+     * @param value Value to write to the UriBeacon
+     * @param expectedReturnCodes Valid possible return codes from the beacon
+     * @return this builder
+     */
     public Builder write(UUID characteristicUuid, byte[] value,
         int[] expectedReturnCodes) {
       mTestActions.add(
@@ -563,41 +766,12 @@ public class TestHelper {
       return this;
     }
 
-    public Builder assertNotEquals(UUID characteristicUuid, byte[] expectedValue,
-        int expectedReturnCode) {
-      mTestActions.add(
-          new TestAction(TestAction.ASSERT_NOT_EQUALS, characteristicUuid, expectedReturnCode, expectedValue));
-      return this;
-    }
-
-    public Builder assertAdvFlags(byte expectedValue) {
-
-      mTestActions.add(new TestAction(TestAction.ADV_FLAGS, new byte[]{expectedValue}));
-      return this;
-    }
-
-    public Builder assertAdvTxPower(byte expectedValue) {
-      mTestActions.add(new TestAction(TestAction.ADV_TX_POWER, new byte[]{expectedValue}));
-      return this;
-    }
-
-    public Builder assertAdvUri(byte[] expectedValue) {
-      mTestActions.add(new TestAction(TestAction.ADV_URI, expectedValue));
-      return this;
-    }
-
-    public Builder checkAdvPacket() {
-      mTestActions.add(new TestAction(TestAction.ADV_PACKET));
-      return this;
-    }
-
-    public Builder insertActions(Builder builder) {
-      for (TestAction action : builder.mTestActions) {
-        mTestActions.add(action);
-      }
-      return this;
-    }
-
+    /**
+     * Adds a Write and then a Read action for each of the values.
+     * @param characteristicUuid UUID of the characteristic to write and read
+     * @param values array of values to write and read
+     * @return this builder
+     */
     public Builder writeAndRead(UUID characteristicUuid, byte[][] values) {
       for (byte[] value : values) {
         writeAndRead(characteristicUuid, value);
@@ -605,6 +779,12 @@ public class TestHelper {
       return this;
     }
 
+    /**
+     * Adds a Write and then a Read action to the queue of actions.
+     * @param characteristicUuid UUID of the characteristic to write and read
+     * @param value value to write and expected to read
+     * @return this builder
+     */
     public Builder writeAndRead(UUID characteristicUuid, byte[] value) {
       mTestActions.add(
           new TestAction(TestAction.WRITE, characteristicUuid, BluetoothGatt.GATT_SUCCESS,
@@ -615,6 +795,22 @@ public class TestHelper {
       return this;
     }
 
+    /**
+     * Adds the actions inside the provided Builder to the current test.
+     * @param builder Builder to get the actions from
+     * @return this builder
+     */
+    public Builder insertActions(Builder builder) {
+      for (TestAction action : builder.mTestActions) {
+        mTestActions.add(action);
+      }
+      return this;
+    }
+
+    /**
+     * Builds the test
+     * @return this builder
+     */
     public TestHelper build() {
       mTestActions.add(new TestAction(TestAction.LAST));
       // Keep a copy of the steps to show in the UI

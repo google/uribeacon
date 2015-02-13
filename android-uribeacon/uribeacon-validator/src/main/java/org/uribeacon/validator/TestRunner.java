@@ -32,102 +32,31 @@ import java.util.ArrayList;
 import java.util.ListIterator;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * The purpose of the TestRunner is to hold the test and dictate what test to run next or to retry a test.
+ * It also communicates the tests' state changes to the activity.
+ * The TestRunner contains an ArrayList of TestHelpers. Each TestHelper represents a single test to run.
+ * A TestHelper consist of a set of actions to be carried out e.g. connect to beacon. A TestHelper also
+ * contains the state of the Test e.g. test started.
+ * Finally a TestAction represent an interaction with the beacon. The TestAction also holds the whether or not
+ * the action was successful.
+ */
 class TestRunner {
 
   private static final String TAG = TestRunner.class.getCanonicalName();
 
+  // States for the runner
+  //TODO: don't need so many variables. Define states.
   private boolean mStopped;
   private boolean mFailed = false;
   private boolean mRestartedCompleted = false;
   private boolean mRestarted = false;
-  private final TestCallback mTestCallback = new TestCallback() {
-    @Override
-    public void testStarted() {
-      mDataCallback.dataUpdated();
-    }
 
-    @Override
-    public void testCompleted(final BluetoothDevice bluetoothDevice, final BluetoothGatt gatt) {
-      Log.d(TAG, "Test Completed. Failed: " + mLatestTest.isFailed());
-      if (mLatestTest.isFailed()) {
-        mFailed = true;
-      }
-      if (mRestarted) {
-        mRestarted = false;
-        mRestartedCompleted = true;
-      }
-      mDataCallback.dataUpdated();
-      // if the test haven't been stopped and a single test retry hasn't been done then run next test
-      if (!mStopped && !mRestartedCompleted) {
-        Log.d(TAG, "Stopped");
-        // If we just disconnected from the beacon we want to wait a second the next test
-        // Otherwise the connection to the beacon might fail.
-        if (gatt == null) {
-          mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-              start(bluetoothDevice, gatt);
-            }
-          }, TimeUnit.SECONDS.toMillis(1));
-        } else {
-          start(bluetoothDevice, gatt);
-        }
-      } else {
-        Log.d(TAG, "Not Stopped");
-        if (gatt != null) {
-          gatt.disconnect();
-        }
-        mHandler.removeCallbacksAndMessages(null);
-      }
-    }
-
-    @Override
-    public void waitingForConfigMode() {
-      mDataCallback.waitingForConfigMode();
-    }
-
-    @Override
-    public void connectedToBeacon() {
-      mDataCallback.connectedToBeacon();
-    }
-
-    @Override
-    public void multipleConfigModeBeacons(ArrayList<ScanResult> scanResults) {
-      mDataCallback.multipleConfigModeBeacons(scanResults);
-    }
-
-  };
   private final ArrayList<TestHelper> mUriBeaconTests;
   private TestHelper mLatestTest;
   private final ListIterator<TestHelper> mTestIterator;
   private final DataCallback mDataCallback;
   private final Handler mHandler;
-
-  public TestRunner(Context context, DataCallback dataCallback,
-      String testType, boolean optionalImplemented) {
-    mStopped = false;
-    mDataCallback = dataCallback;
-    if (CoreUriBeaconTests.class.getName().equals(testType)) {
-      mUriBeaconTests = CoreUriBeaconTests.initializeTests(context, mTestCallback,
-          optionalImplemented);
-    } else {
-      mUriBeaconTests = SpecUriBeaconTests
-          .initializeTests(context, mTestCallback, optionalImplemented);
-    }
-    mTestIterator = mUriBeaconTests.listIterator();
-    mHandler = new Handler(Looper.myLooper());
-  }
-
-  public void start(BluetoothDevice bluetoothDevice, BluetoothGatt gatt) {
-    Log.d(TAG, "Starting tests");
-    if (mTestIterator.hasNext() && !mStopped) {
-      mLatestTest = mTestIterator.next();
-      mLatestTest.run(bluetoothDevice, gatt, superBluetoothScanCallback);
-    } else {
-      mDataCallback.testsCompleted(mFailed);
-    }
-  }
-
   // To keep the connection to the beacon alive the same gatt object
   // must be passed around. But since gatt is attached to a callback a single super callback
   // is needed for all tests to share.
@@ -159,19 +88,131 @@ class TestRunner {
     }
   };
 
+  private final TestCallback mTestCallback = new TestCallback() {
+    @Override
+    public void testStarted() {
+      mDataCallback.dataUpdated();
+    }
+
+    @Override
+    public void testCompleted(final BluetoothDevice bluetoothDevice, final BluetoothGatt gatt) {
+      Log.d(TAG, "Test Completed. Failed: " + mLatestTest.isFailed());
+      // If the latest test failed set the runner to failed
+      if (mLatestTest.isFailed()) {
+        mFailed = true;
+      }
+      // If a test was restarted. TODO: Should probably be a state of the test not the runner.
+      if (mRestarted) {
+        mRestarted = false;
+        mRestartedCompleted = true;
+      }
+      mDataCallback.dataUpdated();
+      // if the test haven't been stopped and a single test retry hasn't been done then run next test
+      if (!mStopped && !mRestartedCompleted) {
+        // If we just disconnected from the beacon we want to wait a second before the next test
+        // Otherwise the connection to the beacon might fail.
+        if (gatt == null) {
+          mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+              start(bluetoothDevice, gatt);
+            }
+          }, TimeUnit.SECONDS.toMillis(1));
+        } else {
+          start(bluetoothDevice, gatt);
+        }
+      } else {
+        // disconnect if done with tests and gatt connection still on
+        if (gatt != null) {
+          gatt.disconnect();
+        }
+        // if tests have been stopped, you don't want to run any more tests
+        // TODO: check if this is necessary. It seems that the conditions could be enough for the next test not to run.
+        mHandler.removeCallbacksAndMessages(null);
+      }
+    }
+
+    @Override
+    public void waitingForConfigMode() {
+      mDataCallback.waitingForConfigMode();
+    }
+
+    @Override
+    public void connectedToBeacon() {
+      mDataCallback.connectedToBeacon();
+    }
+
+    @Override
+    public void multipleBeacons(ArrayList<ScanResult> scanResults) {
+      mDataCallback.multipleConfigModeBeacons(scanResults);
+    }
+
+  };
+
+  /**
+   * Class to execute the tests
+   * @param context To be used by the bluetooth stack
+   * @param dataCallback callback to communicate with the activity
+   * @param testType type of the tests to run
+   * @param optionalImplemented if the optional characteristics have been implemented
+   */
+  public TestRunner(Context context, DataCallback dataCallback,
+      String testType, boolean optionalImplemented) {
+    mStopped = false;
+    mDataCallback = dataCallback;
+    if (CoreUriBeaconTests.class.getName().equals(testType)) {
+      mUriBeaconTests = CoreUriBeaconTests.initializeTests(context, mTestCallback,
+          optionalImplemented);
+    } else {
+      mUriBeaconTests = SpecUriBeaconTests
+          .initializeTests(context, mTestCallback, optionalImplemented);
+    }
+    mTestIterator = mUriBeaconTests.listIterator();
+    mHandler = new Handler(Looper.myLooper());
+  }
+
+  /**
+   * Start next test
+   * @param bluetoothDevice
+   * @param gatt
+   */
+  public void start(BluetoothDevice bluetoothDevice, BluetoothGatt gatt) {
+    Log.d(TAG, "Starting tests");
+    if (mTestIterator.hasNext() && !mStopped) {
+      mLatestTest = mTestIterator.next();
+      mLatestTest.run(bluetoothDevice, gatt, superBluetoothScanCallback);
+    } else {
+      mDataCallback.testsCompleted(mFailed);
+    }
+  }
+
+  /**
+   * @return an ArrayList of the tests that are gonna be executed
+   */
   public ArrayList<TestHelper> getUriBeaconTests() {
     return mUriBeaconTests;
   }
 
+  /**
+   * Stops the current test and don't execute more tests
+   */
   public void stop() {
     mStopped = true;
     mLatestTest.stopTest();
   }
 
+  /**
+   * Used for when a test requires the user to specify which beacon to interact with
+   * @param which index of the beacon the test should interact with
+   */
   public void continueTest(int which) {
     mLatestTest.continueTest(which);
   }
 
+  /**
+   * Restart a test
+   * @param testPosition index of the test to restart
+   */
   public void restart(int testPosition) {
     mRestarted = true;
     mRestartedCompleted = false;
@@ -179,16 +220,36 @@ class TestRunner {
     mLatestTest.repeat(superBluetoothScanCallback);
   }
 
+  /**
+   * Callback to communicate the state of the tests to the activity
+   */
   public interface DataCallback {
 
+    /**
+     * A test has changed its state
+     */
     public void dataUpdated();
 
+    /**
+     * A test is looking for a beacon in config mode
+     */
     public void waitingForConfigMode();
 
+    /**
+     * A test has successfully connected to a beacon
+     */
     public void connectedToBeacon();
 
+    /**
+     * All the tests have been completed
+     * @param failed true if a test has failed false otherwise
+     */
     public void testsCompleted(boolean failed);
 
+    /**
+     * The are multiple possible beacons to test, the user should pick one
+     * @param scanResults ArrayList of the possible beacons to test
+     */
     public void multipleConfigModeBeacons(ArrayList<ScanResult> scanResults);
   }
 }
