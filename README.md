@@ -10,7 +10,7 @@
 
 **Are you looking for UriBeacon Products?** Visit [Blesh](https://www.blesh.com/physical-web) or
 [Twocanoes](http://twocanoes.com/products/hardware/physical-web-beacon)
-and see the flashable implementations on the [gitub repo](https://github.com/google/uribeacon/blob/master/beacons/README.md).
+and see the flashable implementations on the [GitHub repo](https://github.com/google/uribeacon/blob/master/beacons/README.md).
 
 **Interested in the big picture?** Check out how UriBeacons are used in the [Physical Web](http://google.github.io/physical-web/) project.
 
