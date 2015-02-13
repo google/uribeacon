@@ -60,6 +60,7 @@ public class TestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     testResultHolder.mTestName.setText(test.getName());
     setIcon(testResultHolder.mImageView, test);
 
+    // The first listener detects a long press
     holder.itemView.setOnLongClickListener(new OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
@@ -67,6 +68,7 @@ public class TestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
           return true;
         }
     });
+    // The second listener executes a restart once the user releases the long press
     holder.itemView.setOnTouchListener(new OnTouchListener() {
       @Override
       public boolean onTouch(View v, MotionEvent event) {
@@ -79,6 +81,8 @@ public class TestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         return false;
       }
     });
+
+    // if the test failed prepare expand view
     if (test.isFailed()) {
       setErrorMessage(testResultHolder, test);
       setOnClickListener(testResultHolder);
@@ -110,6 +114,9 @@ public class TestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     });
   }
 
+  /**
+   * Sets the message for the expanded view and the summary of a failed test
+   */
   private void setErrorMessage(TestResultViewHolder holder, TestHelper test) {
     TextView details = holder.mTestDetails;
     String sDetails = "Steps:";
@@ -157,6 +164,9 @@ public class TestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     return mDataset.get(position);
   }
 
+  /**
+   * Set the icon depending on the state of the test
+   */
   private void setIcon(ImageView imageView, TestHelper test) {
     if (!test.isStarted()) {
       imageView.setImageResource(R.drawable.not_started);

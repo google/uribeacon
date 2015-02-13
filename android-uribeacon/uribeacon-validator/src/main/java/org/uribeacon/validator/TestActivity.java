@@ -63,7 +63,9 @@ public class TestActivity extends Activity {
             progress = null;
           }
           mAdapter.notifyDataSetChanged();
+          // update intent to share to the latest data
           setShareIntent();
+          // Update progress on the button
           setButtonProgress();
         }
       });
@@ -127,20 +129,6 @@ public class TestActivity extends Activity {
     }
   };
 
-  private void setButtonProgress() {
-    mCompleted = 0;
-    int total = mTestRunner.getUriBeaconTests().size();
-    for (TestHelper test : mTestRunner.getUriBeaconTests()) {
-      if (test.isStarted() && test.isFinished()) {
-        mCompleted++;
-      } else {
-        break;
-      }
-    }
-    TextView fab = (TextView) findViewById(R.id.button_progress);
-    fab.setText((mCompleted * 100 / total) + "%");
-  }
-
   private RecyclerView.Adapter mAdapter;
   private final AdapterCallback mAdapterCallback = new AdapterCallback() {
     @Override
@@ -154,9 +142,13 @@ public class TestActivity extends Activity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_test);
+
+    // Set up test runner
     boolean optionalImplemented = getIntent().getBooleanExtra(MainActivity.LOCK_IMPLEMENTED, false);
     String testType = getIntent().getStringExtra(MainActivity.TEST_TYPE);
     mTestRunner = new TestRunner(this, mDataCallback, testType, optionalImplemented);
+
+    // Set up RecyclerView
     ArrayList<TestHelper> mUriBeaconTests = mTestRunner.getUriBeaconTests();
     final RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView_tests);
     final RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
@@ -165,6 +157,7 @@ public class TestActivity extends Activity {
     mAdapter = new TestsAdapter(mUriBeaconTests, mAdapterCallback);
     mRecyclerView.setAdapter(mAdapter);
 
+    // Set up progress button
     TextView fab = (TextView) findViewById(R.id.button_progress);
     fab.setText("0%");
     fab.setOnClickListener(new View.OnClickListener() {
@@ -175,6 +168,9 @@ public class TestActivity extends Activity {
         mRecyclerView.smoothScrollToPosition(mCompleted + numberOfTestInScreen - 1);
       }
     });
+
+    // Start running tests
+    mTestRunner.start(null, null);
   }
 
   @Override
@@ -186,6 +182,46 @@ public class TestActivity extends Activity {
     mShareActionProvider = (ShareActionProvider) item.getActionProvider();
     setShareIntent();
     return true;
+  }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+  }
+
+  @Override
+  protected void onDestroy() {
+    super.onDestroy();
+    mTestRunner.stop();
+  }
+
+  /**
+   * Dialog to choose a beacon from multiple
+   * @param scanResults
+   */
+  private void showCustomDialog(ArrayList<ScanResult> scanResults) {
+    AlertDialog.Builder alertDialog = new AlertDialog.Builder(TestActivity.this)
+        .setNegativeButton(R.string.cancel, new OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialog, int which) {
+            mTestRunner.stop();
+            dialog.dismiss();
+          }
+        })
+        .setOnCancelListener(new OnCancelListener() {
+          @Override
+          public void onCancel(DialogInterface dialog) {
+            mTestRunner.stop();
+          }
+        });
+    LayoutInflater inflater = getLayoutInflater();
+    View convertView = inflater.inflate(R.layout.multiple_beacon_dialog, null);
+    alertDialog.setTitle(R.string.title_multiple_beacons);
+    alertDialog.setView(convertView);
+    AlertDialog dialog= alertDialog.create();
+    ListView lv = (ListView) convertView.findViewById(R.id.multipleBeacons_listView);
+    lv.setAdapter(new MultipleBeaconsAdapter(TestActivity.this, scanResults, mTestRunner, dialog));
+    dialog.show();
   }
 
   private void setShareIntent() {
@@ -200,6 +236,10 @@ public class TestActivity extends Activity {
     }
   }
 
+  /**
+   * Creates a styled string with the results of the test.
+   * @return a spanned with styled text
+   */
   private Spanned createTestResults() {
     String results = "<h1>UriBeacon Results</h1>\n";
     for (TestHelper test : mTestRunner.getUriBeaconTests()) {
@@ -222,6 +262,11 @@ public class TestActivity extends Activity {
     return Html.fromHtml(results);
   }
 
+  /**
+   * Function to get details of the result of a test
+   * @param test The test from which to get the details
+   * @return a string with the details of the test
+   */
   private String getReasonTestFailed(TestHelper test) {
     String steps = "<h6>Steps to reproduce:</h6>";
     for (int i = 0; i < test.getTestSteps().size(); i++) {
@@ -268,41 +313,19 @@ public class TestActivity extends Activity {
     return steps;
   }
 
-
-  @Override
-  protected void onResume() {
-    super.onResume();
-    mTestRunner.start(null, null);
+  private void setButtonProgress() {
+    mCompleted = 0;
+    int total = mTestRunner.getUriBeaconTests().size();
+    for (TestHelper test : mTestRunner.getUriBeaconTests()) {
+      if (test.isStarted() && test.isFinished()) {
+        mCompleted++;
+      } else {
+        break;
+      }
+    }
+    TextView fab = (TextView) findViewById(R.id.button_progress);
+    fab.setText((mCompleted * 100 / total) + "%");
   }
 
-  @Override
-  protected void onDestroy() {
-    super.onDestroy();
-    mTestRunner.stop();
-  }
-  private void showCustomDialog(ArrayList<ScanResult> scanResults) {
-    AlertDialog.Builder alertDialog = new AlertDialog.Builder(TestActivity.this)
-        .setNegativeButton(R.string.cancel, new OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialog, int which) {
-            mTestRunner.stop();
-            dialog.dismiss();
-          }
-        })
-        .setOnCancelListener(new OnCancelListener() {
-          @Override
-          public void onCancel(DialogInterface dialog) {
-            mTestRunner.stop();
-          }
-        });
-    LayoutInflater inflater = getLayoutInflater();
-    View convertView = inflater.inflate(R.layout.multiple_beacon_dialog, null);
-    alertDialog.setTitle(R.string.title_multiple_beacons);
-    alertDialog.setView(convertView);
-    AlertDialog dialog= alertDialog.create();
-    ListView lv = (ListView) convertView.findViewById(R.id.multipleBeacons_listView);
-    lv.setAdapter(new MultipleBeaconsAdapter(TestActivity.this, scanResults, mTestRunner, dialog));
-    dialog.show();
-  }
 }
 
