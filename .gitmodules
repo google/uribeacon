@@ -9,4 +9,4 @@
 	url = https://github.com/mbedmicro/nRF51822.git
 [submodule "beacons/mbed/mbedmicro/BLE_API"]
 	path = beacons/mbed/mbedmicro/BLE_API
-	url = https://github.com/schilit/BLE_API.git
+	url = https://github.com/mbedmicro/BLE_API.git
