@@ -39,6 +39,18 @@ This service is not dependent upon any other [services](https://developer.blueto
 | 0x08   | Insufficient Authorization |
 | 0x0d   | Invalid Attribute Length   |
 
+### 1.4 Config Mode
+
+During Config Mode the UriBeacon must:
+
+* Broadcast the [Config Service UUID](#2-service-declaration)
+* Be connectable
+* Have a Tx Power Mode set to medium
+* Have a broadcasting period of 1000 ms
+
+Having a continuously connectable UriBeacon could allow any passersby to connect to the beacon and stop the UriBeacon from broadcasting. To avoid this we recommend using one of these two approaches:
+* Having a physical button in the UriBeacon. When this button is pressed the UriBeacon would go into Config Mode.
+* A short period of time after the batteries are put in when the beacon would be in Config Mode.
 
 ## 2 Service Declaration
 
