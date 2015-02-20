@@ -39,6 +39,28 @@ This service is not dependent upon any other [services](https://developer.blueto
 | 0x08   | Insufficient Authorization |
 | 0x0d   | Invalid Attribute Length   |
 
+### 1.4 Config Mode
+Having a continuously connectable UriBeacon would allow any passerby to connect to the device and stop the UriBeacon
+from broadcasting. As a consequence a third party could launch a Denial of Service (DoS) attack by permanently
+connecting to the beacon. For this reason a UriBeacon should not be connectable during regular URI Advertizing mode.
+
+A beacon can be placed in Configuration Mode in order to be configurable. Configuration Mode should only be
+used by an administrator, and we recommend the following options to make it difficult for a random third-party
+to reconfigure proprietary beacons:
+
+* A button that when pressed puts the beacon in Configuration Mode for a short period of time. The button could
+be placed inside the battery compartment or outside of the beacon if the beacon is placed out of reach for
+typical clients/users of the UriBeacon system
+* A beacon could be placed in Configuration Mode automatically during a short period after power on (say 30 seconds)
+e.g. batteries are installed, or the beacon is connected to the mains supply (e.g. a USB wall power supply, etc.
+
+When in Configuration mode the beacon would advertise a different ADV packet indicating that mode using the ADV
+long name parameter string, and the ADV Service 128-bit UUID of the UriBeacon configuration service, and an ADV
+TxPower parameter to allow nearness of the beacon to be determined by the signal path-loss. Its recommend that
+the radio TxPower should also be increased to a Medium transmit power (typ. -2dbM) and this should also be
+reflected in the ADV TxPower parameter(typ. -6dBm, with a loss of 4dBm in the beacon antenna). Note: including
+all these parameters might result in the packet exceeding 31 bytes,  in which case a larger configuration packet
+size of 62 bytes can be achieved using the scan/response mechanism.
 
 ## 2 Service Declaration
 
