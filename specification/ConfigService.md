@@ -42,7 +42,7 @@ This service is not dependent upon any other [services](https://developer.blueto
 ### 1.4 Config Mode
 Having a continuously connectable UriBeacon would allow any passerby to connect to the device and stop the UriBeacon
 from broadcasting. As a consequence a third party could launch a Denial of Service (DoS) attack by permanently
-connecting to the beacon. For this reason a UriBeacon should not be connectable during regular URI Advertizing mode.
+connecting to the beacon. For this reason a UriBeacon should not be connectable during regular URI Advertising mode.
 
 A beacon can be placed in Configuration Mode in order to be configurable. Configuration Mode should only be
 used by an administrator, and we recommend the following options to make it difficult for a random third-party
