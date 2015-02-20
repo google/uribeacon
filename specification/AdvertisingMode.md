@@ -1,12 +1,4 @@
-# UriBeacon Specification
-
-***The Web Uri Open Beacon specification for the Internet of Things***
-
-*(pronounced YUR-ee-BEE-kun)*
-
-Note: this is a preview-release intended for comments and experimentation.
-
-Also see the [UriBeacon Config Service](ConfigService.md).
+# UriBeacon Advertising Packet Specification
 
 ## Overview
 
