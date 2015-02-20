@@ -104,8 +104,8 @@ Read returns true if the device is locked.
 |  Lock State | Must be unlocked. Will be locked after successful write.|
 
 **Return Codes**
-* [Insufficient Authorization](#13-return-codes) for attempt with a valid length value and the beacon is locked. The exception is of course when attempting to Unlock the beacon with the correct key.
-* [Insufficient Authorization](#13-return-codes) for an attempt to write a characteristic with an invalid value, e.g. invalid length. [Invalid length](#13-return-codes) is also acceptable.
+* [Insufficient Authorization](#14-return-codes) for attempt with a valid length value and the beacon is locked. The exception is of course when attempting to Unlock the beacon with the correct key.
+* [Insufficient Authorization](#14-return-codes) for an attempt to write a characteristic with an invalid value, e.g. invalid length. [Invalid length](#14-return-codes) is also acceptable.
 
 ### 3.3 Unlock
 
@@ -117,8 +117,8 @@ Read returns true if the device is locked.
 |  Lock State | Will be unlocked after successful write.|
 
 **Return Codes**
-* [Insufficient Authorization](#13-return-codes) for an unlock attempt with an valid length incorrect key when the beacon is locked.
-* [Invalid length](#13-return-codes) for an unlock attempt with an invalid length whether the beacon is locked or not.
+* [Insufficient Authorization](#14-return-codes) for an unlock attempt with an valid length incorrect key when the beacon is locked.
+* [Invalid length](#14-return-codes) for an unlock attempt with an invalid length whether the beacon is locked or not.
 * Success for an unlock attempt with a valid length key when the beacon is unlocked
 
 ### 3.4 Uri Data
@@ -185,7 +185,7 @@ Sets the transmission power mode to one of:
 | TX_POWER_MODE_LOWEST | 0 |
 
 **Return Codes**
-* [Write Not Permitted](#13-return-codes) for an attempt to write invalid values.
+* [Write Not Permitted](#14-return-codes) for an attempt to write invalid values.
 
 ### 3.8 Beacon Period
 
