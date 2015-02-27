@@ -200,10 +200,10 @@ procedure set_uribeacon_config_mode()
    advConfSrData(1:1)  = $01 # AD Flags
    advConfSrData(2:1)  = $06 # 06=connectable 04=non-connectable
 
-   # Name= "Config Uribeacon BG"
-   advConfSrData(3:1)  = 16  # Length
+   # Adervtised Name= "Change Uri"
+   advConfSrData(3:1)  = 11  # Length
    advConfSrData(4:1)  = $09 # AD Full Name
-   advConfSrData(5:15) = "(BG) Change Uri" 
+   advConfSrData(5:15) = "Change Uri" 
 
    # Adv default period = 1000ms - (1000 + 100mS). Use all three adv channels.
    timer_period = (1000 * 16) / 10 # converted to timer value equivalent to period mS
