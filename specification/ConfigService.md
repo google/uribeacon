@@ -6,7 +6,7 @@ The material contained on this page is informative only and subject to change.
 
 ## 1 Introduction
 
-The UriBeacon Config Service allows setting UriBeacon fields and transmission characteristics. This information includes the following:
+The UriBeacon Configuration Service should only be available during Configuration Mode (i.e. connectable) and **not** be available during regular URI Advertising Mode (i.e. **not** connectable). The UriBeacon Configuration Service allows setting UriBeacon fields and transmission characteristics. This information includes the following:
 
 *   Lock code
 *   Uri
@@ -18,29 +18,39 @@ This document is formatted according to the Bluetooth
 [service](https://developer.bluetooth.org/TechnologyOverview/Pages/ANS.aspx) and 
 [profile](https://developer.bluetooth.org/gatt/profiles/Pages/ProfileViewer.aspx?u=org.bluetooth.profile.blood_pressure.xml) formatting styles.
 
+### 1.1 Configuration Mode
+A Configuration Mode is necessary because having a continuously connectable UriBeacon would allow any passerby to connect to the device and stop the UriBeacon from broadcasting. As a consequence a third party could launch a Denial of Service (DoS) attack by permanently connecting to the beacon. For this reason a UriBeacon should not be connectable during regular [URI Advertising mode](AdvertisingMode.md).
 
-### 1.1 Service Dependencies
+A beacon can be placed in Configuration Mode in order to be configurable. Configuration Mode should only be used by an administrator, and we recommend the following options to make it difficult for a random third-party to reconfigure proprietary beacons:
+
+* A button that when pressed puts the beacon in Configuration Mode for a short period of time. The button could be placed inside the battery compartment or outside of the beacon if the beacon is placed out of reach for typical clients/users of the UriBeacon system
+* A beacon could be placed in Configuration Mode automatically during a short period after power on (say 30 seconds) e.g. batteries are installed, or the beacon is connected to the mains supply (e.g. a USB wall power supply, etc.
+
+When in Configuration mode the beacon would advertise a different ADV packet indicating that mode using the ADV long name parameter string, and the ADV Service 128-bit UUID of the UriBeacon configuration service, and an ADV TxPower parameter to allow nearness of the beacon to be determined by the signal path-loss. Its recommend that the radio TxPower should also be increased to a Medium transmit power (typ. -2dBm) and this should also be reflected in the ADV TxPower parameter(typ. -6dBm, with a loss of 4dBm in the beacon antenna). Note: including all these parameters might result in the packet exceeding 31 bytes,  in which case a larger configuration packet size of 62 bytes can be achieved using the scan/response mechanism.
+
+### 1.2 Service Dependencies
 
 This service is not dependent upon any other [services](https://developer.bluetooth.org/gatt/services/Pages/ServicesHome.aspx).
 
-### 1.2 Transport Dependencies
+### 1.3 Transport Dependencies
 
 |Transport   | Supported |
 |:-----------|-----------|
 | Classic    | false	 |
 | Low Energy | true      |
 
-### 1.3 Error Codes
+### 1.4 Return Codes
 
 | Code   | Description                |
 |:-------|:---------------------------|
+| 0x00   | Success                    |
+| 0x03   | Write Not Permitted        |
 | 0x08   | Insufficient Authorization |
 | 0x0d   | Invalid Attribute Length   |
 
-
 ## 2 Service Declaration
 
-The assigned number for `<<UriBeacon Config Service>>` is
+The assigned number for `<<UriBeacon Configuration Service>>` is
 
         ee0c2080-8786-40ba-ab96-99b91ac981d8
 
@@ -89,21 +99,27 @@ Read returns true if the device is locked.
 | Name | Lock |
 |:------------|:--------------------------------------------|
 | UUID  | ee0c<b>2082</b>-8786-40ba-ab96-99b91ac981d8|
-|  Description| Locks the beacon. |
+|  Description| Locks the beacon and sets the single-use lock-code. |
 |  Type | uint128 |
 |  Lock State | Must be unlocked. Will be locked after successful write.|
+
+**Return Codes**
+* [Insufficient Authorization](#14-return-codes) for attempt with a valid length value and the beacon is locked. The exception is of course when attempting to Unlock the beacon with the correct key.
+* [Insufficient Authorization](#14-return-codes) for an attempt to write a characteristic with an invalid value, e.g. invalid length. [Invalid length](#14-return-codes) is also acceptable.
 
 ### 3.3 Unlock
 
 | Name | Unlock |
 |:------------|:--------------------------------------------|
 | UUID  | ee0c<b>2083</b>-8786-40ba-ab96-99b91ac981d8|
-|  Description| Unlocks the beacon. |
+|  Description| Unlocks the beacon and clears the single-use lock-code. |
 |  Type | uint128 |
 |  Lock State | Will be unlocked after successful write.|
 
-If the beacon is unlocked then the write will return success regardless of the
-contents of the parameter.
+**Return Codes**
+* [Insufficient Authorization](#14-return-codes) for an unlock attempt with an valid length incorrect key when the beacon is locked.
+* [Invalid length](#14-return-codes) for an unlock attempt with an invalid length whether the beacon is locked or not.
+* Success for an unlock attempt with a valid length key when the beacon is unlocked
 
 ### 3.4 Uri Data
 
@@ -143,7 +159,12 @@ The Flags characteristic is a sinlge unsigned byte value containing the
 This characteristic is a fixed length array of values, in dBm, to be included in the 
 [UriBeacon TX Power Level](https://github.com/google/uribeacon/tree/master/specification#uribeacon-tx-power-level) field of the advertisement when that mode is active. The index into the array is [TX Power Mode](#37-tx-power-mode). 
 
-Note to developers: The Advertised TX Power Levels is not the same as values set internally into the radio tx power. You need to implement an internal array indexed by TX Power Mode that is used for the internal facing radio setting. The Advertised TX Power Levels is also indexed by TX Power Mode but is outward facing, and is the value that is put into the adv packet. These are related but distinct because numbers used by radio function may not be the same as those exposed in adv packets.
+**Note to developers:** 
+The Advertised TX Power Levels is not the same as values set internally into the radio tx power. You need to implement an internal array indexed by TX Power Mode that is used for the internal facing radio setting. 
+
+The Advertised TX Power Levels is also indexed by TX Power Mode but is outward facing, and is the value that is put into the adv packet. These are related but distinct because numbers used by radio function may not be the same as those exposed in adv packets. 
+
+The best way to determine the precise value for these output values is to measure the actual RSSI from your beacon from 1 meter away and then add 41dBm to that. 41dBm is the signal loss that occurs over 1 meter.
 
 ### 3.7 TX Power Mode
 
@@ -163,6 +184,8 @@ Sets the transmission power mode to one of:
 | TX_POWER_MODE_LOW | 1 | 
 | TX_POWER_MODE_LOWEST | 0 |
 
+**Return Codes**
+* [Write Not Permitted](#14-return-codes) for an attempt to write invalid values.
 
 ### 3.8 Beacon Period
 
@@ -173,7 +196,7 @@ Sets the transmission power mode to one of:
 | Type        | uint16                                      |
 | Lock State  | For write, must be unlocked.                |
 
-The period in milliseconds that a UriBeacon packet is transmitted. A value of zero disables UriBeacon transmissions.
+The period in milliseconds that a UriBeacon packet is transmitted. **A value of zero disables UriBeacon transmissions.** Setting a period value that the hardware doesn't support should default to minimum value the hardware supports. For example if the user tries to set the period to 1 millisecond and the lowest value the hardware supports is 100 milliseconds, the value for the characteristic should be set to 100 milliseconds and the UriBeacon should broadcast at a 100 milliseconds.
 
 ### 3.9 Reset
 

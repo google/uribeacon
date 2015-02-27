@@ -12,14 +12,21 @@
   limitations under the License.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
               android:orientation="vertical"
+              android:paddingStart="24dp"
+              android:paddingEnd="24dp"
               android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              tools:context="org.uribeacon.validator.MainActivity">
-    <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerView_types"
-            android:scrollbars="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="fill_parent"/>
+              android:gravity="center"
+              android:background="?android:attr/selectableItemBackground"
+              android:layout_height="@dimen/list_item_height">
+    <TextView
+            android:id="@+id/primary_text"
+            android:textAppearance="@android:style/TextAppearance.Material.Notification.Title"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"/>
+    <TextView
+            android:id="@+id/secondary_text"
+            android:textAppearance="@android:style/TextAppearance.Material.Notification"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"/>
 </LinearLayout>

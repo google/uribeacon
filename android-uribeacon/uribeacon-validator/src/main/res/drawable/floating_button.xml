@@ -11,9 +11,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 -->
-<objectAnimator xmlns:android="http://schemas.android.com/apk/res/android"
-                android:duration="1000"
-                android:propertyName="rotation"
-                android:valueFrom="0"
-                android:repeatCount="-1"
-                android:valueTo="360"/>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+       android:shape="rectangle">
+    <solid android:color="#DB4437" />
+    <corners android:radius="56dp" />
+</shape>
