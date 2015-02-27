@@ -16,6 +16,6 @@ A UriBeacon can exist in two states:
 
 * Configuration Mode (connectable)
 
-In the URI Advertising mode a beacon will periodically transmit (typically at 1 second intervals) an ADV packet containing: flags, transmit power, and an encoded URI. In this state the beacon content cannot be modified, and the devices does not support a connection. See [UriBeacon ADV packet](AdvertisingMode.md) for a full description.
+In the URI Advertising mode a beacon will periodically transmit (typically at 1 second intervals) an ADV packet containing: flags, transmit power, and an encoded URI. In this state the beacon content cannot be modified, and the device does not support a connection. See [UriBeacon ADV packet](AdvertisingMode.md) for a full description.
 
 In the Configuration Mode the UriBeacon is connectable and supports the UriBeacon configuration service. Using this service, the ADV packet payload can be modified, parameters can be locked/unlocked with a passcode, and operational characteristics modified.  See [Uribeacon Configuration Mode](ConfigService.md) for a full description.
