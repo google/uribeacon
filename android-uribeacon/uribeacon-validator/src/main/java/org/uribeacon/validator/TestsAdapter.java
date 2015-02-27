@@ -19,57 +19,83 @@ package org.uribeacon.validator;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnLongClickListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class TestsAdapter extends RecyclerView.Adapter<TestsAdapter.ViewHolder> {
+public class TestsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
   private static final String TAG = TestsAdapter.class.getCanonicalName();
   private final ArrayList<TestHelper> mDataset;
+  private final AdapterCallback mAdapterCallback;
 
   // Provide a suitable constructor (depends on the kind of dataset)
-  public TestsAdapter(ArrayList<TestHelper> uriBeaconTests) {
+  public TestsAdapter(ArrayList<TestHelper> uriBeaconTests, AdapterCallback adapterCallback) {
+    mAdapterCallback = adapterCallback;
     mDataset = uriBeaconTests;
   }
 
   // Create new views (invoked by the layout manager)
   @Override
-  public TestsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
+  public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent,
       int viewType) {
-    // create a new view
     View v = LayoutInflater.from(parent.getContext())
         .inflate(R.layout.test_view, parent, false);
-
-    return new ViewHolder(v);
+    return new TestResultViewHolder(v);
   }
 
   // Replace the contents of a view (invoked by the layout manager)
   @Override
-  public void onBindViewHolder(ViewHolder holder, int position) {
-    // - get element from your dataset at this position
-    // - replace the contents of the view with that element
-    TestHelper test = mDataset.get(position);
-    holder.mTestName.setText(test.getName());
-    setIcon(holder.mImageView, test);
+  public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
+
+    final TestResultViewHolder testResultHolder = (TestResultViewHolder) holder;
+    TestHelper test = getItem(position);
+    testResultHolder.mTestName.setText(test.getName());
+    setIcon(testResultHolder.mImageView, test);
+
+    // The first listener detects a long press
+    holder.itemView.setOnLongClickListener(new OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+          testResultHolder.longPressed = true;
+          return true;
+        }
+    });
+    // The second listener executes a restart once the user releases the long press
+    holder.itemView.setOnTouchListener(new OnTouchListener() {
+      @Override
+      public boolean onTouch(View v, MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_UP) {
+          if (testResultHolder.longPressed) {
+            testResultHolder.longPressed = false;
+            mAdapterCallback.restart(position);
+          }
+        }
+        return false;
+      }
+    });
+
+    // if the test failed prepare expand view
     if (test.isFailed()) {
-      setErrorMessage(holder, test);
-      setOnClickListener(holder);
+      setErrorMessage(testResultHolder, test);
+      setOnClickListener(testResultHolder);
     } else {
-      holder.mTestResult.setVisibility(View.GONE);
-      holder.mTestDetails.setVisibility(View.GONE);
-      holder.mLayout.setOnClickListener(null);
-      holder.mLayout.setClickable(false);
+      testResultHolder.mTestResult.setVisibility(View.GONE);
+      testResultHolder.mTestDetails.setVisibility(View.GONE);
+      testResultHolder.itemView.setOnClickListener(null);
+      testResultHolder.itemView.setClickable(false);
     }
   }
 
-  private void setOnClickListener(final ViewHolder holder) {
-    holder.mLayout.setOnClickListener(new View.OnClickListener() {
+  private void setOnClickListener(final TestResultViewHolder holder) {
+    holder.itemView.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View item) {
         if (holder.expanded) {
@@ -88,7 +114,10 @@ public class TestsAdapter extends RecyclerView.Adapter<TestsAdapter.ViewHolder> 
     });
   }
 
-  private void setErrorMessage(ViewHolder holder, TestHelper test) {
+  /**
+   * Sets the message for the expanded view and the summary of a failed test
+   */
+  private void setErrorMessage(TestResultViewHolder holder, TestHelper test) {
     TextView details = holder.mTestDetails;
     String sDetails = "Steps:";
     for (int i = 0; i < test.getTestSteps().size(); i++) {
@@ -131,6 +160,13 @@ public class TestsAdapter extends RecyclerView.Adapter<TestsAdapter.ViewHolder> 
   }
 
 
+  private TestHelper getItem(int position) {
+    return mDataset.get(position);
+  }
+
+  /**
+   * Set the icon depending on the state of the test
+   */
   private void setIcon(ImageView imageView, TestHelper test) {
     if (!test.isStarted()) {
       imageView.setImageResource(R.drawable.not_started);
@@ -153,24 +189,28 @@ public class TestsAdapter extends RecyclerView.Adapter<TestsAdapter.ViewHolder> 
   // Provide a reference to the views for each data item
   // Complex data items may need more than one view per item, and
   // you provide access to all the views for a data item in a view holder
-  public static class ViewHolder extends RecyclerView.ViewHolder {
+  public static class TestResultViewHolder extends RecyclerView.ViewHolder {
 
     // each data item is just a string in this case
     public final TextView mTestName;
     public final TextView mTestResult;
     public final ImageView mImageView;
     public final TextView mTestDetails;
-    public final LinearLayout mLayout;
     private boolean expanded;
+    public boolean longPressed;
 
-    public ViewHolder(View v) {
+    public TestResultViewHolder(View v) {
       super(v);
-      mLayout = (LinearLayout) v;
       expanded = false;
+      longPressed = false;
       mTestName = (TextView) v.findViewById(R.id.test_name);
       mTestResult = (TextView) v.findViewById(R.id.test_reason);
       mImageView = (ImageView) v.findViewById(R.id.imageView_testIcon);
       mTestDetails = (TextView) v.findViewById(R.id.test_detailed_view);
     }
+  }
+
+  public interface AdapterCallback {
+    public void restart(int testPosition);
   }
 }

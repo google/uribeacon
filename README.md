@@ -6,8 +6,14 @@
 
 *(pronounced YUR-ee-BEE-kun)*
 
+**Are you a UriBeacon Developer?** Open an [issue](https://github.com/google/uribeacon/issues) and we will point you at resources to help development and testing.
 
-Check out how UriBeacons are used in the [Physical Web](http://google.github.io/physical-web/) project.
+**Are you looking for UriBeacon Products?** Visit [Blesh](https://www.blesh.com/physical-web),
+[Twocanoes](http://twocanoes.com/products/hardware/physical-web-beacon) or
+[KST](https://kstechnologies.com/shop/particle/)
+and also see the flashable implementations on the [GitHub repo](https://github.com/google/uribeacon/blob/master/beacons/README.md).
+
+**Interested in the big picture?** Check out how UriBeacons are used in the [Physical Web](http://google.github.io/physical-web/) project.
 
 ## Disclaimer
 
@@ -39,13 +45,10 @@ This repository contains the UriBeacon written specification
 and sample code for advertisers and scanners:
 
 * **[specification](specification) - The UriBeacon Open Specification.**
-* **[android-uribeacon](android-uribeacon) - Allows Android apps to interact with UriBeacons.**
-* **[ios-uribeacon](ios-uribeacon) - Allows iOS apps to interact with UriBeacons.**
-* **[linux uribeacon](beacons/linux) - Allows Linux users to experiment with UriBeacons.**
-* **[nRF51 uribeacon](beacons/nRF51) - Flash instructions for the Nordic Semiconductor nRF51822 beacon.**
-* **[android uribeacon](beacons/android) - Allows Android 5.0 devices to broadcast beacons.**
-* **[NodeJS uribeacon](beacons/nodejs) - Allows Linux user to create UriBeacons with NodeJS.**
-* **[RFduino uribeacon](beacons/RFduino) - Allows RFduino to broadcast as a UriBeacon.**
+* **[android-uribeacon](android-uribeacon) - Android client to interact with UriBeacons.**
+* **[ios-uribeacon](ios-uribeacon) - iOS client to interact with UriBeacons.**
+* **[uribeacon-validator](android-uribeacon/uribeacon-validator) - Android app for testing UriBeacon implementations over BLE.**
+* **[beacons](beacons) - Implementations for UriBeacon on a number of embedded BLE devices.**
 
 We will also be providing instructions on how to assemble and
 program standalone UriBeacon tags.
