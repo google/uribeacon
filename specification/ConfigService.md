@@ -19,7 +19,7 @@ This document is formatted according to the Bluetooth
 [profile](https://developer.bluetooth.org/gatt/profiles/Pages/ProfileViewer.aspx?u=org.bluetooth.profile.blood_pressure.xml) formatting styles.
 
 ### 1.1 Configuration Mode
-A Configuration Mode is necessary because having a continuously connectable UriBeacon would allow any passerby to connect to the device and stop the UriBeacon from broadcasting. As a consequence a third party could launch a Denial of Service (DoS) attack by permanently connecting to the beacon. For this reason a UriBeacon should not be connectable during regular [URI Advertizing mode](AdvertisingMode.md).
+A Configuration Mode is necessary because having a continuously connectable UriBeacon would allow any passerby to connect to the device and stop the UriBeacon from broadcasting. As a consequence a third party could launch a Denial of Service (DoS) attack by permanently connecting to the beacon. For this reason a UriBeacon should not be connectable during regular [URI Advertising mode](AdvertisingMode.md).
 
 A beacon can be placed in Configuration Mode in order to be configurable. Configuration Mode should only be used by an administrator, and we recommend the following options to make it difficult for a random third-party to reconfigure proprietary beacons:
 
