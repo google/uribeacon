@@ -8,7 +8,7 @@ Note: this is a preview-release intended for comments and experimentation.
 
 ## Overview
 
-The UriBeacon design allows a Bluetooth Low Energy (BLE) device to periodically transmit an ADV packet that contains a URI.  This technology enables any device, place or thing to become a beacon through physical association. As a consequence UriBeacon enables any object in the physical world to transmit a URI over a short distance (typically 20-30 feet), and is an enabling technology to support the Physical Web paradigm. By providing discovery, search, and control (using web pages) based on situated proximity, the Physical Web can be thought of as an on-ramp to the Internet-of-things(IoT).
+The UriBeacon design allows a Bluetooth Low Energy (BLE) device to periodically transmit an ADV packet that contains a URI.  This technology enables any device, place or thing to become a beacon through physical association. As a consequence UriBeacon enables any object in the physical world to transmit a URI over a short distance (typically 20-30 feet), and is an enabling technology to support the [Physical Web](https://github.com/google/physical-web) paradigm. By providing discovery, search, and control (using web pages) based on situated proximity, the Physical Web can be thought of as an on-ramp to the Internet-of-things(IoT).
 
 A UriBeacon can exist in two states:
 
