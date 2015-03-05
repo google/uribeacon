@@ -10,9 +10,9 @@ Additional contributed implementations:
 
 * [Bluegiga BLE113](BLE113)
 * [RFduino](RFduino)
-* [Arduino](Arduino)
+* [Arduino](arduino)
 * [OpenBeacon](OpenBeacon)
-* [Android](Android)
+* [Android](android)
 * [linux](linux)
 * [nRF51](nRF51)
 * [nodejs](nodejs)
