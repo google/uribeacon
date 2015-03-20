@@ -146,7 +146,7 @@ procedure set_uribeacon_url_mode()
    advUrlData(6:1)  = $FE # 16-bit UUID MSB
 
    # UriBeacon Service Data
-   length = 5 + sizeof(uridata)
+   # length = 5 + sizeof(uridata)
    advUrlData(7:1)  = 16  # Length
    advUrlData(8:1)  = $16 # AD Type Service Data
    advUrlData(9:1)  = $D8 # 16-bit UUID LSB
