@@ -10,8 +10,9 @@
 
 **Are you looking for UriBeacon Products?** Visit [Blesh](https://www.blesh.com/physical-web),
 [Twocanoes](http://twocanoes.com/products/hardware/physical-web-beacon)
-[KST](https://kstechnologies.com/shop/particle/) or
-[iBLio](http://www.iblio.net)
+[KST](https://kstechnologies.com/shop/particle/)
+[iBLio](http://www.iblio.net) or
+[BKON](http://www.bkon.com/uribeacon)
 and also see the flashable implementations on the [GitHub repo](https://github.com/google/uribeacon/blob/master/beacons/README.md).
 
 **Interested in the big picture?** Check out how UriBeacons are used in the [Physical Web](http://google.github.io/physical-web/) project.
