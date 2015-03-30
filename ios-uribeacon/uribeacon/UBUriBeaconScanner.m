@@ -292,7 +292,8 @@ static stateChange stateGraph[] = {
   _updatedConfigurableBeacons = [NSMutableDictionary dictionary];
   if (applicationActive) {
     [_beaconsCentralManager scanForPeripheralsWithServices:@[
-      [CBUUID UUIDWithString:URIBEACON_SERVICE]
+      [CBUUID UUIDWithString:URIBEACON_SERVICE],
+      [CBUUID UUIDWithString:TEST_SERVICE]
     ] options:nil];
     [_configurableBeaconsCentralManager scanForPeripheralsWithServices:@[
       [CBUUID UUIDWithString:CONFIG_V1_SERVICE],
@@ -300,7 +301,10 @@ static stateChange stateGraph[] = {
     ] options:nil];
     [self _startTimerScanning];
   } else {
-    NSArray *services = @[ [CBUUID UUIDWithString:URIBEACON_SERVICE] ];
+    NSArray *services = @[
+      [CBUUID UUIDWithString:URIBEACON_SERVICE],
+      [CBUUID UUIDWithString:TEST_SERVICE]
+    ];
     [_beaconsCentralManager scanForPeripheralsWithServices:services
                                                    options:nil];
   }
@@ -524,7 +528,7 @@ static stateChange stateGraph[] = {
 
 - (void)centralManager:(CBCentralManager *)central
     didConnectPeripheral:(CBPeripheral *)peripheral {
-  void (^block)(NSError * error) =
+  void (^block)(NSError *error) =
       [_connectionsBlocks objectForKey:[peripheral identifier]];
   [_connectionsBlocks removeObjectForKey:[peripheral identifier]];
   if (block != nil) {
@@ -541,8 +545,8 @@ static stateChange stateGraph[] = {
   // switch back to normal mode.
   NSUInteger indexToRemove = [_configurableBeacons
       indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-          UBConfigurableUriBeacon *beacon = obj;
-          return [[beacon identifier] isEqual:[peripheral identifier]];
+        UBConfigurableUriBeacon *beacon = obj;
+        return [[beacon identifier] isEqual:[peripheral identifier]];
       }];
   if (indexToRemove != NSNotFound) {
     [_configurableBeacons removeObjectAtIndex:indexToRemove];
@@ -554,7 +558,7 @@ static stateChange stateGraph[] = {
 - (void)centralManager:(CBCentralManager *)central
     didDisconnectPeripheral:(CBPeripheral *)peripheral
                       error:(NSError *)error {
-  void (^block)(NSError * error) =
+  void (^block)(NSError *error) =
       [_disconnectionsBlocks objectForKey:[peripheral identifier]];
   [_disconnectionsBlocks removeObjectForKey:[peripheral identifier]];
   if (block != nil) {
@@ -570,27 +574,26 @@ static stateChange stateGraph[] = {
   [writer setData:data];
   [_writers setObject:writer forKey:[peripheral identifier]];
   [writer writeWithCompletionBlock:^(NSError *error) {
-      void (^writeCompletionBlock)(NSError * error) = [block copy];
-      [_writers removeObjectForKey:[peripheral identifier]];
-      if (writeCompletionBlock != nil) {
-        writeCompletionBlock(error);
-      }
+    void (^writeCompletionBlock)(NSError *error) = [block copy];
+    [_writers removeObjectForKey:[peripheral identifier]];
+    if (writeCompletionBlock != nil) {
+      writeCompletionBlock(error);
+    }
   }];
 }
 
 - (void)_readBeaconWithPeripheral:(CBPeripheral *)peripheral
-                  completionBlock:(void (^)(NSError *error,
-                                            NSData *data))block {
+                  completionBlock:
+                      (void (^)(NSError *error, NSData *data))block {
   UBUriBeaconReader *reader = [[UBUriBeaconReader alloc] init];
   [reader setPeripheral:peripheral];
   [_readers setObject:reader forKey:[peripheral identifier]];
   [reader readWithCompletionBlock:^(NSError *error, NSData *data) {
-      void (^readCompletionBlock)(NSError * error, NSData * data) =
-          [block copy];
-      [_readers removeObjectForKey:[peripheral identifier]];
-      if (readCompletionBlock != nil) {
-        readCompletionBlock(error, data);
-      }
+    void (^readCompletionBlock)(NSError *error, NSData *data) = [block copy];
+    [_readers removeObjectForKey:[peripheral identifier]];
+    if (readCompletionBlock != nil) {
+      readCompletionBlock(error, data);
+    }
   }];
 }
 
@@ -603,11 +606,11 @@ static stateChange stateGraph[] = {
   [writer setCharacteristic:CONFIG_V2_CHARACTERISTIC_URI];
   [_writers setObject:writer forKey:[peripheral identifier]];
   [writer writeWithCompletionBlock:^(NSError *error) {
-      void (^writeCompletionBlock)(NSError * error) = [block copy];
-      [_writers removeObjectForKey:[peripheral identifier]];
-      if (writeCompletionBlock != nil) {
-        writeCompletionBlock(error);
-      }
+    void (^writeCompletionBlock)(NSError *error) = [block copy];
+    [_writers removeObjectForKey:[peripheral identifier]];
+    if (writeCompletionBlock != nil) {
+      writeCompletionBlock(error);
+    }
   }];
 }
 
@@ -618,11 +621,11 @@ static stateChange stateGraph[] = {
   [reader setCharacteristic:CONFIG_V2_CHARACTERISTIC_URI];
   [_readers setObject:reader forKey:[peripheral identifier]];
   [reader readWithCompletionBlock:^(NSError *error, NSData *data) {
-      void (^readCompletionBlock)(NSError * error, NSURL * uri) = [block copy];
-      [_readers removeObjectForKey:[peripheral identifier]];
-      if (readCompletionBlock != nil) {
-        readCompletionBlock(error, [NSURL ub_decodedBeaconURI:data]);
-      }
+    void (^readCompletionBlock)(NSError *error, NSURL *uri) = [block copy];
+    [_readers removeObjectForKey:[peripheral identifier]];
+    if (readCompletionBlock != nil) {
+      readCompletionBlock(error, [NSURL ub_decodedBeaconURI:data]);
+    }
   }];
 }
 
