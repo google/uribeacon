@@ -465,11 +465,13 @@ public class UriBeacon {
         if (fieldLength == 0) {
           break;
         }
-        int fieldType = scanRecord[currentPos++] & 0xff;
+        int fieldType = scanRecord[currentPos] & 0xff;
         if (fieldType == DATA_TYPE_SERVICE_DATA) {
           // The first two bytes of the service data are service data UUID.
-          if (scanRecord[currentPos++] == URI_SERVICE_16_BIT_UUID_BYTES[0]
-              && scanRecord[currentPos++] == URI_SERVICE_16_BIT_UUID_BYTES[1]) {
+          if (scanRecord[currentPos + 1] == URI_SERVICE_16_BIT_UUID_BYTES[0]
+              && scanRecord[currentPos + 2] == URI_SERVICE_16_BIT_UUID_BYTES[1]) {
+            // jump to data
+            currentPos += 3;
             // length includes the length of the field type and ID
             byte[] bytes = new byte[fieldLength - 3];
             System.arraycopy(scanRecord, currentPos, bytes, 0, fieldLength - 3);
@@ -477,7 +479,7 @@ public class UriBeacon {
           }
         }
         // length includes the length of the field type
-        currentPos += fieldLength - 1;
+        currentPos += fieldLength;
       }
     } catch (Exception e) {
       Log.e(TAG, "unable to parse scan record: " + Arrays.toString(scanRecord), e);
