@@ -47,6 +47,11 @@ public class UriBeacon {
   private static final String TAG = "UriBeacon";
   private static final int DATA_TYPE_SERVICE_DATA = 0x16;
   private static final byte[] URI_SERVICE_16_BIT_UUID_BYTES = {(byte) 0xd8, (byte) 0xfe};
+
+  //TODO: Add comments
+  private static final byte[] TEST_SERVICE_16_BIT_UUID_BYTES = { (byte) 0xaa, (byte) 0xfe};
+  private static final byte TEST_URL_FRAME_TYPE = 0x10;
+
   /**
    * URI Scheme maps a byte code into the scheme and an optional scheme specific prefix.
    */
@@ -166,14 +171,24 @@ public class UriBeacon {
   public static UriBeacon parseFromBytes(byte[] scanRecordBytes) {
     byte[] serviceData = parseServiceDataFromBytes(scanRecordBytes);
     // Minimum UriBeacon consists of flags, TxPower
-    if (serviceData == null || serviceData.length < 2) {
-      return null;
+    if (serviceData != null && serviceData.length >= 2) {
+      int currentPos = 0;
+      byte flags = serviceData[currentPos++];
+      byte txPowerLevel = serviceData[currentPos++];
+      String uri = decodeUri(serviceData, currentPos);
+      return new UriBeacon(flags, txPowerLevel, uri);
     }
-    int currentPos = 0;
-    byte flags = serviceData[currentPos++];
-    byte txPowerLevel = serviceData[currentPos++];
-    String uri = decodeUri(serviceData, currentPos);
-    return new UriBeacon(flags, txPowerLevel, uri);
+    //TODO: refactor
+    serviceData = parseTestServiceDataFromBytes(scanRecordBytes);
+    if (serviceData != null && serviceData.length >= 2) {
+      int currentPos = 0;
+      byte txPowerLevel = serviceData[currentPos++];
+      byte flags = (byte) (serviceData[currentPos] >> 4);
+      serviceData[currentPos] = (byte) (serviceData[currentPos] & 0xFF);
+      String uri = decodeUri(serviceData, currentPos);
+      return new UriBeacon(flags, txPowerLevel, uri);
+    }
+    return null;
   }
 
   @Override
@@ -484,5 +499,35 @@ public class UriBeacon {
     }
     return null;
   }
-
+  private static byte[] parseTestServiceDataFromBytes(byte[] scanRecord) {
+    //TODO: Add comments
+    int currentPos = 0;
+    try {
+      while (currentPos < scanRecord.length) {
+        int fieldLength = scanRecord[currentPos++] & 0xff;
+        if (fieldLength == 0) {
+          break;
+        }
+        int fieldType = scanRecord[currentPos] & 0xff;
+        if (fieldType == DATA_TYPE_SERVICE_DATA) {
+          if (scanRecord[currentPos + 1] == TEST_SERVICE_16_BIT_UUID_BYTES[0]
+              && scanRecord[currentPos + 2] == TEST_SERVICE_16_BIT_UUID_BYTES[1]
+              && scanRecord[currentPos + 3] == TEST_URL_FRAME_TYPE) {
+            // Jump to beginning of frame.
+            currentPos += 4;
+            // TODO: Add tests
+            // field length - field type - ID - frame type
+            byte[] bytes = new byte[fieldLength - 4];
+            System.arraycopy(scanRecord, currentPos, bytes, 0, fieldLength - 4);
+            return bytes;
+          }
+        }
+        // length includes the length of the field type.
+        currentPos += fieldLength;
+      }
+    } catch (Exception e) {
+      Log.e(TAG, "unable to parse scan record: " + Arrays.toString(scanRecord), e);
+    }
+    return null;
+  }
 }
