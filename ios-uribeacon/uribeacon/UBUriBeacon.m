@@ -44,7 +44,7 @@ enum {
   if (data == nil) {
     // No UriBeacon service data.
     type = SERVICE_TYPE_TEST;
-    NSData *data = [info objectForKey:[CBUUID UUIDWithString:TEST_SERVICE]];
+    data = [info objectForKey:[CBUUID UUIDWithString:TEST_SERVICE]];
     if (data == nil) {
       // No ZipBeacon service data.
       return nil;
