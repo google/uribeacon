@@ -12,9 +12,9 @@ The UriBeacon design allows a Bluetooth Low Energy (BLE) device to periodically 
 
 A UriBeacon can exist in two states:
 
-* URI Advertising Mode (non-connectable)
+* [Advertising Mode](AdvertisingMode.md) (non-connectable)
 
-* Configuration Mode (connectable)
+* [Configuration Mode](ConfigService.md) (connectable)
 
 In the URI Advertising mode a beacon will periodically transmit (typically at 1 second intervals) an ADV packet containing: flags, transmit power, and an encoded URI. In this state the beacon content cannot be modified, and the device does not support a connection. See [UriBeacon ADV packet](AdvertisingMode.md) for a full description.
 
