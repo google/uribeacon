@@ -90,7 +90,7 @@
     <orderEntry type="library" exported="" scope="TEST" name="objenesis-2.1" level="project" />
     <orderEntry type="library" exported="" name="support-annotations-21.0.3" level="project" />
     <orderEntry type="library" exported="" name="support-v4-21.0.3" level="project" />
-    <orderEntry type="library" exported="" scope="TEST" name="mockito-core-1.10.14" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="mockito-core-2.0.5-beta" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="hamcrest-core-1.1" level="project" />
   </component>
 </module>
