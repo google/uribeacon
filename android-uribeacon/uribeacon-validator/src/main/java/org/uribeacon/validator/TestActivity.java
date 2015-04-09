@@ -122,8 +122,8 @@ public class TestActivity extends Activity {
           if (progress != null) {
             progress.dismiss();
             progress = null;
-            showCustomDialog(scanResults);
           }
+          showCustomDialog(scanResults);
         }
       });
     }
