@@ -234,7 +234,8 @@ public class UriBeaconScanActivity extends ListActivity implements SwipeRefreshL
     if (mIsConfig) {
       mScanFilterUuids = configServices;
     } else if (filterUriBeacon) {
-      mScanFilterUuids = new ParcelUuid[]{UriBeacon.URI_SERVICE_UUID};
+      mScanFilterUuids = new ParcelUuid[]{
+          UriBeacon.URI_SERVICE_UUID, UriBeacon.TEST_SERVICE_UUID};
     } else {
       mScanFilterUuids = null;
     }

@@ -49,6 +49,8 @@ public class UriBeacon {
   private static final byte[] URI_SERVICE_16_BIT_UUID_BYTES = {(byte) 0xd8, (byte) 0xfe};
 
   //TODO: Add comments
+  public static final ParcelUuid TEST_SERVICE_UUID =
+      ParcelUuid.fromString("0000FEAA-0000-1000-8000-00805F9B34FB");
   private static final byte[] TEST_SERVICE_16_BIT_UUID_BYTES = { (byte) 0xaa, (byte) 0xfe};
   private static final byte TEST_URL_FRAME_TYPE = 0x10;
 
