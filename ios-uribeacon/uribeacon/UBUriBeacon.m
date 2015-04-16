@@ -106,7 +106,7 @@ enum {
     return NO;
   }
   int packetType = ((unsigned char *)[data bytes])[0];
-  if (type == SERVICE_TYPE_TEST && ((packetType & 0x1f) != 0x10)) {
+  if (type == SERVICE_TYPE_TEST && ((packetType & 0xf0) != 0x10)) {
     return NO;
   }
   [self setFlags:((unsigned char *)[data bytes])[0]];
