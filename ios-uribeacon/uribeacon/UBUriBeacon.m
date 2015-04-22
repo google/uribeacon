@@ -46,7 +46,7 @@ enum {
     type = SERVICE_TYPE_TEST;
     data = [info objectForKey:[CBUUID UUIDWithString:TEST_SERVICE]];
     if (data == nil) {
-      // No ZipBeacon service data.
+      // No service data.
       return nil;
     }
   }
