@@ -105,6 +105,8 @@ table below:
 
 **Table 1: Sampling of Url Shorteners**
 
+For example, let's say we have a truncated URL of the form "https://www..com". The initial "https://www." is encoded in the scheme prefix and ".com" is encoded as a single byte. This leaves 16 bytes for the remainder of the URL, which leads 16 characters to play with in most cases.
+
 Note that short Urls are mostly transparent: user agents can hide
 short and show long URLs, titles, etc. and configuration tools can
 automatically shorten long Urls when writing beacons. Also this
