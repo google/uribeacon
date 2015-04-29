@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-
 <!--
   Copyright 2015 Google Inc. All rights reserved.
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +14,8 @@
 
 <hardware>
 	<sleeposc enable="false" ppm="30" />
-     <usb enable="true" endpoint="none" />
-     <txpower power="15" bias="5" />
+  <usb enable="true" endpoint="none" />
+  <txpower power="15" bias="5" />
 	<script enable="true" />
 </hardware>
+

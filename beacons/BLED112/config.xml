@@ -15,5 +15,6 @@
 
 <config>
 	<script force="true"/>
-     <user_data size="0x800"/>
+  <user_data size="0x800"/>
+  <script_timeout value="2000" />
 </config>
