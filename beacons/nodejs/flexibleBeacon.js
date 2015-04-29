@@ -14,7 +14,7 @@ template[5] = 0x16; // Service Data
 template[6] = 0xD8; // URI Beacon ID
 template[7] = 0xFE; // URI Beacon ID
 template[8] = 0x00; // Flags
-template[9] = 0x20; // Power
+template[9] = 0xEC; // Power -20 dBm
 
 var scanData = new Buffer(0); // maximum 31 bytes
 var encoded = uriBeacon.encode("http://example.com");

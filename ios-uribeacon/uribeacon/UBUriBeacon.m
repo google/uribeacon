@@ -19,6 +19,11 @@
 
 #import "NSURL+UB.h"
 
+enum {
+  SERVICE_TYPE_URIBEACON,
+  SERVICE_TYPE_TEST,
+};
+
 @implementation UBUriBeacon
 
 - (id)initWithPeripheral:(CBPeripheral *)peripheral
@@ -34,12 +39,18 @@
     // No service data.
     return nil;
   }
+  int type = SERVICE_TYPE_URIBEACON;
   NSData *data = [info objectForKey:[CBUUID UUIDWithString:URIBEACON_SERVICE]];
   if (data == nil) {
     // No UriBeacon service data.
-    return nil;
+    type = SERVICE_TYPE_TEST;
+    data = [info objectForKey:[CBUUID UUIDWithString:TEST_SERVICE]];
+    if (data == nil) {
+      // No service data.
+      return nil;
+    }
   }
-  if (![self _parseFromData:data]) {
+  if (![self _parseFromData:data type:type]) {
     // Data couldn't be parsed.
     return nil;
   }
@@ -59,9 +70,9 @@
   if ([data length] < 8) {
     return nil;
   }
-  if (![self
-          _parseFromData:[data subdataWithRange:NSMakeRange(
-                                                    8, [data length] - 8)]]) {
+  if (![self _parseFromData:[data subdataWithRange:NSMakeRange(
+                                                       8, [data length] - 8)]
+                       type:SERVICE_TYPE_URIBEACON]) {
     // Data couldn't be parsed.
     return nil;
   }
@@ -89,9 +100,13 @@
   return self;
 }
 
-- (BOOL)_parseFromData:(NSData *)data {
+- (BOOL)_parseFromData:(NSData *)data type:(int)type {
   size_t length = [data length];
   if (length <= 2) {
+    return NO;
+  }
+  int packetType = ((unsigned char *)[data bytes])[0];
+  if (type == SERVICE_TYPE_TEST && ((packetType & 0xf0) != 0x10)) {
     return NO;
   }
   [self setFlags:((unsigned char *)[data bytes])[0]];
@@ -112,14 +127,16 @@
 
 - (NSData *)_advertisementData {
   static char advdata[] = {
-      0x03,        // length
-      0x03,        // Service ID
-      0xD8, 0xFE,  // UUID
-      0x0,         // length
-      0x16,        // Service Data
-      0xD8, 0xFE,  // UUID
-      0x0,         // flags
-      0x0,         // Transmit power
+      0x03,  // length
+      0x03,  // Service ID
+      0xD8,
+      0xFE,  // UUID
+      0x0,   // length
+      0x16,  // Service Data
+      0xD8,
+      0xFE,  // UUID
+      0x0,   // flags
+      0x0,   // Transmit power
   };
 
   NSMutableData *result = [NSMutableData data];
@@ -162,33 +179,38 @@
  * d = distance (from transmitter to receiver in meters);
  *
  *
- * Free-space path loss (FSPL) is proportional to the square of the distance between the
- * transmitter and the receiver, and also proportional to the square of the frequency of the
- * radio signal.
- *   *
+ * Free-space path loss (FSPL) is proportional to the square of the distance
+ * between the transmitter and the receiver, and also proportional to the square
+ *of the frequency of the radio signal.
+ *
  * FSPL = (4 * pi * d / l)^2 = (4 * pi * d * f / c )^2
  *
- * FSPL (dBm) = 20*log10(d) + 20*log10(f) + 20*log10(4*pi/c) = 20*log10(d) + PATH_LOSS_AT_1M
+ * FSPL (dBm) = 20*log10(d) + 20*log10(f) + 20*log10(4*pi/c) = 20*log10(d) +
+ *              PATH_LOSS_AT_1M
  *
  * Calculating constants:
  *
  * FSPL_FREQ = 20*log10(f) = 20*log10(2.45 * 10^9) = 188.78 [round to 189]
  *
- * FSPL_LIGHT = 20*log10(4*pi/c) = 20*log10(4pi/2.9979*10^8) = -147.55 [round to -148]
+ * FSPL_LIGHT = 20*log10(4*pi/c) = 20*log10(4pi/2.9979*10^8) = -147.55
+ *                                                          [round to -148]
  *
- * PATH_LOSS_AT_1M = FSPL_FREQ + FSPL_LIGHT = 188.78 - 147.55 = 41.23 [round to 41]
+ * PATH_LOSS_AT_1M = FSPL_FREQ + FSPL_LIGHT = 188.78 - 147.55 = 41.23
+ *                                                          [round to 41]
  *
  *
- * Re-arranging formula to provide a solution for distance when the path loss (FPSL) is available:
+ * Re-arranging formula to provide a solution for distance when the path loss
+ * (FPSL) is available:
  *
  * 20*log10(d) = path loss - PATH_LOSS_AT_1M
  *
  * distance(d) = 10^((path loss - PATH_LOSS_AT_1M)/20.0)
  *
- * The beacon will broadcast its power as it would be seen in ideal conditions at 1 meter,
- * computed using the following equation from its own source power.
+ * The beacon will broadcast its power as it would be seen in ideal conditions
+ * at 1 meter, computed using the following equation from its own source power.
  *
- * calibratedTxPower = txPowerAtSource - path loss at 1m (for BLE 1m path loss is 41dBm)
+ * calibratedTxPower = txPowerAtSource - path loss at 1m (for BLE 1m path loss
+ * is 41dBm)
  */
 
 // Free Space Path Loss (FSPL) Constants (see above)
@@ -196,7 +218,8 @@
 #define FSPL_LIGHT -148
 
 /* (dBm) PATH_LOSS at 1m for isotropic antenna transmitting BLE */
-#define FREE_SPACE_PATH_LOSS_CONSTANT_FOR_BLE (FSPL_FREQ + FSPL_LIGHT) // const = 41
+#define FREE_SPACE_PATH_LOSS_CONSTANT_FOR_BLE \
+  (FSPL_FREQ + FSPL_LIGHT)  // const = 41
 
 // Cutoff distances between different regions.
 #define NEAR_TO_MID_METERS 0.5
@@ -206,7 +229,8 @@
   NSInteger txPowerAtSource = [self txPowerLevel];
   NSInteger pathLoss = txPowerAtSource - [self RSSI];
   // Distance calculation
-  double distance = pow(10.0, (pathLoss - FREE_SPACE_PATH_LOSS_CONSTANT_FOR_BLE) / 20.0);
+  double distance =
+      pow(10.0, (pathLoss - FREE_SPACE_PATH_LOSS_CONSTANT_FOR_BLE) / 20.0);
 
   if (distance < 0) {
     return UBUriBeaconRegionUnknown;
@@ -221,10 +245,10 @@
 }
 
 - (NSString *)description {
-  return
-      [NSString stringWithFormat:@"<%@: %p %@ %@ %lu %i %li>", [self class], self,
-                                 [self identifier], [self URI], (unsigned long) [self flags],
-                                 [self txPowerLevel], (long)[self RSSI]];
+  return [NSString stringWithFormat:@"<%@: %p %@ %@ %lu %i %li>", [self class],
+                                    self, [self identifier], [self URI],
+                                    (unsigned long)[self flags],
+                                    [self txPowerLevel], (long)[self RSSI]];
 }
 
 @end

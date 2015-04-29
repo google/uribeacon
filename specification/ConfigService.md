@@ -24,7 +24,7 @@ A Configuration Mode is necessary because having a continuously connectable UriB
 A beacon can be placed in Configuration Mode in order to be configurable. Configuration Mode should only be used by an administrator, and we recommend the following options to make it difficult for a random third-party to reconfigure proprietary beacons:
 
 * A button that when pressed puts the beacon in Configuration Mode for a short period of time. The button could be placed inside the battery compartment or outside of the beacon if the beacon is placed out of reach for typical clients/users of the UriBeacon system
-* A beacon could be placed in Configuration Mode automatically during a short period after power on (say 30 seconds) e.g. batteries are installed, or the beacon is connected to the mains supply (e.g. a USB wall power supply, etc.
+* A beacon could be placed in Configuration Mode automatically during a short period after power on (say 30 seconds) e.g. batteries are installed, or the beacon is connected to the mains supply (e.g. a USB wall power supply, etc).
 
 When in Configuration mode the beacon would advertise a different ADV packet indicating that mode using the ADV long name parameter string, and the ADV Service 128-bit UUID of the UriBeacon configuration service, and an ADV TxPower parameter to allow nearness of the beacon to be determined by the signal path-loss. Its recommend that the radio TxPower should also be increased to a Medium transmit power (typ. -2dBm) and this should also be reflected in the ADV TxPower parameter(typ. -6dBm, with a loss of 4dBm in the beacon antenna). Note: including all these parameters might result in the packet exceeding 31 bytes,  in which case a larger configuration packet size of 62 bytes can be achieved using the scan/response mechanism.
 
@@ -130,8 +130,8 @@ Read returns true if the device is locked.
 |  Type | uint8[]|
 |  Lock State | For write, must be unlocked.|
 
-The Uri Data characteristic is a variable length structure. The first byte contains the [Uri Scheme Prefix](https://github.com/google/uribeacon/tree/master/specification#uribeacon-uri-scheme-prefix).
-The remaining bytes contain either [urn:uuid encoding](https://github.com/google/uribeacon/tree/master/specification#uribeacon-urnuuid-encoding) or  [HTTP URL encoding](https://github.com/google/uribeacon/tree/master/specification#uribeacon-http-url-encoding).
+The Uri Data characteristic is a variable length structure. The first byte contains the [Uri Scheme Prefix](https://github.com/google/uribeacon/tree/master/specification/AdvertisingMode.md#uribeacon-uri-scheme-prefix).
+The remaining bytes contain either [urn:uuid encoding](https://github.com/google/uribeacon/tree/master/specification/AdvertisingMode.md#uribeacon-urnuuid-encoding) or  [HTTP URL encoding](https://github.com/google/uribeacon/tree/master/specification/AdvertisingMode.md#uribeacon-http-url-encoding).
 
 Note: Uri Data must be between 0 and 18 bytes in length.
 
@@ -144,8 +144,8 @@ Note: Uri Data must be between 0 and 18 bytes in length.
 |  Type | uint8 |
 |  Lock State | For write, must be unlocked.|
 
-The Flags characteristic is a sinlge unsigned byte value containing the
-[UriBeacon Flags](https://github.com/google/uribeacon/tree/master/specification#uribeacon-flags).
+The Flags characteristic is a single unsigned byte value containing the
+[UriBeacon Flags](https://github.com/google/uribeacon/tree/master/specification/AdvertisingMode.md#uribeacon-flags).
 
 ### 3.6 Advertised TX Power Levels
 
@@ -157,7 +157,7 @@ The Flags characteristic is a sinlge unsigned byte value containing the
 |  Lock State | For write, must be unlocked.|
 
 This characteristic is a fixed length array of values, in dBm, to be included in the 
-[UriBeacon TX Power Level](https://github.com/google/uribeacon/tree/master/specification#uribeacon-tx-power-level) field of the advertisement when that mode is active. The index into the array is [TX Power Mode](#37-tx-power-mode). 
+[UriBeacon TX Power Level](https://github.com/google/uribeacon/tree/master/specification/AdvertisingMode.md#uribeacon-tx-power-level) field of the advertisement when that mode is active. The index into the array is [TX Power Mode](#37-tx-power-mode). 
 
 **Note to developers:** 
 The Advertised TX Power Levels is not the same as values set internally into the radio tx power. You need to implement an internal array indexed by TX Power Mode that is used for the internal facing radio setting. 

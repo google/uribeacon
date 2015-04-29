@@ -19,6 +19,7 @@
 #import <CoreBluetooth/CoreBluetooth.h>
 
 #define URIBEACON_SERVICE @"FED8"
+#define TEST_SERVICE @"FEAA"
 
 #define CONFIG_V1_SERVICE @"b35d7da6-eed4-4d59-8f89-f6573edea967"
 //                              ^
