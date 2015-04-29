@@ -18,8 +18,8 @@
 	<hardware in="hardware.xml" />
 	<usb_main in="cdc.xml" />
 	<config in="config.xml" />
-	<script in="uriBeacon.bgs" />
-	<image out="uriBeacon_BLED112.hex" />
+	<script in="uribeacon.bgs" />
+	<image out="uribeacon.hex" />
 	<boot fw="boot" />
 	<device type="ble112" />
 </project>
