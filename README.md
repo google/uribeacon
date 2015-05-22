@@ -12,7 +12,8 @@
 [Twocanoes](http://twocanoes.com/products/hardware/physical-web-beacon)
 [KST](https://kstechnologies.com/shop/particle/)
 [iBLio](http://www.iblio.net) or
-[BKON](http://www.bkon.com/uribeacon)
+[BKON](http://www.bkon.com/uribeacon) or
+[GoPlus](http://iffu.co.kr/eng/product/go-plus_uri.html)
 and also see the flashable implementations on the [GitHub repo](https://github.com/google/uribeacon/blob/master/beacons/README.md).
 
 **Interested in the big picture?** Check out how UriBeacons are used in the [Physical Web](http://google.github.io/physical-web/) project.
