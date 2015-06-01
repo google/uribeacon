@@ -1,0 +1,8 @@
+* [Blesh](https://www.blesh.com/physical-web)
+* [Twocanoes](http://twocanoes.com/products/hardware/physical-web-beacon)
+* [KST](https://kstechnologies.com/shop/particle/)
+* [iBLio](http://www.iblio.net)
+* [BKON](http://www.bkon.com/uribeacon)
+* [GoPlus](http://iffu.co.kr/eng/product/go-plus_uri.html)
+* [BlueUp](http://www.blueupbeacons.com/index.php?page=products)
+* [CBeacons](https://www.cbeacons.com/)
