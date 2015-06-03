@@ -6,7 +6,7 @@ CSR uEnergy SDK 2.3.0.31 (xIDE)
 
 Obtain a copy of the code by creating an account on www.csr.com, and purchasing their BLE beacon development board
 
-for the hardware CSR100x. On installing the SDK in C: copy the contents of this GitHub directory to 
+for the hardware CSR101x. On installing the SDK in C: copy the contents of this GitHub directory to 
 
 c:\CSR-uEnergy_SDK-2.3.0.31\apps\uribeacon
 
