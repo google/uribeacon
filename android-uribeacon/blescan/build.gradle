@@ -24,9 +24,6 @@ android {
     sourceSets {
         main {
             manifest.srcFile 'src/androidTest/AndroidManifest.xml'
-            java {
-                srcDirs = ['src/main/java/org/uribeacon/scan']
-            }
         }
     }
 }
@@ -46,4 +43,5 @@ makeJar.dependsOn(clearJar, build)
 
 dependencies {
     compile 'com.android.support:support-v4:21.0.3'
+    androidTestCompile 'org.mockito:mockito-core:2.0.5-beta'
 }
