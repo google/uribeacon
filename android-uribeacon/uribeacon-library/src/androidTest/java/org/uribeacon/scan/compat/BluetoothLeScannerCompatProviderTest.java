@@ -24,6 +24,7 @@ import android.app.AlarmManager;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.os.Build;
 import android.test.AndroidTestCase;
 
 import org.uribeacon.scan.compat.BluetoothLeScannerCompat;
@@ -97,10 +98,14 @@ public class BluetoothLeScannerCompatProviderTest extends AndroidTestCase {
     assertNull(BluetoothLeScannerCompatProvider.getBluetoothLeScannerCompat(
         context, canUseNativeApi));
 
-    bluetoothManager = (BluetoothManager) getContext().getSystemService(BLUETOOTH_SERVICE);
-    alarmManager = null;
-    assertNull(BluetoothLeScannerCompatProvider.getBluetoothLeScannerCompat(
-        context, canUseNativeApi));
+    // The alarm manager is not mandatory for creating a bluetooth scanner on
+    // LOLLIPOP (at least not if the right hardware features are supported.)
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+      bluetoothManager = (BluetoothManager) getContext().getSystemService(BLUETOOTH_SERVICE);
+      alarmManager = null;
+      assertNull(BluetoothLeScannerCompatProvider.getBluetoothLeScannerCompat(
+          context, canUseNativeApi));
+    }
 
     bluetoothManager = null;
     alarmManager = (AlarmManager) getContext().getSystemService(ALARM_SERVICE);
