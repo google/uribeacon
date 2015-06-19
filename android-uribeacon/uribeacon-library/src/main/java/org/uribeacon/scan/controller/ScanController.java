@@ -264,7 +264,7 @@ public class ScanController implements MotionManager.MotionListener {
        *    SCREEN_ON -> FAST_SCAN
        * SLOW_SCAN
        *    MOTION  ->  FAST_SCAN
-       *    SCREEN_OFF -> SLOW_SCAN
+       *    SCREEN_ON -> FAST_SCAN
        * FAST_SCAN
        *    MOTION_TIMEOUT -> SLOW_SCAN
        *    SCREEN_OFF -> SLOW_SCAN
@@ -276,7 +276,7 @@ public class ScanController implements MotionManager.MotionListener {
 
         put(ScanState.SLOW_SCAN, new HashMap<Event, ScanState>() {{
           put(Event.MOTION, ScanState.FAST_SCAN);
-          put(Event.SCREEN_OFF, ScanState.SLOW_SCAN);
+          put(Event.SCREEN_ON, ScanState.FAST_SCAN);
         }});
 
         put(ScanState.FAST_SCAN, new HashMap<Event, ScanState>() {{

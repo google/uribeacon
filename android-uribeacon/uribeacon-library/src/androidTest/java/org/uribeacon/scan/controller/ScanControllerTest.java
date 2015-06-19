@@ -80,35 +80,72 @@ public class ScanControllerTest extends AndroidTestCase {
 
   public void testMotion() {
     mMockContext = new MockContext(mContext);
-    ScanController scanController = new ScanController(mMockContext, 
-        ScanController.ScreenOffMode.NO_SCAN);
-    List<ScanFilter> filters = new ArrayList<ScanFilter>();
 
     ScanSettings.Builder builder = new ScanSettings.Builder();
     builder.setCallbackType(ScanSettings.CALLBACK_TYPE_ALL_MATCHES);
     ScanSettings settings = builder.build();
 
-    scanController.startScan(settings, filters, mScanCallback);
+    List<ScanFilter> filters = new ArrayList<ScanFilter>();
 
-    mMockContext.sendScreenOnEvent();
-    assertEquals(ScanController.ScanState.FAST_SCAN, scanController.getScanState());
+    // Test ScreenOffMode.NO_SCAN
+    {
+      ScanController scanController = new ScanController(mMockContext,
+          ScanController.ScreenOffMode.NO_SCAN);
 
-    scanController.onMotionTimeout();
-    assertEquals(ScanController.ScanState.SLOW_SCAN, scanController.getScanState());
+      scanController.startScan(settings, filters, mScanCallback);
 
-    scanController.onMotion();
-    assertEquals(ScanController.ScanState.FAST_SCAN, scanController.getScanState());
+      mMockContext.sendScreenOnEvent();
+      assertEquals(ScanController.ScanState.FAST_SCAN, scanController.getScanState());
 
-    mMockContext.sendScreenOffEvent();
-    assertEquals(ScanController.ScanState.NO_SCAN, scanController.getScanState());
+      scanController.onMotionTimeout();
+      assertEquals(ScanController.ScanState.SLOW_SCAN, scanController.getScanState());
 
-    scanController.onMotionTimeout();
-    assertEquals(ScanController.ScanState.NO_SCAN, scanController.getScanState());
+      scanController.onMotion();
+      assertEquals(ScanController.ScanState.FAST_SCAN, scanController.getScanState());
 
-    scanController.onMotion();
-    assertEquals(ScanController.ScanState.NO_SCAN, scanController.getScanState());
+      mMockContext.sendScreenOffEvent();
+      assertEquals(ScanController.ScanState.NO_SCAN, scanController.getScanState());
 
-    scanController.unregister();
+      scanController.onMotionTimeout();
+      assertEquals(ScanController.ScanState.NO_SCAN, scanController.getScanState());
+
+      scanController.onMotion();
+      assertEquals(ScanController.ScanState.NO_SCAN, scanController.getScanState());
+
+      scanController.unregister();
+    }
+
+    // Test ScreenOffMode.SLOW_SCAN
+    {
+      ScanController scanController = new ScanController(mMockContext,
+          ScanController.ScreenOffMode.SLOW_SCAN);
+
+      scanController.startScan(settings, filters, mScanCallback);
+
+      mMockContext.sendScreenOnEvent();
+      assertEquals(ScanController.ScanState.FAST_SCAN, scanController.getScanState());
+
+      scanController.onMotionTimeout();
+      assertEquals(ScanController.ScanState.SLOW_SCAN, scanController.getScanState());
+
+      scanController.onMotion();
+      assertEquals(ScanController.ScanState.FAST_SCAN, scanController.getScanState());
+
+      mMockContext.sendScreenOffEvent();
+      assertEquals(ScanController.ScanState.SLOW_SCAN, scanController.getScanState());
+
+      scanController.onMotion();
+      assertEquals(ScanController.ScanState.FAST_SCAN, scanController.getScanState());
+
+      scanController.onMotionTimeout();
+      assertEquals(ScanController.ScanState.SLOW_SCAN, scanController.getScanState());
+
+      mMockContext.sendScreenOnEvent();
+      assertEquals(ScanController.ScanState.FAST_SCAN, scanController.getScanState());
+
+      scanController.unregister();
+    }
+
   }
 }
 
