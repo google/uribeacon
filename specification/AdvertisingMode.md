@@ -168,7 +168,7 @@ Note: URIs are written only with the graphic printable characters of the US-ASCI
 ### UriBeacon HTTP URL decoding
 
 During the decoding process of a sequence of characters denoting a UriBeacon one should first determine whether it starts with a Uri scheme prefix. 
-Then, if the scheme prefix denotes an HTTP URL prefix, all subsequent characters should be insepcted and expanded accordingly. It is possible
+Then, if the scheme prefix denotes an HTTP URL prefix, all subsequent characters should be inspected and expanded accordingly. It is possible
 for the sequence of characters to contain multiple HTTP URL expansion characters.
 
 ## References
