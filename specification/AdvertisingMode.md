@@ -164,6 +164,13 @@ below.
 
 Note: URIs are written only with the graphic printable characters of the US-ASCII coded character set. The octets 00-20 and 7F-FF hexadecimal are not used. See “Excluded US-ASCII Characters” in RFC 2936.
 
+
+### UriBeacon HTTP URL decoding
+
+During the decoding process of a sequence of characters denoting a UriBeacon one should first determine whether it starts with a Uri scheme prefix. 
+Then, if the scheme prefix denotes an HTTP URL prefix, all subsequent characters should be insepcted and expanded accordingly. It is possible
+for the sequence of characters to contain multiple HTTP URL expansion characters.
+
 ## References
 - `Service UUID` type is defined in Core Specification Supplement, Part A, section 1.1
 - `Service Data` type is defined in Core Specification Supplement, Part A, section 1.11
