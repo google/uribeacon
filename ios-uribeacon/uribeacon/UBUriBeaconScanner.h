@@ -15,6 +15,7 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 @class UBUriBeacon;
 @class UBConfigurableUriBeacon;
@@ -27,7 +28,8 @@
  only non-configurable beacons will be discovered.
 
  Here's an example of how to scan beacons:
- <pre><code>_scanner = [[UBUriBeaconScanner alloc] init];
+ <pre><code>_scanner = [[UBUriBeaconScanner alloc]
+     initWithApplication:[UIApplication sharedApplication]];
  [_scanner startScanningWithUpdateBlock:^{
    NSLog(@"beacons: %@", [_scanner beacons]);
    NSLog(@"configurable beacons: %@", [_scanner configurableBeacons]);
@@ -35,6 +37,13 @@
  </code></pre>
  */
 @interface UBUriBeaconScanner : NSObject
+
+/**
+ * Initializes the scanner.
+ * The -[UIApplication sharedApplication] should be given as argument.
+ * If you're running in an extension, you should use nil.
+ */
+- (id)initWithApplication:(UIApplication*)application;
 
 /**
  * Start discovering UriBeacons. It will check frequently for beacon
