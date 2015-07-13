@@ -125,8 +125,7 @@ static stateChange stateGraph[] = {
      STATE_SCANNING},  // stop scanning, start scanning, set timer
 };
 
-@interface UBUriBeaconScanner () <CBCentralManagerDelegate,
-                                  CBPeripheralDelegate>
+@interface UBUriBeaconScanner ()<CBCentralManagerDelegate, CBPeripheralDelegate>
 
 @end
 
@@ -147,9 +146,15 @@ static stateChange stateGraph[] = {
   NSMutableDictionary *_writers;
   NSMutableDictionary *_readers;
   NSMutableSet *_connectedBeacons;
+
+  UIApplication *_application;
 }
 
 - (id)init {
+  return [self initWithApplication:nil];
+}
+
+- (id)initWithApplication:(UIApplication *)application {
   self = [super init];
   if (!self) {
     return nil;
@@ -161,9 +166,11 @@ static stateChange stateGraph[] = {
       [[CBCentralManager alloc] initWithDelegate:self queue:nil options:nil];
   [_configurableBeaconsCentralManager setDelegate:self];
 
+  _application = application;
   BOOL applicationActive =
-      [[UIApplication sharedApplication] applicationState] ==
-      UIApplicationStateActive;
+      _application != nil
+          ? [_application applicationState] == UIApplicationStateActive
+          : YES;
   _bluetoothOnOrConnected =
       [_beaconsCentralManager state] == CBCentralManagerStatePoweredOn;
   if (applicationActive && _bluetoothOnOrConnected) {
@@ -180,12 +187,12 @@ static stateChange stateGraph[] = {
       addObserver:self
          selector:@selector(_didBecomeActive:)
              name:UIApplicationDidBecomeActiveNotification
-           object:[UIApplication sharedApplication]];
+           object:_application];
   [[NSNotificationCenter defaultCenter]
       addObserver:self
          selector:@selector(_willResignActive:)
              name:UIApplicationWillResignActiveNotification
-           object:[UIApplication sharedApplication]];
+           object:_application];
   _beacons = [NSMutableArray array];
   _configurableBeacons = [NSMutableArray array];
 
@@ -325,9 +332,9 @@ static stateChange stateGraph[] = {
 }
 
 - (void)centralManager:(CBCentralManager *)central
-    didDiscoverPeripheral:(CBPeripheral *)peripheral
-        advertisementData:(NSDictionary *)advertisementData
-                     RSSI:(NSNumber *)RSSI {
+ didDiscoverPeripheral:(CBPeripheral *)peripheral
+     advertisementData:(NSDictionary *)advertisementData
+                  RSSI:(NSNumber *)RSSI {
   if (central == _configurableBeaconsCentralManager) {
     UBConfigurableUriBeacon *configurableBeacon =
         [[UBConfigurableUriBeacon alloc] initWithPeripheral:peripheral
@@ -527,7 +534,7 @@ static stateChange stateGraph[] = {
 }
 
 - (void)centralManager:(CBCentralManager *)central
-    didConnectPeripheral:(CBPeripheral *)peripheral {
+  didConnectPeripheral:(CBPeripheral *)peripheral {
   void (^block)(NSError *error) =
       [_connectionsBlocks objectForKey:[peripheral identifier]];
   [_connectionsBlocks removeObjectForKey:[peripheral identifier]];

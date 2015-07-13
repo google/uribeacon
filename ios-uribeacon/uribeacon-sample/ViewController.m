@@ -45,13 +45,14 @@
            object:[UIApplication sharedApplication]];
 
   // Start the scanner.
-  _scanner = [[UBUriBeaconScanner alloc] init];
+  _scanner = [[UBUriBeaconScanner alloc]
+      initWithApplication:[UIApplication sharedApplication]];
   ViewController *__weak weakSelf = self;
   [_scanner startScanningWithUpdateBlock:^{
-      ViewController *strongSelf = weakSelf;
-      [[strongSelf tableView] reloadData];
-      [strongSelf _openConfiguration];
-      [strongSelf _showLocalNotification];
+    ViewController *strongSelf = weakSelf;
+    [[strongSelf tableView] reloadData];
+    [strongSelf _openConfiguration];
+    [strongSelf _showLocalNotification];
   }];
 
   UIBarButtonItem *settingsButton =
@@ -129,7 +130,7 @@
 }
 
 - (void)configurationViewControllerDismissed:
-            (ConfigureViewController *)controller {
+    (ConfigureViewController *)controller {
   _configureViewController = nil;
 }
 
@@ -148,7 +149,7 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView
-    numberOfRowsInSection:(NSInteger)section {
+ numberOfRowsInSection:(NSInteger)section {
   return [[_scanner beacons] count];
 }
 
