@@ -150,6 +150,10 @@ static stateChange stateGraph[] = {
   UIApplication *_application;
 }
 
+- (id)init {
+  return [self initWithApplication:nil];
+}
+
 - (id)initWithApplication:(UIApplication *)application {
   self = [super init];
   if (!self) {
