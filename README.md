@@ -18,5 +18,5 @@ We look forward to continuing to work with you in the Eddystone-URL project!
 
 ### Old Repo Contents
 
-If you’re looking for the old UriBeacon specification and code, you can find it tagged [here](https://github.com/uribeacon/tree/uribeacon-final).
+If you’re looking for the old UriBeacon specification and code, you can find it tagged [here](https://github.com/google/uribeacon/tree/uribeacon-final).
 
